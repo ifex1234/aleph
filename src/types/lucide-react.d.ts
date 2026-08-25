@@ -1,0 +1,62 @@
+/**
+ * Type surface for lucide-react@1.x, which ships no type declarations in
+ * this environment. Runtime imports resolve to the real package (vite);
+ * this file only satisfies tsc for the icon names the app uses.
+ */
+import type { ComponentType, SVGProps } from "react"
+
+export type LucideIcon = ComponentType<
+  SVGProps<SVGSVGElement> & { size?: number | string; strokeWidth?: number | string }
+>
+
+export const AlertTriangleIcon: LucideIcon
+export const ArrowLeftIcon: LucideIcon
+export const ArrowRightIcon: LucideIcon
+export const BookOpenIcon: LucideIcon
+export const BrainCircuitIcon: LucideIcon
+export const CastIcon: LucideIcon
+export const CheckCircleIcon: LucideIcon
+export const CheckIcon: LucideIcon
+export const ChevronDownIcon: LucideIcon
+export const ChevronLeftIcon: LucideIcon
+export const ChevronRightIcon: LucideIcon
+export const ChevronsUpDownIcon: LucideIcon
+export const ChevronUpIcon: LucideIcon
+export const CopyIcon: LucideIcon
+export const DownloadIcon: LucideIcon
+export const EditIcon: LucideIcon
+export const FileTextIcon: LucideIcon
+export const GraduationCapIcon: LucideIcon
+export const Grid3X3Icon: LucideIcon
+export const GripVerticalIcon: LucideIcon
+export const HeartIcon: LucideIcon
+export const HelpCircleIcon: LucideIcon
+export const KeyIcon: LucideIcon
+export const LoaderCircleIcon: LucideIcon
+export const MaximizeIcon: LucideIcon
+export const MicIcon: LucideIcon
+export const MicOffIcon: LucideIcon
+export const MinusIcon: LucideIcon
+export const MonitorIcon: LucideIcon
+export const MoonIcon: LucideIcon
+export const MoreHorizontalIcon: LucideIcon
+export const MousePointer2Icon: LucideIcon
+export const PaletteIcon: LucideIcon
+export const PanelLeftIcon: LucideIcon
+export const PencilIcon: LucideIcon
+export const PinIcon: LucideIcon
+export const PinOffIcon: LucideIcon
+export const PlayIcon: LucideIcon
+export const PlusIcon: LucideIcon
+export const RadioIcon: LucideIcon
+export const RefreshCwIcon: LucideIcon
+export const SaveIcon: LucideIcon
+export const SearchIcon: LucideIcon
+export const SettingsIcon: LucideIcon
+export const SparklesIcon: LucideIcon
+export const SunIcon: LucideIcon
+export const Trash2Icon: LucideIcon
+export const TrashIcon: LucideIcon
+export const TvIcon: LucideIcon
+export const UploadIcon: LucideIcon
+export const XIcon: LucideIcon

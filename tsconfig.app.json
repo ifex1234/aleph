@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "types": ["vite/client"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "lucide-react": ["./src/types/lucide-react.d.ts"],
+      "fabric": ["./src/types/fabric.d.ts"],
+      "@tauri-apps/api/core": ["./src/compat/core.ts"],
+      "@tauri-apps/api/event": ["./src/compat/event.ts"],
+      "@tauri-apps/api/webviewWindow": ["./src/compat/webviewWindow.ts"],
+      "@tauri-apps/api/window": ["./src/compat/window.ts"],
+      "@tauri-apps/api/app": ["./src/compat/app.ts"],
+      "@tauri-apps/api/path": ["./src/compat/path.ts"],
+      "@tauri-apps/plugin-dialog": ["./src/compat/dialog.ts"],
+      "@tauri-apps/plugin-fs": ["./src/compat/fs.ts"],
+      "@tauri-apps/plugin-log": ["./src/compat/log.ts"],
+      "@tauri-apps/plugin-store": ["./src/compat/store.ts"]
+    }
+  },
+  "include": ["src"]
+}

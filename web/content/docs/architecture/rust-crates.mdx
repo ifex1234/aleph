@@ -1,0 +1,103 @@
+---
+title: Rust Crates
+description: Seven workspace crates, each with one job — audio, STT, Bible, detection, broadcast, API, and notes.
+icon: Boxes
+---
+
+The backend is split into focused crates so each layer can be tested
+in isolation and replaced without rewiring the rest. Inter-crate
+dependencies follow a strict downward fan-out from the API layer.
+
+## Crate overview
+
+| Crate | Responsibility |
+| --- | --- |
+| `aleph-audio` | Audio device enumeration, capture, voice activity detection (cpal) |
+| `aleph-stt` | Deepgram STT WebSocket + REST fallback; Whisper local engine |
+| `aleph-bible` | SQLite Bible database, FTS5 search, cross-references |
+| `aleph-detection` | Verse detection pipeline: direct, semantic, quotation, ensemble merger, sentence buffer, sermon context, reading mode |
+| `aleph-broadcast` | NDI video frame output via FFI |
+| `aleph-api` | Tauri command API layer — the only crate that touches Tauri |
+| `aleph-notes` | (placeholder for upcoming sermon notes feature) |
+
+## Why split this way
+
+Each crate maps to a clear external responsibility:
+
+- **`aleph-audio`** owns the operating system. Anything device-specific —
+  enumeration, capture buffers, sample-rate conversion, VAD — lives
+  here so the rest of the workspace can pretend audio is just bytes.
+
+- **`aleph-stt`** owns network and local STT. Both Whisper and Deepgram
+  emit the same transcript event type, so the consumer doesn't know
+  (or care) which engine is wired in.
+
+- **`aleph-bible`** owns the database. FTS5 query construction,
+  cross-reference joins, BM25 ranking — all of it is encapsulated
+  behind a small set of typed read paths.
+
+- **`aleph-detection`** owns the pipeline. It depends on `aleph-bible`
+  for verse text and reference lookup, but otherwise it's self-
+  contained and testable with synthetic transcripts.
+
+- **`aleph-broadcast`** owns NDI. It loads the SDK dynamically and
+  exposes a `start_sender`/`send_frame`/`stop_sender` API. Other
+  crates don't include the FFI surface at all.
+
+- **`aleph-api`** owns Tauri. Every Tauri command lives here. Other
+  crates don't depend on Tauri, which means the workspace can be
+  built and tested as plain Rust without the Tauri shell.
+
+- **`aleph-notes`** is a placeholder. Its `lib.rs` reads
+  *"Planned: Claude API integration, sermon note generation, and
+  PDF/Markdown export"* — none of that is implemented yet.
+
+## Dependency graph
+
+![Dependency graph of the seven Rust crates fanning out from aleph-api with two internal cross-deps](/docs/diagrams/diagram-crate-dependencies.svg)
+
+*The fan-out from `aleph-api` down through audio, stt, bible, detection, broadcast, and notes. Edges are strictly downward; no cycles. **Click to expand.***
+
+
+```
+aleph-api
+├── aleph-audio
+├── aleph-stt        ───→  aleph-audio
+├── aleph-bible
+├── aleph-detection  ───→  aleph-bible
+├── aleph-broadcast
+└── aleph-notes
+```
+
+The graph is strictly downward — no cycles, no horizontal
+dependencies. This is enforced by the workspace `Cargo.toml` and is
+the property that keeps incremental builds fast and individual crates
+testable.
+
+## Feature flags
+
+Two crates are gated behind Cargo features so the workspace stays
+buildable on minimal toolchains:
+
+- `aleph-stt` exposes a `whisper` feature (`whisper-rs = "0.16"`,
+  `optional = true`). The Deepgram path is always available.
+- `aleph-detection` exposes `onnx` (turns on `ort = "2.0.0-rc.12"`)
+  and `vector-search` features.
+
+The default crate features in `src-tauri/Cargo.toml` enable both ONNX
+and vector search, so the standard `tauri dev` workflow gets the full
+detection pipeline.
+
+## Testing
+
+Pipeline crates have inline `#[cfg(test)]` modules with curated
+transcript fixtures so detection behavior is asserted on known
+inputs.
+
+Run the workspace test suite from the repo root:
+
+```bash
+cargo test --workspace
+```
+
+The frontend test surface uses Vitest (`bun run test`).
