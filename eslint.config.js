@@ -20,4 +20,13 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Next.js App Router route files must export non-component handlers
+    // (generateMetadata, generateStaticParams, etc.) — fast-refresh does not
+    // apply to them.
+    files: ['web/app/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

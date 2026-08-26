@@ -62,6 +62,29 @@ export function ndiLibraryPath(): string {
 export const MODEL_DIR = () => path.join(projectRoot(), "models")
 export const EMBEDDINGS_DIR = () => path.join(projectRoot(), "embeddings")
 
+/**
+ * Roots searched for optional heavy assets (ONNX embedding model, verse
+ * index): the packaged resources dir, the per-user download dir, then the
+ * dev checkout. Order matters — bundled assets win over downloaded ones.
+ */
+export function assetRoots(): string[] {
+  return [
+    resourceDir(),
+    userDataDir(),
+    projectRoot(),
+  ]
+}
+
+/** Candidate directories for a named model under each asset root. */
+export function modelDirCandidates(name: string): string[] {
+  return assetRoots().map((root) => path.join(root, "models", name))
+}
+
+/** Candidate paths for a named embeddings file under each asset root. */
+export function embeddingFileCandidates(name: string): string[] {
+  return assetRoots().map((root) => path.join(root, "embeddings", name))
+}
+
 export function userDataDir(): string {
   return app.getPath("userData")
 }

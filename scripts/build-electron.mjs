@@ -15,7 +15,14 @@ const options = {
   format: "cjs",
   target: "node20",
   sourcemap: "inline",
-  external: ["electron", "better-sqlite3", "koffi", "ws", "onnxruntime-node"],
+  external: [
+    "electron",
+    "better-sqlite3",
+    "koffi",
+    "ws",
+    "onnxruntime-node",
+    "@huggingface/transformers",
+  ],
 }
 
 if (watch) {

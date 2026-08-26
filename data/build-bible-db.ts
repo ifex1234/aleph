@@ -4,11 +4,12 @@
  * Prereq: bun run data/download-sources.ts
  */
 
-import { Database } from "bun:sqlite"
-import { readFileSync } from "node:fs"
-import { join } from "node:path"
+import { readFileSync, unlinkSync } from "node:fs"
+import { join, dirname } from "node:path"
+import { fileURLToPath } from "node:url"
+import { SQLite as Database } from "./lib/sqlite"
 
-const DATA_DIR = import.meta.dir
+const DATA_DIR = dirname(fileURLToPath(import.meta.url))
 const DB_PATH = join(DATA_DIR, "aleph.db")
 const SCHEMA_PATH = join(DATA_DIR, "schema.sql")
 const SOURCES_DIR = join(DATA_DIR, "sources")
@@ -510,10 +511,12 @@ function main() {
 
   // Remove existing DB
   try {
-    require("node:fs").unlinkSync(DB_PATH)
-  } catch {}
+    unlinkSync(DB_PATH)
+  } catch {
+    // No existing database to remove.
+  }
 
-  const db = new Database(DB_PATH, { create: true })
+  const db = new Database(DB_PATH)
 
   // Create schema — execute each statement individually for FTS5 compatibility
   const schema = readFileSync(SCHEMA_PATH, "utf-8")
@@ -566,7 +569,7 @@ function main() {
       meta.license
     )
     const translationId = db
-      .query("SELECT last_insert_rowid() as id")
+      .prepare("SELECT last_insert_rowid() as id")
       .get() as { id: number }
     const tId = translationId.id
 
@@ -580,7 +583,9 @@ function main() {
       const testament = bookNumber <= 39 ? "OT" : "NT"
 
       insertBook.run(tId, bookNumber, book.name, abbrev, testament)
-      const bookResult = db.query("SELECT last_insert_rowid() as id").get() as {
+      const bookResult = db
+        .prepare("SELECT last_insert_rowid() as id")
+        .get() as {
         id: number
       }
       const bookId = bookResult.id
@@ -683,14 +688,16 @@ function main() {
   db.exec("ANALYZE;")
 
   // Stats
-  const verseTotal = db.query("SELECT COUNT(*) as c FROM verses").get() as {
+  const verseTotal = db
+    .prepare("SELECT COUNT(*) as c FROM verses")
+    .get() as {
     c: number
   }
   const transTotal = db
-    .query("SELECT COUNT(*) as c FROM translations")
+    .prepare("SELECT COUNT(*) as c FROM translations")
     .get() as { c: number }
   const crossTotal = db
-    .query("SELECT COUNT(*) as c FROM cross_references")
+    .prepare("SELECT COUNT(*) as c FROM cross_references")
     .get() as { c: number }
 
   console.log(`\n✅ aleph.db built successfully!`)

@@ -7,10 +7,11 @@
  * Run: bun run download:whisper
  */
 
-import { join } from "node:path"
+import { dirname, join } from "node:path"
 import { existsSync, mkdirSync, createWriteStream } from "node:fs"
+import { fileURLToPath } from "node:url"
 
-const PROJECT_ROOT = join(import.meta.dir, "..")
+const PROJECT_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 const MODELS_DIR = join(PROJECT_ROOT, "models", "whisper")
 const MODEL_FILE = "ggml-large-v3-turbo-q8_0.bin"
 const MODEL_PATH = join(MODELS_DIR, MODEL_FILE)
@@ -29,7 +30,9 @@ async function main() {
 
   const response = await fetch(MODEL_URL, { redirect: "follow" })
   if (!response.ok) {
-    throw new Error(`Download failed: ${response.status} ${response.statusText}`)
+    throw new Error(
+      `Download failed: ${response.status} ${response.statusText}`
+    )
   }
 
   const totalBytes = Number(response.headers.get("content-length") ?? 0)
@@ -49,9 +52,12 @@ async function main() {
     writer.write(Buffer.from(value))
     downloaded += value.byteLength
 
-    const percent = totalBytes > 0 ? Math.floor((downloaded / totalBytes) * 100) : 0
+    const percent =
+      totalBytes > 0 ? Math.floor((downloaded / totalBytes) * 100) : 0
     if (percent !== lastPercent && percent % 5 === 0) {
-      process.stdout.write(`\r  ${percent}% (${(downloaded / 1_000_000).toFixed(0)}/${totalMB} MB)`)
+      process.stdout.write(
+        `\r  ${percent}% (${(downloaded / 1_000_000).toFixed(0)}/${totalMB} MB)`
+      )
       lastPercent = percent
     }
   }

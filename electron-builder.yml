@@ -11,6 +11,13 @@ files:
   - dist-electron/**
   - package.json
 
+# Native/prebuilt modules must live outside the asar for their binaries to load.
+asarUnpack:
+  - node_modules/onnxruntime-node/**
+  - node_modules/@huggingface/transformers/**
+  - node_modules/onnxruntime-common/**
+  - node_modules/onnxruntime-web/**
+
 extraResources:
   # Bible database, resolved at runtime from the resources dir.
   - from: data/aleph.db

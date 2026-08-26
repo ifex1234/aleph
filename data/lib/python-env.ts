@@ -6,10 +6,17 @@
  * Python-dependent script shares a single virtual-environment setup path.
  */
 
-import { join } from "node:path"
+import { spawn } from "node:child_process"
+import { join, dirname } from "node:path"
 import { existsSync } from "node:fs"
+import { fileURLToPath } from "node:url"
+import { run } from "./exec"
 
-export const PROJECT_ROOT = join(import.meta.dir, "..", "..")
+export const PROJECT_ROOT = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "..",
+  ".."
+)
 export const VENV_DIR = join(PROJECT_ROOT, ".venv")
 export const MIN_PYTHON_VERSION: [number, number, number] = [3, 9, 0]
 
@@ -20,6 +27,23 @@ export function getVenvBin(name: string): string {
   return join(VENV_DIR, "bin", name)
 }
 
+/** Runs `cmd --version`, resolving with stdout on success or null if the binary is unavailable. */
+function probeVersion(cmd: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    const proc = spawn(cmd, ["--version"], {
+      stdio: ["ignore", "pipe", "pipe"],
+    })
+    let out = ""
+    proc.stdout?.on("data", (chunk) => {
+      out += chunk
+    })
+    proc.on("error", () => resolve(null))
+    proc.on("close", (code) => {
+      resolve(code === 0 && out.includes("Python") ? out : null)
+    })
+  })
+}
+
 export async function findPython(): Promise<string> {
   for (const candidate of [
     "python3.12",
@@ -28,19 +52,8 @@ export async function findPython(): Promise<string> {
     "python3",
     "python",
   ]) {
-    try {
-      const proc = Bun.spawn([candidate, "--version"], {
-        stdout: "pipe",
-        stderr: "pipe",
-      })
-      const output = await new Response(proc.stdout).text()
-      const exitCode = await proc.exited
-      if (exitCode === 0 && output.includes("Python")) {
-        return candidate
-      }
-    } catch {
-      // Binary not found, try next candidate
-    }
+    const output = await probeVersion(candidate)
+    if (output !== null) return candidate
   }
 
   console.error("\n❌ Python not found.")
@@ -82,12 +95,9 @@ export async function ensureVenv(pythonCmd: string): Promise<void> {
   }
 
   console.log(`  Creating virtual environment at ${VENV_DIR}...`)
-  const proc = Bun.spawn([pythonCmd, "-m", "venv", VENV_DIR], {
-    stdout: "inherit",
-    stderr: "inherit",
-  })
-  const exitCode = await proc.exited
-  if (exitCode !== 0) {
+  try {
+    await run([pythonCmd, "-m", "venv", VENV_DIR])
+  } catch {
     console.error("\n❌ Failed to create virtual environment.")
     process.exit(1)
   }
@@ -97,12 +107,9 @@ export async function ensureVenv(pythonCmd: string): Promise<void> {
 export async function installPipDeps(packages: string[]): Promise<void> {
   const pip = getVenvBin("pip")
   console.log(`  Installing ${packages.join(", ")}...`)
-  const proc = Bun.spawn([pip, "install", ...packages], {
-    stdout: "inherit",
-    stderr: "inherit",
-  })
-  const exitCode = await proc.exited
-  if (exitCode !== 0) {
+  try {
+    await run([pip, "install", ...packages])
+  } catch {
     console.error("\n❌ Failed to install dependencies.")
     process.exit(1)
   }
@@ -120,12 +127,11 @@ export async function ensurePythonEnv(
 
   const pythonCmd = await findPython()
 
-  const versionProc = Bun.spawn([pythonCmd, "--version"], {
-    stdout: "pipe",
-    stderr: "pipe",
-  })
-  const versionOutput = await new Response(versionProc.stdout).text()
-  await versionProc.exited
+  const versionOutput = await probeVersion(pythonCmd)
+  if (versionOutput === null) {
+    console.error(`\n❌ Could not read ${pythonCmd} version.`)
+    process.exit(1)
+  }
   const version = parsePythonVersion(versionOutput)
   console.log(`  Found ${pythonCmd} version ${version.join(".")}`)
 

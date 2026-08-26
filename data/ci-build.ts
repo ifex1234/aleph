@@ -19,6 +19,7 @@
 import { join } from "node:path"
 import { existsSync } from "node:fs"
 import { ensurePythonEnv, PROJECT_ROOT } from "./lib/python-env"
+import { run } from "./lib/exec"
 
 // ── Paths ────────────────────────────────────────────────────────────
 const DATA_DIR = join(PROJECT_ROOT, "data")
@@ -40,23 +41,6 @@ function shouldSkip(label: string, ...artifacts: string[]): boolean {
     console.log(`  ⏭ Skip: ${label} (artifacts already exist)`)
   }
   return allExist
-}
-
-async function run(
-  cmd: string[],
-  cwd?: string,
-  extraEnv?: Record<string, string>
-): Promise<void> {
-  const proc = Bun.spawn(cmd, {
-    stdout: "inherit",
-    stderr: "inherit",
-    cwd: cwd ?? PROJECT_ROOT,
-    env: { ...process.env, ...extraEnv },
-  })
-  const exitCode = await proc.exited
-  if (exitCode !== 0) {
-    throw new Error(`Command failed (exit ${exitCode}): ${cmd.join(" ")}`)
-  }
 }
 
 // ── Main ─────────────────────────────────────────────────────────────
@@ -89,13 +73,13 @@ async function main() {
       CROSS_REFS
     )
   ) {
-    await run(["bun", "run", join(DATA_DIR, "download-sources.ts")])
+    await run(["bun", "run", join(DATA_DIR, "download-sources.ts")], { cwd: PROJECT_ROOT })
   }
 
   // ── Phase 3: Build Bible database ──────────────────────────────
   console.log("\n━━━ Phase 3/4: Build Bible database ━━━")
   if (!shouldSkip("Bible database", DB_PATH)) {
-    await run(["bun", "run", join(DATA_DIR, "build-bible-db.ts")])
+    await run(["bun", "run", join(DATA_DIR, "build-bible-db.ts")], { cwd: PROJECT_ROOT })
   }
 
   // Embedding re-ranking assets (ONNX model + verse embeddings) are
@@ -113,7 +97,7 @@ async function main() {
       )
       process.exit(1)
     }
-    await run(["bun", "run", join(DATA_DIR, "compute-embeddings.ts")])
+    await run(["bun", "run", join(DATA_DIR, "compute-embeddings.ts")], { cwd: PROJECT_ROOT })
   }
 
   // ── Done ───────────────────────────────────────────────────────

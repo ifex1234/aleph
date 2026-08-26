@@ -14,11 +14,8 @@
  */
 
 import { join } from "node:path"
-import {
-  ensurePythonEnv,
-  getVenvBin,
-  PROJECT_ROOT,
-} from "./lib/python-env"
+import { ensurePythonEnv, getVenvBin, PROJECT_ROOT } from "./lib/python-env"
+import { run } from "./lib/exec"
 
 const MODELS_DIR = join(PROJECT_ROOT, "models", "qwen3-embedding-0.6b")
 const MODELS_DIR_INT8 = join(
@@ -49,8 +46,8 @@ async function main() {
   )
   console.log("  This may take a few minutes on first run.\n")
 
-  const proc = Bun.spawn(
-    [
+  try {
+    await run([
       optimumCli,
       "export",
       "onnx",
@@ -60,16 +57,9 @@ async function main() {
       "feature-extraction",
       MODELS_DIR,
       "--library-name",
-      "transformers"
-    ],
-    {
-      stdout: "inherit",
-      stderr: "inherit",
-    }
-  )
-
-  const exitCode = await proc.exited
-  if (exitCode !== 0) {
+      "transformers",
+    ])
+  } catch {
     console.error("\n❌ Export failed.")
     process.exit(1)
   }
@@ -81,8 +71,8 @@ async function main() {
   console.log("  This reduces the model from ~2.4GB to ~571MB.")
   console.log("  Dynamic INT8 quantization preserves >99% embedding quality.\n")
 
-  const quantizeProc = Bun.spawn(
-    [
+  try {
+    await run([
       optimumCli,
       "onnxruntime",
       "quantize",
@@ -92,20 +82,12 @@ async function main() {
       "-o",
       MODELS_DIR_INT8,
       "--library-name",
-      "transformers"
-    ],
-    {
-      stdout: "inherit",
-      stderr: "inherit",
-    }
-  )
-
-  const quantizeExitCode = await quantizeProc.exited
-  if (quantizeExitCode !== 0) {
+      "transformers",
+    ])
+    console.log(`\n✅ INT8 model quantized to ${MODELS_DIR_INT8}\n`)
+  } catch {
     console.error("\n⚠️  Quantization failed. The FP32 model is still usable.")
     console.error("   To quantize manually: bun run quantize:model")
-  } else {
-    console.log(`\n✅ INT8 model quantized to ${MODELS_DIR_INT8}\n`)
   }
 
   console.log("  Files created:")

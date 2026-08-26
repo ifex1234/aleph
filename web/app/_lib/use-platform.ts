@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 export type Platform = "mac" | "windows" | "linux" | "other";
 
+// No store to subscribe to — the client snapshot is just a one-shot read.
+const emptySubscribe = () => () => {};
+
 export function usePlatform(): Platform | null {
-  const [platform, setPlatform] = useState<Platform | null>(null);
-
-  useEffect(() => {
-    setPlatform(detectPlatform());
-  }, []);
-
-  return platform;
+  // Server render / hydration pass yield null so markup matches SSR; the
+  // client snapshot resolves right after mount.
+  return useSyncExternalStore(emptySubscribe, detectPlatform, () => null);
 }
 
 function detectPlatform(): Platform {

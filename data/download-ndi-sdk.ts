@@ -9,10 +9,11 @@
  * Run: bun run download:ndi-sdk
  */
 
-import { join } from "node:path"
-import { mkdir } from "node:fs/promises"
+import { join, dirname } from "node:path"
+import { mkdir, writeFile } from "node:fs/promises"
+import { fileURLToPath } from "node:url"
 
-const SDK_DIR = join(import.meta.dir, "..", "sdk", "ndi")
+const SDK_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "sdk", "ndi")
 
 const TRUELAZER_BASE =
   "https://raw.githubusercontent.com/PolarAudio/TrueLazer/main/sdk/NDI%206%20SDK"
@@ -75,13 +76,14 @@ const downloads: DownloadItem[] = [
   },
 ]
 
-async function downloadFile(url: string, dest: string): Promise<void> {
+async function downloadFile(url: string, dest: string): Promise<number> {
   const response = await fetch(url, { redirect: "follow" })
   if (!response.ok) {
     throw new Error(`HTTP ${response.status} for ${url}`)
   }
-  const buffer = await response.arrayBuffer()
-  await Bun.write(dest, buffer)
+  const buffer = Buffer.from(await response.arrayBuffer())
+  await writeFile(dest, buffer)
+  return buffer.byteLength
 }
 
 async function main() {
@@ -99,9 +101,7 @@ async function main() {
   for (const item of downloads) {
     process.stdout.write(`  ${item.name}... `)
     try {
-      await downloadFile(item.url, item.dest)
-      const stat = Bun.file(item.dest)
-      const size = stat.size
+      const size = await downloadFile(item.url, item.dest)
       console.log(
         `OK (${size > 1024 * 1024 ? `${(size / 1024 / 1024).toFixed(1)} MB` : `${(size / 1024).toFixed(1)} KB`})`
       )

@@ -1,4 +1,5 @@
-import { DeepgramStreamClient } from "./deepgram"
+import { DeepgramStreamClient, type SttEvent } from "./deepgram"
+import { WhisperLocalClient } from "./whisper"
 import { CaptureManager, type CaptureDeviceInfo, type CaptureStatusEvent } from "../audio/capture"
 import { DirectDetector } from "../detection/detector"
 import { DetectionMerger } from "../detection/merger"
@@ -27,8 +28,11 @@ export const capture = new CaptureManager()
 
 type Mode = "idle" | "test" | "stt"
 
+/** Both providers expose the same surface: onEvent/start/sendAudio/tick/stop. */
+type SttClient = DeepgramStreamClient | WhisperLocalClient
+
 let mode: Mode = "idle"
-let deepgram: DeepgramStreamClient | null = null
+let client: SttClient | null = null
 let tickTimer: NodeJS.Timeout | null = null
 let testTimeout: NodeJS.Timeout | null = null
 let currentGain = 1
@@ -70,8 +74,8 @@ function onCaptureStatus(e: CaptureStatusEvent): void {
 }
 
 function onPcm(samples: Buffer): void {
-  if (mode !== "stt" || !deepgram) return
-  deepgram.sendAudio(samples)
+  if (mode !== "stt") return
+  client?.sendAudio(samples)
 }
 
 // ---------------------------------------------------------------------------
@@ -126,19 +130,22 @@ export async function startTranscription(opts: {
     throw new Error("Transcription is already running")
   }
 
-  const apiKey =
-    opts.apiKey && opts.apiKey.length > 0
-      ? opts.apiKey
-      : (process.env.DEEPGRAM_API_KEY ?? "")
+  const provider = opts.provider ?? "deepgram"
 
-  if ((opts.provider ?? "deepgram") === "whisper") {
-    throw new Error(
-      "Local Whisper is not configured in this build. Use the Deepgram provider."
-    )
-  }
-
-  if (!apiKey) {
-    throw new Error("No Deepgram API key provided")
+  let next: SttClient
+  if (provider === "whisper") {
+    // Construction validates the local setup and throws actionable
+    // setup errors (binary/model missing) that surface in the UI.
+    next = new WhisperLocalClient()
+  } else {
+    const apiKey =
+      opts.apiKey && opts.apiKey.length > 0
+        ? opts.apiKey
+        : (process.env.DEEPGRAM_API_KEY ?? "")
+    if (!apiKey) {
+      throw new Error("No Deepgram API key provided")
+    }
+    next = new DeepgramStreamClient(apiKey)
   }
 
   // Starting transcription preempts an active audio test.
@@ -147,9 +154,9 @@ export async function startTranscription(opts: {
   mode = "stt"
   currentGain = clampGain(opts.gain)
   lastPartial = ""
+  client = next
 
-  deepgram = new DeepgramStreamClient(apiKey)
-  deepgram.onEvent = (e) => {
+  client.onEvent = (e: SttEvent) => {
     switch (e.type) {
       case "connected":
         emitAll("stt_connected", null)
@@ -174,30 +181,43 @@ export async function startTranscription(opts: {
         break
     }
   }
-  deepgram.start()
+  client.start()
 
   await capture.start(opts.deviceId ?? null, currentGain)
 
   // Keepalive/flush ticker.
   if (tickTimer) clearInterval(tickTimer)
   tickTimer = setInterval(() => {
-    deepgram?.tick()
+    client?.tick()
   }, 50)
 
-  info("[STT] transcription started")
+  info(`[STT] transcription started (provider=${provider})`)
 }
 
 export async function stopTranscription(): Promise<void> {
   if (mode !== "stt") {
     throw new Error("Transcription is not running")
   }
+  const stopping = client
+
+  if (stopping instanceof WhisperLocalClient) {
+    // Drain pending windows first — mode stays "stt" so trailing speech
+    // still produces transcript + detection events. Bounded by a timeout
+    // so a stuck inference process can't hang the stop request.
+    await Promise.race([
+      stopping.stop(),
+      new Promise<void>((resolve) => setTimeout(resolve, 8000)),
+    ])
+  } else {
+    stopping?.stop()
+  }
+
   mode = "idle"
   if (tickTimer) {
     clearInterval(tickTimer)
     tickTimer = null
   }
-  deepgram?.stop()
-  deepgram = null
+  client = null
   capture.stop()
   info("[STT] transcription stopped")
 }

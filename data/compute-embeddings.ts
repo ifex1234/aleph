@@ -1,4 +1,3 @@
-/// <reference types="bun-types" />
 /**
  * Pre-computes verse embeddings using the ONNX model.
  * This script exports verses to a JSON file, then a Rust binary does the actual embedding.
@@ -17,11 +16,12 @@
  * The actual embedding computation will be done via Rust.
  */
 
-import { Database } from "bun:sqlite"
-import { join } from "node:path"
-import { mkdir } from "node:fs/promises"
+import { join, dirname } from "node:path"
+import { mkdir, writeFile } from "node:fs/promises"
+import { fileURLToPath } from "node:url"
+import { SQLite as Database } from "./lib/sqlite"
 
-const DATA_DIR = import.meta.dir
+const DATA_DIR = dirname(fileURLToPath(import.meta.url))
 const DB_PATH = join(DATA_DIR, "aleph.db")
 const OUTPUT_PATH = join(DATA_DIR, "verses-for-embedding.json")
 
@@ -34,7 +34,7 @@ async function main() {
 
   // Get all KJV verses (translation_id = 1)
   const verses = db
-    .query(
+    .prepare(
       "SELECT id, book_name, chapter, verse, text FROM verses WHERE translation_id = 1 ORDER BY id"
     )
     .all() as Array<{
@@ -54,7 +54,7 @@ async function main() {
     ref: `${v.book_name} ${v.chapter}:${v.verse}`,
   }))
 
-  await Bun.write(OUTPUT_PATH, JSON.stringify(output))
+  await writeFile(OUTPUT_PATH, JSON.stringify(output))
   console.log(`  ✓ Exported to ${OUTPUT_PATH}`)
   console.log(
     `\n  Next: Run the Rust precompute binary to generate embeddings.`

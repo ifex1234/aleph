@@ -2,6 +2,10 @@ import { app, BrowserWindow, dialog } from "electron"
 import fs from "node:fs"
 import * as bible from "./services/bible"
 import { pipeline, detectionStatusResult } from "./services/detection-runtime"
+import {
+  ensureSemanticAssets,
+  semanticDownloadStatus,
+} from "./services/semantic-download"
 import { sharedState } from "./services/state"
 import {
   capture,
@@ -98,6 +102,10 @@ const handlers: Record<string, Handler> = {
   detection_status: () => detectionStatusResult(),
 
   semantic_search: async (a) => pipeline.semanticSearch(str(a.query), num(a.limit) || 10),
+
+  // ------------------------------------------------ semantic asset downloads
+  semantic_download_start: () => ensureSemanticAssets(),
+  semantic_download_status: () => semanticDownloadStatus(),
 
   reading_mode_status: () => readingModeStatus(),
   stop_reading_mode: () => stopReadingMode(),

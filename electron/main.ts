@@ -6,6 +6,7 @@ import { flushStores } from "./services/stores"
 import { handleInvoke } from "./ipc"
 import { closeDb } from "./services/bible"
 import { initRuntime } from "./services/detection-runtime"
+import { initSemanticDownload } from "./services/semantic-download"
 import { capture } from "./services/stt/session"
 import { shutdownNdi } from "./services/ndi"
 import { oscServer, httpServer } from "./ipc"
@@ -112,6 +113,8 @@ if (!app.requestSingleInstanceLock()) {
 
     registerIpc()
     initRuntime()
+    // Fetch semantic-search assets on first run of packaged builds.
+    initSemanticDownload()
 
     const main = createMainWindow()
     void main

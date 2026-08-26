@@ -5,11 +5,13 @@
  * Run: bun run data/download-sources.ts
  */
 
-import { mkdir, rm } from "node:fs/promises"
-import { existsSync } from "node:fs"
-import { join } from "node:path"
+import { mkdir, rm, open, writeFile } from "node:fs/promises"
+import { existsSync, statSync } from "node:fs"
+import { join, dirname } from "node:path"
+import { fileURLToPath } from "node:url"
+import { spawn } from "node:child_process"
 
-const DATA_DIR = import.meta.dir
+const DATA_DIR = dirname(fileURLToPath(import.meta.url))
 const SOURCES_DIR = join(DATA_DIR, "sources")
 const CROSS_REFS_DIR = join(DATA_DIR, "cross-refs")
 
@@ -38,8 +40,8 @@ async function downloadFile(url: string, dest: string): Promise<void> {
   console.log(`  Downloading ${url}...`)
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Failed to download ${url}: ${res.status}`)
-  const buffer = await res.arrayBuffer()
-  await Bun.write(dest, buffer)
+  const buffer = Buffer.from(await res.arrayBuffer())
+  await writeFile(dest, buffer)
   const sizeMB = (buffer.byteLength / 1024 / 1024).toFixed(1)
   console.log(`  ✓ Saved ${dest} (${sizeMB} MB)`)
 }
@@ -54,7 +56,19 @@ function isZip(bytes: Uint8Array): boolean {
   )
 }
 
-async function unzip(
+/** Reads the first `bytes` bytes of a file without loading it fully. */
+async function readHead(path: string, bytes: number): Promise<Uint8Array> {
+  const handle = await open(path, "r")
+  try {
+    const buf = Buffer.alloc(bytes)
+    await handle.read(buf, 0, bytes, 0)
+    return buf
+  } finally {
+    await handle.close()
+  }
+}
+
+function unzip(
   zipPath: string,
   destDir: string,
   exclude: string[] = []
@@ -72,11 +86,14 @@ async function unzip(
           ...exclude.flatMap((e) => ["--exclude", e]),
         ]
       : ["unzip", "-o", zipPath, "-d", destDir, ...flatMapExclude(exclude)]
-  const proc = Bun.spawn(args, { stdout: "inherit", stderr: "inherit" })
-  const exitCode = await proc.exited
-  if (exitCode !== 0) {
-    throw new Error(`unzip failed (exit ${exitCode}) for ${zipPath}`)
-  }
+  return new Promise((resolve, reject) => {
+    const proc = spawn(args[0]!, args.slice(1), { stdio: "inherit" })
+    proc.on("error", reject)
+    proc.on("close", (code) => {
+      if (code === 0) resolve()
+      else reject(new Error(`unzip failed (exit ${code}) for ${zipPath}`))
+    })
+  })
 }
 
 function flatMapExclude(exclude: string[]): string[] {
@@ -101,8 +118,7 @@ async function downloadSourcesZip(): Promise<void> {
 
   // Validate that we got a real zip and not Google Drive's HTML interstitial
   // (happens if the file ID is wrong, the file is private, or quota exceeded).
-  const head = new Uint8Array(await Bun.file(zipDest).slice(0, 4).arrayBuffer())
-  if (!isZip(head)) {
+  if (!isZip(await readHead(zipDest, 4))) {
     await rm(zipDest, { force: true })
     throw new Error(
       "Google Drive returned a non-zip response (likely an HTML page). " +
@@ -131,8 +147,7 @@ async function downloadSourcesZip(): Promise<void> {
 
 async function downloadCrossRefs(): Promise<void> {
   const crossRefFile = join(CROSS_REFS_DIR, "cross_references.txt")
-  const existing = Bun.file(crossRefFile)
-  if ((await existing.exists()) && existing.size > 1000) {
+  if (existsSync(crossRefFile) && statSync(crossRefFile).size > 1000) {
     console.log("  ⏭ cross_references.txt already exists, skipping")
     return
   }

@@ -61,14 +61,14 @@ No Rust toolchain, no CMake, no Python required for the core app.
 ```bash
 git clone <repo-url>
 cd aleph
-npm install
+bun install
 ```
 
 Native module note: `better-sqlite3` must match Electron's ABI. After a
 fresh install run:
 
 ```bash
-npx electron-rebuild -f -w better-sqlite3
+bunx electron-rebuild -f -w better-sqlite3
 ```
 
 Build the Bible database (downloads sources, builds `data/aleph.db`):

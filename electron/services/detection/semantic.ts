@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
-import { MODEL_DIR, EMBEDDINGS_DIR } from "../paths"
+import { modelDirCandidates, embeddingFileCandidates } from "../paths"
 import { warn } from "../logger"
 
 /**
@@ -10,9 +10,11 @@ import { warn } from "../logger"
  *   embeddings/kjv-qwen3-0.6b.bin         (flat f32 vectors)
  *   embeddings/kjv-qwen3-0.6b-ids.bin     (flat i64 verse ids)
  *
- * Requires `onnxruntime-node` to be installed; when it or the model files
- * are missing the embedder reports unavailable and the app degrades to
- * direct + FTS5 detection only.
+ * Assets are resolved across the bundled resources dir and the per-user
+ * download dir (see paths.assetRoots); when missing in packaged builds the
+ * semantic-download service fetches them on first run. Requires
+ * `onnxruntime-node`; when it or the model files are missing the embedder
+ * reports unavailable and the app degrades to direct + FTS5 detection only.
  */
 
 export interface EmbedderStatus {
@@ -38,20 +40,55 @@ let unavailableReason: string | null = null
 
 const MAX_TOKENS = 128
 
-function findModelDir(): string | null {
-  const int8 = path.join(MODEL_DIR(), "qwen3-embedding-0.6b-int8")
-  const fp32 = path.join(MODEL_DIR(), "qwen3-embedding-0.6b")
-  if (fs.existsSync(path.join(int8, "model_quantized.onnx"))) return int8
-  if (fs.existsSync(path.join(fp32, "model.onnx"))) return fp32
+function firstExisting(candidates: string[]): string | null {
+  for (const candidate of candidates) {
+    try {
+      if (candidate && fs.existsSync(candidate)) return candidate
+    } catch {
+      // Unreadable path — keep looking.
+    }
+  }
   return null
+}
+
+function findModelDir(): string | null {
+  // INT8 is preferred everywhere (571MB vs 2.4GB, >99% quality); fp32 is a
+  // dev-checkout fallback.
+  const variants = ["qwen3-embedding-0.6b-int8", "qwen3-embedding-0.6b"]
+  for (const variant of variants) {
+    for (const dir of modelDirCandidates(variant)) {
+      const file = variant.endsWith("int8") ? "model_quantized.onnx" : "model.onnx"
+      if (fs.existsSync(path.join(dir, file))) return dir
+    }
+  }
+  return null
+}
+
+/**
+ * True when any semantic-search asset is absent from every known location,
+ * i.e. the first-run downloader still has work to do.
+ */
+export function assetsMissing(): boolean {
+  return (
+    findModelDir() === null ||
+    resolveEmbeddingFile("kjv-qwen3-0.6b.bin") === null ||
+    resolveEmbeddingFile("kjv-qwen3-0.6b-ids.bin") === null
+  )
+}
+
+/** Resolves an embeddings index file across bundled + downloaded locations. */
+function resolveEmbeddingFile(name: string): string | null {
+  return firstExisting(embeddingFileCandidates(name))
 }
 
 export function embeddingStatus(): EmbedderStatus {
   const modelDir = findModelDir()
-  const embeddingsBin = path.join(EMBEDDINGS_DIR(), "kjv-qwen3-0.6b.bin")
-  const idsBin = path.join(EMBEDDINGS_DIR(), "kjv-qwen3-0.6b-ids.bin")
+  const embeddingsBin = resolveEmbeddingFile("kjv-qwen3-0.6b.bin")
+  const idsBin = resolveEmbeddingFile("kjv-qwen3-0.6b-ids.bin")
 
-  if (!modelDir || !fs.existsSync(embeddingsBin) || !fs.existsSync(idsBin)) {
+  if (!modelDir || !embeddingsBin || !idsBin) {
+    // Null warning when only the index is missing: the downloader reports
+    // that flow via its own progress events instead.
     return {
       available: false,
       warning: modelDir
@@ -79,34 +116,36 @@ function load(): void {
     })
     modelFile = path.basename(modelPath)
 
+    // Tokenizer: prefer the tokenizer.json shipped/downloaded next to the
+    // model so production runs fully offline; fall back to the HF hub id
+    // (dev convenience only — it caches outside our control).
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const tokenizers = require("@huggingface/tokenizers") ?? null
-    void tokenizers
-
-    // Tokenizer: use transformers.js if present; otherwise fail soft.
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const tf = require("@huggingface/transformers")
-      const tok = tf.AutoTokenizer.fromSync("Qwen/Qwen3-Embedding-0.6B", {
-        localFilesOnly: false,
-      })
-      tokenizer = {
-        encode: (text: string) => {
-          const enc = tok(text, {
-            padding: "max_length",
-            truncation: true,
-            max_length: MAX_TOKENS,
-            return_tensor_ids: true,
-          })
-          return { ids: enc.input_ids.data as number[], attention_mask: enc.attention_mask.data as number[] }
-        },
-      }
-    } catch {
-      throw new Error("tokenizer unavailable (@huggingface/transformers not installed)")
+    const tf = require("@huggingface/transformers")
+    const localTokenizer = path.join(modelDir, "tokenizer.json")
+    const hasLocalTokenizer = fs.existsSync(localTokenizer)
+    if (!hasLocalTokenizer) {
+      warn("[semantic] tokenizer.json not found next to model; fetching from the HF hub")
+    }
+    const tok = tf.AutoTokenizer.fromSync(
+      hasLocalTokenizer ? modelDir : "Qwen/Qwen3-Embedding-0.6B",
+      { localFilesOnly: hasLocalTokenizer }
+    )
+    tokenizer = {
+      encode: (text: string) => {
+        const enc = tok(text, {
+          padding: "max_length",
+          truncation: true,
+          max_length: MAX_TOKENS,
+          return_tensor_ids: true,
+        })
+        return { ids: enc.input_ids.data as number[], attention_mask: enc.attention_mask.data as number[] }
+      },
     }
 
-    const vectorsBuf = fs.readFileSync(path.join(EMBEDDINGS_DIR(), "kjv-qwen3-0.6b.bin"))
-    const idsBuf = fs.readFileSync(path.join(EMBEDDINGS_DIR(), "kjv-qwen3-0.6b-ids.bin"))
+    const vectorsPath = resolveEmbeddingFile("kjv-qwen3-0.6b.bin")!
+    const idsPath = resolveEmbeddingFile("kjv-qwen3-0.6b-ids.bin")!
+    const vectorsBuf = fs.readFileSync(vectorsPath)
+    const idsBuf = fs.readFileSync(idsPath)
     const vectors = new Float32Array(
       vectorsBuf.buffer.slice(vectorsBuf.byteOffset, vectorsBuf.byteOffset + vectorsBuf.byteLength)
     )
@@ -121,12 +160,24 @@ function load(): void {
     unavailableReason =
       e instanceof Error && /tokenizer/.test(e.message)
         ? "Semantic search disabled: no tokenizer available."
-        : "Semantic search disabled: install onnxruntime-node and place the embedding model under models/."
-    warn(`[semantic] ${unavailableReason}`)
+        : "Semantic search disabled: onnxruntime-node is missing or the embedding model failed to load."
+    warn(`[semantic] ${unavailableReason}`, e)
     session = null
     tokenizer = null
     index = null
   }
+}
+
+/**
+ * Drops all cached load state so the next status check retries from disk.
+ * Called after the first-run downloader finishes fetching assets.
+ */
+export function resetForReload(): void {
+  loadAttempted = false
+  unavailableReason = null
+  session = null
+  tokenizer = null
+  index = null
 }
 
 /** Mean-pool + L2-normalize a text into an embedding vector. */

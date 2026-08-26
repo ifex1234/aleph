@@ -19,6 +19,7 @@
 import { join } from "node:path"
 import { existsSync } from "node:fs"
 import { ensurePythonEnv, getVenvBin, PROJECT_ROOT } from "./lib/python-env"
+import { run } from "./lib/exec"
 
 // ── Paths ────────────────────────────────────────────────────────────
 const DATA_DIR = join(PROJECT_ROOT, "data")
@@ -62,23 +63,6 @@ function shouldSkip(label: string, ...artifacts: string[]): boolean {
     console.log(`  ⏭ Skip: ${label} (artifacts already exist)`)
   }
   return allExist
-}
-
-async function run(
-  cmd: string[],
-  cwd?: string,
-  extraEnv?: Record<string, string>
-): Promise<void> {
-  const proc = Bun.spawn(cmd, {
-    stdout: "inherit",
-    stderr: "inherit",
-    cwd: cwd ?? PROJECT_ROOT,
-    env: { ...process.env, ...extraEnv },
-  })
-  const exitCode = await proc.exited
-  if (exitCode !== 0) {
-    throw new Error(`Command failed (exit ${exitCode}): ${cmd.join(" ")}`)
-  }
 }
 
 // ── Main ─────────────────────────────────────────────────────────────
@@ -125,13 +109,13 @@ async function main() {
       CROSS_REFS
     )
   ) {
-    await run(["bun", "run", join(DATA_DIR, "download-sources.ts")])
+    await run(["bun", "run", join(DATA_DIR, "download-sources.ts")], { cwd: PROJECT_ROOT })
   }
 
   // ── Phase 3: Build Bible database ──────────────────────────────
   console.log("\n━━━ Phase 3/7: Build Bible database ━━━")
   if (!shouldSkip("Bible database", DB_PATH)) {
-    await run(["bun", "run", join(DATA_DIR, "build-bible-db.ts")])
+    await run(["bun", "run", join(DATA_DIR, "build-bible-db.ts")], { cwd: PROJECT_ROOT })
   }
 
   // ── Phase 4: ONNX model download + quantize ────────────────────
@@ -158,7 +142,7 @@ async function main() {
         MODELS_DIR,
         "--library-name",
         "transformers",
-      ])
+      ], { cwd: PROJECT_ROOT })
       console.log(`  ✓ Model exported to ${MODELS_DIR}`)
     }
 
@@ -177,7 +161,7 @@ async function main() {
           MODELS_DIR_INT8,
           "--library-name",
           "transformers",
-        ])
+        ], { cwd: PROJECT_ROOT })
         console.log(`  ✓ INT8 model saved to ${MODELS_DIR_INT8}`)
       } catch {
         console.error(
@@ -198,7 +182,7 @@ async function main() {
       )
       process.exit(1)
     }
-    await run(["bun", "run", join(DATA_DIR, "compute-embeddings.ts")])
+    await run(["bun", "run", join(DATA_DIR, "compute-embeddings.ts")], { cwd: PROJECT_ROOT })
   }
 
   // ── Phase 6: Pre-compute embeddings ────────────────────────────
@@ -211,13 +195,13 @@ async function main() {
     // (The old sentence-transformers path produced vectors that did not
     // match the runtime embedder — that mismatch crippled vector search
     // until the 2026-08 regeneration.)
-    await run(["bun", "run", "precompute:embeddings"])
+    await run(["bun", "run", "precompute:embeddings"], { cwd: PROJECT_ROOT })
   }
 
   // ── Phase 7: Whisper model ────────────────────────────────────
   console.log("\n━━━ Phase 7/7: Download Whisper model ━━━")
   if (!shouldSkip("Whisper model", WHISPER_MODEL)) {
-    await run(["bun", "run", join(DATA_DIR, "download-whisper-model.ts")])
+    await run(["bun", "run", join(DATA_DIR, "download-whisper-model.ts")], { cwd: PROJECT_ROOT })
   }
 
   // ── Done ───────────────────────────────────────────────────────
@@ -225,9 +209,7 @@ async function main() {
   console.log("║   ✅ Setup complete!                          ║")
   console.log("╚══════════════════════════════════════════════╝")
   if (!withEmbedding) {
-    console.log(
-      "  Note: embedding re-ranking assets were skipped (optional)."
-    )
+    console.log("  Note: embedding re-ranking assets were skipped (optional).")
     console.log(
       "  Gain: better paraphrase search in the Context tab. Cost: ~2.5h build,"
     )
