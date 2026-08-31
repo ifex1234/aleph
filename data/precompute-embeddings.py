@@ -176,7 +176,7 @@ def main():
 
     # Load verses
     print(f"\nLoading verses from {VERSES_PATH}...")
-    with open(VERSES_PATH) as f:
+    with open(VERSES_PATH, encoding='utf-8') as f:
         entries = json.load(f)
     print(f"  {len(entries)} verses loaded")
 

@@ -1,0 +1,57 @@
+Aleph - Deepgram Cost Analysis (2hr Sermon) - Nigeria (NGN)
+================================================================
+Date: 28 Aug 2026
+Source: https://deepgram.com/pricing (Streaming Nova-3)
+FX: $1 = ₦1,530 CBN (parallel ~₦1,600 in brackets)
+
+1. Deepgram Pricing (Pay-As-You-Go, Promo)
+-------------------------------------------
+- Nova-3 Monolingual Streaming (promo): $0.0048/min (reg $0.0077)
+- Nova-3 Monolingual Growth (prepaid $4k/yr): $0.0042/min
+- Nova-3 Multilingual Streaming (promo): $0.0058/min
+- Keyterm Prompting (bibleKeyterms, ~100 terms): +$0.0013/min (Growth +$0.0012)
+- Aleph uses: Nova-3 Monolingual Streaming + Keyterm Prompting (deepgram.ts:46,59)
+
+2. Per-Sermon Cost (120 min)
+-----------------------------
+- Nova-3 promo only:            $0.576 = ₦881  [₦922 @1,600]
+- Nova-3 promo + Keyterm:       $0.732 = ₦1,120 [₦1,171]  <-- Aleph default
+- Nova-3 reg + Keyterm:         $1.08  = ₦1,652 [₦1,728]
+- Growth promo + Keyterm:       $0.648 = ₦992   [₦1,037]
+- Multilingual promo + Keyterm: $0.852 = ₦1,303 [₦1,363]
+
+3. Monthly (4 sermons) / Yearly (52 sermons) - Aleph default (promo+keyterm)
+--------------------------------------------------------------------------------
+- Per month (4x):  $2.93  = ₦4,480  [₦4,685]
+- Per year (52x):  $38.06 = ₦58,240 [₦60,900]
+- Growth yearly:   $33.70 = ₦51,580 [₦53,920]
+
+4. Free Tier
+-------------
+- Deepgram gives $200 free credit = 273 sermons free ($200 / $0.732)
+- = 5.2 years of weekly 2hr sermons free per church
+
+5. Comparison: Whisper Local (whisper.ts)
+-----------------------------------------
+- Whisper large-v3-turbo-q8_0 (74MB, models/whisper/): ₦0 after download
+- Offline, 5s windows, no API key, slower but free
+
+6. App Installer Size (after 3-phase sqlite-vec build)
+-------------------------------------------------------
+- Old 7-phase (no vec): installer ~150-200MB / installed ~350MB
+- A) Vec bundled + model BYO (RECOMMENDED for NG): aleph.db ~195MB (72MB +122MB vec0) -> installer ~280-320MB / installed ~650MB +571MB after first run
+- B) Fully bundled offline: +571MB model -> installer ~580-680MB / installed ~1.1GB
+- e5-small-multilingual (384d, 120MB model) alternative: installer ~380-420MB
+
+7. Affordability Recommendation for Nigeria
+-------------------------------------------
+- Ship Whisper as default Free tier (₦0, offline)
+- Keep Deepgram as Pro BYO tier: church enters own API key, consumes own $200 free then ₦1,120/sermon
+- Charge one-time app license ₦25k-₦50k (not SaaS per-minute) - avoids FX risk
+- Data cost reference: ₦1,120 ~ 2-3GB MTN data (₦1,500) - affordable for mid-size churches
+
+Notes
+-----
+- Deepgram bills per minute of audio processed (15s increments)
+- Promo prices are limited-time; reg prices ~40% higher
+- FX volatile - update ₦1,530 assumption before quoting

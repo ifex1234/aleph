@@ -169,7 +169,7 @@ function AudioSection() {
 
   useEffect(() => {
     loadDevices()
-  }, [loadDevices])
+  }, [])
 
   // gain is 0.0-2.0 in store, display as 0-100%
   const gainPercent = Math.round((gain / 2.0) * 100)

@@ -28,7 +28,7 @@ import { assetsMissing, resetForReload } from "./detection/semantic"
  */
 
 const DEFAULT_BASE_URL =
-  "https://github.com/openbezal/aleph/releases/latest/download"
+  "https://github.com/ifex1234/aleph/releases/latest/download"
 const TOKENIZER_URL =
   "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B/resolve/main/tokenizer.json"
 
@@ -222,7 +222,9 @@ function downloadAsset(target: AssetTarget): Promise<void> {
     if (!sidecarUrl) return
     const text = await fetchText(sidecarUrl)
     if (text === null) {
-      warn(`[semantic-download] no sha256 sidecar for ${target.label}; skipping verification`)
+      warn(
+        `[semantic-download] no sha256 sidecar for ${target.label}; skipping verification`
+      )
       return
     }
     // Sidecars may be "<hex>" or "<hex>  <filename>".
@@ -255,7 +257,11 @@ function downloadAsset(target: AssetTarget): Promise<void> {
         request.on("response", (res) => {
           const body = res as NetBody
           if (res.statusCode !== 200) {
-            reject(new Error(`${target.label}: HTTP ${res.statusCode} from ${target.url}`))
+            reject(
+              new Error(
+                `${target.label}: HTTP ${res.statusCode} from ${target.url}`
+              )
+            )
             body.resume()
             return
           }
@@ -294,7 +300,9 @@ function downloadAsset(target: AssetTarget): Promise<void> {
                 }
                 fs.renameSync(tempPath, target.dest)
                 setStatus({ bytesDone: baseDone + received })
-                info(`[semantic-download] ${target.label}: ${received} bytes → ${target.dest}`)
+                info(
+                  `[semantic-download] ${target.label}: ${received} bytes → ${target.dest}`
+                )
                 resolve()
               } catch (e) {
                 fail(e instanceof Error ? e : new Error(String(e)))

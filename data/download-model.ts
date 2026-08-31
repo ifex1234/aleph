@@ -11,6 +11,11 @@
  *   4. Runs optimum-cli to export and quantize the model
  *
  * Run: bun run download:model
+ *
+ * NOTE: For the new 3-phase sqlite-vec pipeline (data/build-vec-index.ts),
+ * Python is only needed ONCE to create the ONNX files. Subsequent
+ * `build:vec-index` runs are 100% TS/Node (onnxruntime-node + @huggingface/transformers)
+ * and do not require Python or .venv. If models/ already exists, this script is a no-op.
  */
 
 import { join } from "node:path"
@@ -56,8 +61,6 @@ async function main() {
       "--task",
       "feature-extraction",
       MODELS_DIR,
-      "--library-name",
-      "transformers",
     ])
   } catch {
     console.error("\n❌ Export failed.")
@@ -81,8 +84,6 @@ async function main() {
       "--arm64",
       "-o",
       MODELS_DIR_INT8,
-      "--library-name",
-      "transformers",
     ])
     console.log(`\n✅ INT8 model quantized to ${MODELS_DIR_INT8}\n`)
   } catch {

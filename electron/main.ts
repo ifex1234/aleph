@@ -22,7 +22,7 @@ const isDev = process.env.VITE_DEV_SERVER_URL !== undefined
 
 // Windows: app model id for notifications/taskbar grouping.
 if (process.platform === "win32") {
-  app.setAppUserModelId("com.openbezal.aleph")
+  app.setAppUserModelId("com.zeravest.aleph")
 }
 
 // Keep GPU/media working inside screen-capture-like output windows.
@@ -73,22 +73,26 @@ function registerIpc(): void {
   ipcMain.on("aleph:emit", (_event, name: string, payload: unknown) => {
     emitAll(name, payload)
   })
-  ipcMain.handle("aleph:emit-to", (_event, label: string, name: string, payload: unknown) =>
-    emitToWindow(label, name, payload)
+  ipcMain.handle(
+    "aleph:emit-to",
+    (_event, label: string, name: string, payload: unknown) =>
+      emitToWindow(label, name, payload)
   )
 
   // Each window learns its own label synchronously at startup.
   ipcMain.on("aleph:label", (event: Electron.IpcMainEvent) => {
     const win = BrowserWindow.fromWebContents(event.sender)
     event.returnValue =
-      (win as (BrowserWindow & { __alephLabel?: string }) | null)?.__alephLabel ??
-      "main"
+      (win as (BrowserWindow & { __alephLabel?: string }) | null)
+        ?.__alephLabel ?? "main"
   })
 
   // Grant mic access to our own pages without prompting every launch.
-  session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => {
-    callback(permission === "media")
-  })
+  session.defaultSession.setPermissionRequestHandler(
+    (_wc, permission, callback) => {
+      callback(permission === "media")
+    }
+  )
 }
 
 // Single-instance lock so a second launch focuses the existing app.

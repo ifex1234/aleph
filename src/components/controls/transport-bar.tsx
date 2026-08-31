@@ -1,13 +1,12 @@
 import { useState } from "react"
 import { LevelMeter } from "@/components/ui/level-meter"
 import { LiveIndicator } from "@/components/ui/live-indicator"
-import { Badge } from "@/components/ui/badge"
-import { MicIcon, PaletteIcon, CastIcon, SunIcon, MoonIcon } from "lucide-react"
+import { MicIcon, CastIcon, SunIcon, MoonIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SettingsDialog } from "@/components/settings-dialog"
 import { ThemeDesigner } from "@/components/broadcast/theme-designer"
 import { BroadcastOutputsDialog } from "@/components/broadcast/broadcast-outputs-dialog"
-import { useAudioStore, useTranscriptStore, useBroadcastStore } from "@/stores"
+import { useAudioStore, useTranscriptStore } from "@/stores"
 import { useTheme } from "@/components/theme-provider"
 
 export function TransportBar() {
@@ -19,16 +18,13 @@ export function TransportBar() {
   return (
     <div
       data-slot="transport-bar"
-      className="col-span-4 flex h-14 items-center justify-between border-b border-border  bg-card px-3"
+      className="col-span-4 flex h-14 items-center justify-between border-b border-border bg-card px-3"
     >
       {/* Left: Logo + Plan Badge */}
       <div className="flex items-center gap-2.5">
-        <span className="text-sm font-semibold tracking-tight text-foreground">
+        <span className="text- text-sm font-semibold tracking-tight text-red-700">
           Aleph
         </span>
-        <Badge variant="outline" className="text-[0.5625rem] uppercase">
-          Free
-        </Badge>
       </div>
 
       {/* Right: Audio + Status + Settings */}
@@ -59,8 +55,11 @@ export function TransportBar() {
         >
           <CastIcon className="size-3.5" />
         </Button>
-        <BroadcastOutputsDialog open={broadcastOpen} onOpenChange={setBroadcastOpen} />
-        <Button
+        <BroadcastOutputsDialog
+          open={broadcastOpen}
+          onOpenChange={setBroadcastOpen}
+        />
+        {/* <Button
           variant="ghost"
           size="icon-sm"
           title="Theme Designer"
@@ -68,7 +67,7 @@ export function TransportBar() {
           onClick={() => useBroadcastStore.getState().setDesignerOpen(true)}
         >
           <PaletteIcon className="size-3.5" />
-        </Button>
+        </Button> */}
         <ThemeDesigner />
         <SettingsDialog />
       </div>

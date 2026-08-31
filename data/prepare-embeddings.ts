@@ -140,8 +140,6 @@ async function main() {
         "--task",
         "feature-extraction",
         MODELS_DIR,
-        "--library-name",
-        "transformers",
       ], { cwd: PROJECT_ROOT })
       console.log(`  ✓ Model exported to ${MODELS_DIR}`)
     }
@@ -159,8 +157,6 @@ async function main() {
           "--arm64",
           "-o",
           MODELS_DIR_INT8,
-          "--library-name",
-          "transformers",
         ], { cwd: PROJECT_ROOT })
         console.log(`  ✓ INT8 model saved to ${MODELS_DIR_INT8}`)
       } catch {
@@ -195,7 +191,7 @@ async function main() {
     // (The old sentence-transformers path produced vectors that did not
     // match the runtime embedder — that mismatch crippled vector search
     // until the 2026-08 regeneration.)
-    await run(["bun", "run", "precompute:embeddings"], { cwd: PROJECT_ROOT })
+    await run(["bun", "run", "precompute:embeddings-py"], { cwd: PROJECT_ROOT })
   }
 
   // ── Phase 7: Whisper model ────────────────────────────────────

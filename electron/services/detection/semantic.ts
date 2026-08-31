@@ -2,6 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { modelDirCandidates, embeddingFileCandidates } from "../paths"
 import { warn } from "../logger"
+import { hasVecIndex, searchVecVerses } from "../bible"
 
 /**
  * Optional semantic (embedding) search. Loads the same assets the Rust
@@ -67,10 +68,13 @@ function findModelDir(): string | null {
 /**
  * True when any semantic-search asset is absent from every known location,
  * i.e. the first-run downloader still has work to do.
+ * With sqlite-vec, the vec_verses table inside aleph.db satisfies the index
+ * — flat .bin files are a legacy fallback.
  */
 export function assetsMissing(): boolean {
+  if (findModelDir() === null) return true
+  if (hasVecIndex()) return false
   return (
-    findModelDir() === null ||
     resolveEmbeddingFile("kjv-qwen3-0.6b.bin") === null ||
     resolveEmbeddingFile("kjv-qwen3-0.6b-ids.bin") === null
   )
@@ -83,18 +87,21 @@ function resolveEmbeddingFile(name: string): string | null {
 
 export function embeddingStatus(): EmbedderStatus {
   const modelDir = findModelDir()
-  const embeddingsBin = resolveEmbeddingFile("kjv-qwen3-0.6b.bin")
-  const idsBin = resolveEmbeddingFile("kjv-qwen3-0.6b-ids.bin")
-
-  if (!modelDir || !embeddingsBin || !idsBin) {
-    // Null warning when only the index is missing: the downloader reports
-    // that flow via its own progress events instead.
+  if (!modelDir) {
     return {
       available: false,
-      warning: modelDir
-        ? null
-        : "Semantic search disabled: ONNX embedding model not found under models/.",
+      warning: "Semantic search disabled: ONNX embedding model not found under models/.",
     }
+  }
+  // sqlite-vec path: no flat .bin needed
+  if (hasVecIndex()) {
+    void load()
+    return { available: tokenizer !== null && session !== null, warning: unavailableReason }
+  }
+  const embeddingsBin = resolveEmbeddingFile("kjv-qwen3-0.6b.bin")
+  const idsBin = resolveEmbeddingFile("kjv-qwen3-0.6b-ids.bin")
+  if (!embeddingsBin || !idsBin) {
+    return { available: false, warning: null }
   }
   void load()
   return { available: index !== null && tokenizer !== null, warning: unavailableReason }
@@ -142,20 +149,23 @@ function load(): void {
       },
     }
 
-    const vectorsPath = resolveEmbeddingFile("kjv-qwen3-0.6b.bin")!
-    const idsPath = resolveEmbeddingFile("kjv-qwen3-0.6b-ids.bin")!
-    const vectorsBuf = fs.readFileSync(vectorsPath)
-    const idsBuf = fs.readFileSync(idsPath)
-    const vectors = new Float32Array(
-      vectorsBuf.buffer.slice(vectorsBuf.byteOffset, vectorsBuf.byteOffset + vectorsBuf.byteLength)
-    )
-    const ids = new BigInt64Array(
-      idsBuf.buffer.slice(idsBuf.byteOffset, idsBuf.byteOffset + idsBuf.byteLength)
-    )
-    if (vectors.length % ids.length !== 0) {
-      throw new Error("embedding index size mismatch between .bin and -ids.bin")
+    // Legacy flat .bin path: only if vec table absent
+    if (!hasVecIndex()) {
+      const vectorsPath = resolveEmbeddingFile("kjv-qwen3-0.6b.bin")!
+      const idsPath = resolveEmbeddingFile("kjv-qwen3-0.6b-ids.bin")!
+      const vectorsBuf = fs.readFileSync(vectorsPath)
+      const idsBuf = fs.readFileSync(idsPath)
+      const vectors = new Float32Array(
+        vectorsBuf.buffer.slice(vectorsBuf.byteOffset, vectorsBuf.byteOffset + vectorsBuf.byteLength)
+      )
+      const ids = new BigInt64Array(
+        idsBuf.buffer.slice(idsBuf.byteOffset, idsBuf.byteOffset + idsBuf.byteLength)
+      )
+      if (vectors.length % ids.length !== 0) {
+        throw new Error("embedding index size mismatch between .bin and -ids.bin")
+      }
+      index = { dim: vectors.length / ids.length, count: ids.length, vectors, ids }
     }
-    index = { dim: vectors.length / ids.length, count: ids.length, vectors, ids }
   } catch (e) {
     unavailableReason =
       e instanceof Error && /tokenizer/.test(e.message)
@@ -231,9 +241,18 @@ export async function embed(text: string): Promise<Float32Array | null> {
 }
 
 /**
- * Brute-force cosine scan over the flat index (vectors are pre-normalized).
+ * Cosine scan — prefers sqlite-vec (<5ms C), falls back to brute-force flat index.
  */
 export function searchIndex(queryVec: Float32Array, k: number): Array<{ id: number; cosine: number }> {
+  // Fast path: sqlite-vec virtual table (distance = 1 - cosine for cosine metric)
+  if (hasVecIndex()) {
+    try {
+      const hits = searchVecVerses(queryVec, k)
+      return hits.map((h) => ({ id: h.verse_id, cosine: 1 - h.distance }))
+    } catch {
+      // fall through to brute force
+    }
+  }
   if (!index || queryVec.length !== index.dim) return []
   const results: Array<{ id: number; cosine: number }> = []
   for (let n = 0; n < index.count; n++) {
@@ -248,6 +267,7 @@ export function searchIndex(queryVec: Float32Array, k: number): Array<{ id: numb
 
 export function isReady(): boolean {
   void load()
+  if (hasVecIndex()) return session !== null && tokenizer !== null
   return index !== null && tokenizer !== null
 }
 

@@ -63,6 +63,8 @@ export interface VerseSearchRow {
 let db: Database.Database | null = null
 let openFailed = false
 
+let vecLoaded = false
+
 function conn(): Database.Database | null {
   if (db) return db
   if (openFailed) return null
@@ -78,6 +80,15 @@ function conn(): Database.Database | null {
     db = new Database(file, { readonly: true })
     db.pragma("query_only = 1")
     db.pragma("mmap_size = 268435456")
+    // Load sqlite-vec extension if available (optional — FTS5 works without it)
+    try {
+      const vec = require("sqlite-vec")
+      vec.load(db)
+      vecLoaded = true
+      info(`[bible] sqlite-vec ${ (db.prepare("SELECT vec_version()").get() as any)["vec_version()"] }`)
+    } catch {
+      // vec table queries will no-op; FTS5 still works
+    }
     info(`[bible] opened ${file}`)
     return db
   } catch (e) {
@@ -357,4 +368,64 @@ export function searchVersesBm25(query: string, limit: number): Bm25Hit[] {
     }
   }
   return [...seen.values()]
+}
+
+// ---------------------------------------------------------------------------
+// sqlite-vec vector search — replaces brute-force flat .bin scan.
+// Uses the vec_verses virtual table created by data/build-vec-index.ts
+// ---------------------------------------------------------------------------
+
+export function hasVecIndex(): boolean {
+  const c = conn()
+  if (!c || !vecLoaded) return false
+  try {
+    c.prepare("SELECT COUNT(*) as c FROM vec_verses LIMIT 1").get()
+    return true
+  } catch {
+    return false
+  }
+}
+
+export interface VecHit {
+  verse_id: number
+  distance: number
+}
+
+/**
+ * Cosine search via sqlite-vec. queryVec must be L2-normalized, same dim as vec_verses.
+ * Returns verse_id + distance (0 = identical, 2 = opposite for cosine).
+ */
+export function searchVecVerses(queryVec: Float32Array, k: number): VecHit[] {
+  const c = requireConn()
+  if (!c || !vecLoaded) return []
+  try {
+    // vec0: embedding MATCH ? + k parameter + ORDER BY distance
+    return c
+      .prepare("SELECT verse_id, distance FROM vec_verses WHERE embedding MATCH ? AND k = ? ORDER BY distance LIMIT ?")
+      .all(queryVec, k, k) as VecHit[]
+  } catch (e) {
+    // Fallback to legacy MATCH without k (older vec builds)
+    try {
+      return c
+        .prepare("SELECT verse_id, distance FROM vec_verses WHERE embedding MATCH ? ORDER BY distance LIMIT ?")
+        .all(queryVec, k) as VecHit[]
+    } catch {
+      warn("[bible] vec search failed:", e)
+      return []
+    }
+  }
+}
+
+export function vecIndexStats(): { count: number; dim: number } | null {
+  const c = requireConn()
+  if (!c || !vecLoaded) return null
+  try {
+    const row = c.prepare("SELECT COUNT(*) as c FROM vec_verses").get() as { c: number }
+    // Dim via vec0 metadata — probe one row
+    const sample = c.prepare("SELECT embedding FROM vec_verses LIMIT 1").get() as any
+    const dim = sample?.embedding?.length ?? 0
+    return { count: row.c, dim }
+  } catch {
+    return null
+  }
 }

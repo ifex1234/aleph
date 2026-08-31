@@ -17,6 +17,8 @@ asarUnpack:
   - node_modules/@huggingface/transformers/**
   - node_modules/onnxruntime-common/**
   - node_modules/onnxruntime-web/**
+  - node_modules/sqlite-vec/**
+  - node_modules/sqlite-vec-*/**
 
 extraResources:
   # Bible database, resolved at runtime from the resources dir.
