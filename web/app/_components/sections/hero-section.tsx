@@ -61,7 +61,7 @@ function HeroGlow() {
       className="pointer-events-none absolute inset-x-0 -top-24 mx-auto h-[520px] w-full max-w-[1440px] opacity-60"
       style={{
         background:
-          "radial-gradient(60% 50% at 50% 0%, rgba(0,153,255,0.18) 0%, rgba(0,153,255,0.05) 40%, transparent 70%)",
+          "radial-gradient(60% 50% at 50% 0%, rgba(220,38,38,0.18) 0%, rgba(220,38,38,0.05) 40%, transparent 70%)",
       }}
     />
   );

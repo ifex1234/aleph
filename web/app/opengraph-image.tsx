@@ -21,7 +21,7 @@ export default async function Image() {
           width: "100%",
           height: "100%",
           background:
-            "radial-gradient(60% 50% at 50% 0%, rgba(0,153,255,0.28) 0%, rgba(0,153,255,0.06) 40%, transparent 70%), #000000",
+            "radial-gradient(60% 50% at 50% 0%, rgba(220,38,38,0.28) 0%, rgba(220,38,38,0.06) 40%, transparent 70%), #000000",
           color: "#FFFFFF",
           display: "flex",
           flexDirection: "column",
@@ -77,7 +77,7 @@ export default async function Image() {
               lineHeight: 1.02,
               letterSpacing: "-0.05em",
               fontWeight: 600,
-              color: "#0099FF",
+              color: "#dc2626",
             }}
           >
             Aleph finds the verse.

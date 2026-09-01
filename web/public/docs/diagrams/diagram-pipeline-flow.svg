@@ -13,11 +13,11 @@
       <stop offset="1" stop-color="#0e1218"/>
     </linearGradient>
     <linearGradient id="pf-box-accent" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0e3654"/>
-      <stop offset="1" stop-color="#08243d"/>
+      <stop offset="0" stop-color="#450a0a"/>
+      <stop offset="1" stop-color="#7f1d1d"/>
     </linearGradient>
     <marker id="pf-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0099ff"/>
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
     </marker>
   </defs>
 
@@ -39,7 +39,7 @@
       <rect width="260" height="220" rx="14" fill="url(#pf-box)" stroke="#1f2734" stroke-width="1.5"/>
       <rect x="0" y="0" width="260" height="44" rx="14" fill="#0e1622"/>
       <rect x="0" y="30" width="260" height="14" fill="#0e1622"/>
-      <text x="20" y="29" font-size="13" fill="#0099ff" font-weight="600" letter-spacing="2">01 · CAPTURE</text>
+      <text x="20" y="29" font-size="13" fill="#dc2626" font-weight="600" letter-spacing="2">01 · CAPTURE</text>
       <text x="20" y="92" font-size="22" fill="#ffffff" font-weight="600">Audio capture</text>
       <text x="20" y="124" font-size="14" fill="#9aa4b2">cpal device enumeration</text>
       <text x="20" y="146" font-size="14" fill="#9aa4b2">PCM buffer + voice-activity</text>
@@ -51,7 +51,7 @@
       <rect width="260" height="220" rx="14" fill="url(#pf-box)" stroke="#1f2734" stroke-width="1.5"/>
       <rect x="0" y="0" width="260" height="44" rx="14" fill="#0e1622"/>
       <rect x="0" y="30" width="260" height="14" fill="#0e1622"/>
-      <text x="20" y="29" font-size="13" fill="#0099ff" font-weight="600" letter-spacing="2">02 · TRANSCRIBE</text>
+      <text x="20" y="29" font-size="13" fill="#dc2626" font-weight="600" letter-spacing="2">02 · TRANSCRIBE</text>
       <text x="20" y="92" font-size="22" fill="#ffffff" font-weight="600">Speech-to-text</text>
       <text x="20" y="124" font-size="14" fill="#9aa4b2">Whisper (whisper.cpp)</text>
       <text x="20" y="146" font-size="14" fill="#9aa4b2">or Deepgram WebSocket</text>
@@ -60,10 +60,10 @@
 
     <!-- Stage 3: Detection (highlighted as the heart of the pipeline) -->
     <g transform="translate(660 320)">
-      <rect width="280" height="300" rx="14" fill="url(#pf-box-accent)" stroke="#0099ff" stroke-width="2"/>
-      <rect x="0" y="0" width="280" height="44" rx="14" fill="#082742"/>
-      <rect x="0" y="30" width="280" height="14" fill="#082742"/>
-      <text x="20" y="29" font-size="13" fill="#9bd6ff" font-weight="600" letter-spacing="2">03 · DETECT</text>
+      <rect width="280" height="300" rx="14" fill="url(#pf-box-accent)" stroke="#dc2626" stroke-width="2"/>
+      <rect x="0" y="0" width="280" height="44" rx="14" fill="#450a0a"/>
+      <rect x="0" y="30" width="280" height="14" fill="#450a0a"/>
+      <text x="20" y="29" font-size="13" fill="#fca5a5" font-weight="600" letter-spacing="2">03 · DETECT</text>
       <text x="20" y="92" font-size="22" fill="#ffffff" font-weight="600">Detection pipeline</text>
       <g font-size="14" fill="#cfe6f8">
         <text x="20" y="130">› Direct (Aho-Corasick)</text>
@@ -71,7 +71,7 @@
         <text x="20" y="180">› Quotation matcher</text>
         <text x="20" y="205">› Reading mode</text>
       </g>
-      <line x1="20" y1="225" x2="260" y2="225" stroke="#0099ff" stroke-width="1" opacity="0.4"/>
+      <line x1="20" y1="225" x2="260" y2="225" stroke="#dc2626" stroke-width="1" opacity="0.4"/>
       <text x="20" y="252" font-size="14" fill="#9aa4b2">Ensemble merger:</text>
       <text x="20" y="272" font-size="14" fill="#9aa4b2">dedup + time-decay</text>
     </g>
@@ -81,7 +81,7 @@
       <rect width="260" height="220" rx="14" fill="url(#pf-box)" stroke="#1f2734" stroke-width="1.5"/>
       <rect x="0" y="0" width="260" height="44" rx="14" fill="#0e1622"/>
       <rect x="0" y="30" width="260" height="14" fill="#0e1622"/>
-      <text x="20" y="29" font-size="13" fill="#0099ff" font-weight="600" letter-spacing="2">04 · CURATE</text>
+      <text x="20" y="29" font-size="13" fill="#dc2626" font-weight="600" letter-spacing="2">04 · CURATE</text>
       <text x="20" y="92" font-size="22" fill="#ffffff" font-weight="600">Verse queue</text>
       <text x="20" y="124" font-size="14" fill="#9aa4b2">Operator-curated</text>
       <text x="20" y="146" font-size="14" fill="#9aa4b2">Drag-and-drop reorder</text>
@@ -93,7 +93,7 @@
       <rect width="260" height="220" rx="14" fill="url(#pf-box)" stroke="#1f2734" stroke-width="1.5"/>
       <rect x="0" y="0" width="260" height="44" rx="14" fill="#0e1622"/>
       <rect x="0" y="30" width="260" height="14" fill="#0e1622"/>
-      <text x="20" y="29" font-size="13" fill="#0099ff" font-weight="600" letter-spacing="2">05 · BROADCAST</text>
+      <text x="20" y="29" font-size="13" fill="#dc2626" font-weight="600" letter-spacing="2">05 · BROADCAST</text>
       <text x="20" y="92" font-size="22" fill="#ffffff" font-weight="600">NDI sender</text>
       <text x="20" y="124" font-size="14" fill="#9aa4b2">BGRA frames, 24/30/60 fps</text>
       <text x="20" y="146" font-size="14" fill="#9aa4b2">Three alpha modes</text>
@@ -101,7 +101,7 @@
     </g>
 
     <!-- Connectors -->
-    <g stroke="#0099ff" stroke-width="2" fill="none">
+    <g stroke="#dc2626" stroke-width="2" fill="none">
       <line x1="340" y1="470" x2="370" y2="470" marker-end="url(#pf-arrow)"/>
       <line x1="630" y1="470" x2="660" y2="470" marker-end="url(#pf-arrow)"/>
       <line x1="940" y1="470" x2="970" y2="470" marker-end="url(#pf-arrow)"/>

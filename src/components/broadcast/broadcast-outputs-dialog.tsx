@@ -224,7 +224,7 @@ export function BroadcastOutputsDialog({
                   setEditingId(null)
                   setEditorOpen(true)
                 }}
-                className="flex min-h-44 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border text-muted-foreground transition-colors hover:border-lime-500/50 hover:bg-lime-500/5 hover:text-lime-400 focus-visible:border-lime-500/50 focus-visible:text-lime-400 focus-visible:outline-none"
+                className="flex min-h-44 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-primary focus-visible:border-primary/50 focus-visible:text-primary focus-visible:outline-none"
               >
                 <span className="flex size-8 items-center justify-center rounded-full border border-current">
                   <PlusIcon className="size-4" />

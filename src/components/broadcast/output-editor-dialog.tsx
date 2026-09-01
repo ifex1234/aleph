@@ -177,7 +177,7 @@ export function OutputEditorDialog({
                   className={cn(
                     "flex flex-col gap-2 rounded-lg border p-3 text-left transition-colors",
                     form.type === value
-                      ? "border-lime-500/50 bg-lime-500/10"
+                      ? "border-primary/50 bg-primary/10"
                       : "border-border bg-card hover:border-foreground/20"
                   )}
                 >
@@ -185,7 +185,7 @@ export function OutputEditorDialog({
                     className={cn(
                       "flex size-7 items-center justify-center rounded-md border",
                       form.type === value
-                        ? "border-lime-500/50 bg-lime-500/15 text-lime-400"
+                        ? "border-primary/50 bg-primary/15 text-primary"
                         : "border-border bg-background text-muted-foreground"
                     )}
                   >

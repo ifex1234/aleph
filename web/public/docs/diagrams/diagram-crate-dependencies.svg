@@ -9,8 +9,8 @@
       <stop offset="1" stop-color="#060709"/>
     </linearGradient>
     <linearGradient id="cd-api" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0e3654"/>
-      <stop offset="1" stop-color="#082742"/>
+      <stop offset="0" stop-color="#450a0a"/>
+      <stop offset="1" stop-color="#450a0a"/>
     </linearGradient>
     <linearGradient id="cd-crate" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#181c25"/>
@@ -21,7 +21,7 @@
       <stop offset="1" stop-color="#0a0c11"/>
     </linearGradient>
     <marker id="cd-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0099ff"/>
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
     </marker>
     <marker id="cd-arrow-cross" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#a78bfa"/>
@@ -38,14 +38,14 @@
 
     <!-- API node (top) -->
     <g transform="translate(620 230)">
-      <rect width="360" height="120" rx="14" fill="url(#cd-api)" stroke="#0099ff" stroke-width="2"/>
-      <text x="180" y="44" text-anchor="middle" font-size="13" fill="#9bd6ff" letter-spacing="2" font-weight="600">TAURI COMMAND LAYER</text>
+      <rect width="360" height="120" rx="14" fill="url(#cd-api)" stroke="#dc2626" stroke-width="2"/>
+      <text x="180" y="44" text-anchor="middle" font-size="13" fill="#fca5a5" letter-spacing="2" font-weight="600">TAURI COMMAND LAYER</text>
       <text x="180" y="78" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">aleph-api</text>
       <text x="180" y="102" text-anchor="middle" font-size="13" fill="#9aa4b2">the only crate that touches Tauri</text>
     </g>
 
     <!-- Edges from aleph-api to each child (drawn behind boxes) -->
-    <g stroke="#0099ff" stroke-width="1.8" fill="none" opacity="0.75">
+    <g stroke="#dc2626" stroke-width="1.8" fill="none" opacity="0.75">
       <path d="M 800 350 C 800 410 175 440 175 510" marker-end="url(#cd-arrow)"/>
       <path d="M 800 350 C 800 410 405 440 405 510" marker-end="url(#cd-arrow)"/>
       <path d="M 800 350 C 800 400 635 440 635 510" marker-end="url(#cd-arrow)"/>
@@ -134,7 +134,7 @@
       <text x="20" y="32" font-size="12" fill="#5a6b7d" letter-spacing="2" font-weight="600">LEGEND</text>
 
       <g transform="translate(20 46)">
-        <line x1="0" y1="10" x2="40" y2="10" stroke="#0099ff" stroke-width="2" marker-end="url(#cd-arrow)"/>
+        <line x1="0" y1="10" x2="40" y2="10" stroke="#dc2626" stroke-width="2" marker-end="url(#cd-arrow)"/>
         <text x="50" y="14" font-size="13" fill="#cfe6f8">aleph-api → child crate</text>
       </g>
       <g transform="translate(280 46)">

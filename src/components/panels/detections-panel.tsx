@@ -12,7 +12,7 @@ import { mark } from "@/lib/latency-marks"
 import type { DetectionResult } from "@/types"
 
 const SOURCE_COLORS: Record<string, { text: string; label: string }> = {
-  direct: { text: "text-green-600", label: "Direct" },
+  direct: { text: "text-primary", label: "Direct" },
   semantic: { text: "text-indigo-300", label: "Semantic" },
 }
 

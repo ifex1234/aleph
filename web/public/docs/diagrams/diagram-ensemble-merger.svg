@@ -13,11 +13,11 @@
       <stop offset="1" stop-color="#0e1218"/>
     </linearGradient>
     <linearGradient id="em-merger" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0e3654"/>
-      <stop offset="1" stop-color="#08243d"/>
+      <stop offset="0" stop-color="#450a0a"/>
+      <stop offset="1" stop-color="#7f1d1d"/>
     </linearGradient>
     <marker id="em-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0099ff"/>
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
     </marker>
   </defs>
 
@@ -72,23 +72,23 @@
 
     <!-- Merger box -->
     <g transform="translate(640 290)">
-      <rect width="320" height="460" rx="16" fill="url(#em-merger)" stroke="#0099ff" stroke-width="2"/>
+      <rect width="320" height="460" rx="16" fill="url(#em-merger)" stroke="#dc2626" stroke-width="2"/>
       <text x="160" y="60" text-anchor="middle" font-size="22" font-weight="600" fill="#ffffff">Ensemble merger</text>
-      <line x1="40" y1="84" x2="280" y2="84" stroke="#0099ff" stroke-width="1" opacity="0.35"/>
+      <line x1="40" y1="84" x2="280" y2="84" stroke="#dc2626" stroke-width="1" opacity="0.35"/>
       <g font-size="14" fill="#cfe6f8">
-        <text x="40" y="120" font-weight="600" fill="#9bd6ff" font-size="12" letter-spacing="2">DEDUPE</text>
+        <text x="40" y="120" font-weight="600" fill="#fca5a5" font-size="12" letter-spacing="2">DEDUPE</text>
         <text x="40" y="142">overlapping candidates</text>
         <text x="40" y="160">collapse to a single card</text>
 
-        <text x="40" y="208" font-weight="600" fill="#9bd6ff" font-size="12" letter-spacing="2">WEIGHT</text>
+        <text x="40" y="208" font-weight="600" fill="#fca5a5" font-size="12" letter-spacing="2">WEIGHT</text>
         <text x="40" y="230">source-aware confidence</text>
         <text x="40" y="248">scoring across strategies</text>
 
-        <text x="40" y="296" font-weight="600" fill="#9bd6ff" font-size="12" letter-spacing="2">DECAY</text>
+        <text x="40" y="296" font-weight="600" fill="#fca5a5" font-size="12" letter-spacing="2">DECAY</text>
         <text x="40" y="318">time-based score reduction</text>
         <text x="40" y="336">so stale candidates fade</text>
 
-        <text x="40" y="384" font-weight="600" fill="#9bd6ff" font-size="12" letter-spacing="2">BUFFER</text>
+        <text x="40" y="384" font-weight="600" fill="#fca5a5" font-size="12" letter-spacing="2">BUFFER</text>
         <text x="40" y="406">sentence boundaries reduce</text>
         <text x="40" y="424">flicker on partial hits</text>
       </g>
@@ -105,11 +105,11 @@
         <text x="22" y="136">› feeds the verse queue</text>
         <text x="22" y="160">› drives the live preview</text>
       </g>
-      <text x="22" y="200" font-size="12" fill="#0099ff" letter-spacing="1">→ aleph-detection ▸ merger.rs</text>
+      <text x="22" y="200" font-size="12" fill="#dc2626" letter-spacing="1">→ aleph-detection ▸ merger.rs</text>
     </g>
 
     <!-- Connectors: strategies → merger -->
-    <g stroke="#0099ff" stroke-width="1.8" fill="none" opacity="0.85">
+    <g stroke="#dc2626" stroke-width="1.8" fill="none" opacity="0.85">
       <path d="M 440 340 C 540 340 540 440 640 440" marker-end="url(#em-arrow)"/>
       <path d="M 440 460 C 540 460 540 480 640 480" marker-end="url(#em-arrow)"/>
       <path d="M 440 580 C 540 580 540 540 640 540" marker-end="url(#em-arrow)"/>
@@ -117,6 +117,6 @@
     </g>
 
     <!-- Connector: merger → output -->
-    <line x1="960" y1="520" x2="1160" y2="520" stroke="#0099ff" stroke-width="2" marker-end="url(#em-arrow)"/>
+    <line x1="960" y1="520" x2="1160" y2="520" stroke="#dc2626" stroke-width="2" marker-end="url(#em-arrow)"/>
   </g>
 </svg>

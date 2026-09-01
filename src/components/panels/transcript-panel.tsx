@@ -241,7 +241,7 @@ export function TranscriptPanel() {
             <span
               className={`mb-1 size-1.5 rounded-full ${
                 connectionStatus === "connected"
-                  ? "bg-emerald-500"
+                  ? "bg-primary"
                   : connectionStatus === "connecting"
                     ? "animate-pulse bg-amber-500"
                     : connectionStatus === "error"

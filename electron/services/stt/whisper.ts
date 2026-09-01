@@ -3,7 +3,7 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { info, warn } from "../logger"
-import { projectRoot, resourceDir } from "../paths"
+import { projectRoot, resourceDir, userDataDir } from "../paths"
 import type { SttEvent } from "./deepgram"
 import { CORE_KEYTERMS, bibleKeyterms } from "./keyterms"
 import {
@@ -90,22 +90,40 @@ export function resolveWhisperBin(): string {
 
 /** Locates a GGML Whisper model, preferring large-v3-turbo q8_0. */
 export function resolveWhisperModel(): string {
-  const modelDir = path.join(projectRoot(), "models", "whisper")
-  const model = firstExisting([
+  const candidates = [
     process.env.ALEPH_WHISPER_MODEL,
-    path.join(modelDir, DEFAULT_MODEL_FILE),
-  ])
-  if (model) return model
+    path.join(resourceDir(), "models", "whisper", DEFAULT_MODEL_FILE),
+    path.join(resourceDir(), DEFAULT_MODEL_FILE),
+    path.join(projectRoot(), "models", "whisper", DEFAULT_MODEL_FILE),
+  ]
+  try {
+    candidates.push(path.join(userDataDir(), "models", "whisper", DEFAULT_MODEL_FILE))
+  } catch {
+    // userData not available in some test envs
+  }
+  const direct = firstExisting(candidates)
+  if (direct) return direct
 
   // Any other GGML model the user dropped into models/whisper is fine too —
   // smaller models trade accuracy for speed on modest hardware.
-  if (fs.existsSync(modelDir)) {
+  // Check packaged resources, then dev checkout, then userData (downloaded).
+  const searchDirs: string[] = [
+    path.join(resourceDir(), "models", "whisper"),
+    path.join(projectRoot(), "models", "whisper"),
+  ]
+  try {
+    searchDirs.push(path.join(userDataDir(), "models", "whisper"))
+  } catch {
+    // ignore
+  }
+  for (const dir of searchDirs) {
+    if (!fs.existsSync(dir)) continue
     const fallback = fs
-      .readdirSync(modelDir)
+      .readdirSync(dir)
       .filter((f) => /^ggml-.*\.bin$/i.test(f))
       .sort()
       .at(-1)
-    if (fallback) return path.join(modelDir, fallback)
+    if (fallback) return path.join(dir, fallback)
   }
 
   throw new Error(

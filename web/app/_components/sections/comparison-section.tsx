@@ -44,7 +44,7 @@ function ComparisonCard({
 }) {
   const Icon = tone === "positive" ? IconCircleCheck : IconCircleX;
   const iconColor =
-    tone === "positive" ? "text-emerald-500" : "text-red-500";
+    tone === "positive" ? "text-accent" : "text-red-500";
   return (
     <div className="flex h-full w-full flex-col gap-2 border border-border-strong p-8 opacity-90">
       <h3 className="text-lg font-medium leading-6 tracking-[-0.01em] text-foreground">

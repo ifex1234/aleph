@@ -1,4 +1,4 @@
-appId: com.openbezal.aleph
+appId: com.zeravest.aleph
 productName: Aleph
 copyright: Copyright © 2026
 
@@ -24,17 +24,19 @@ extraResources:
   # Bible database, resolved at runtime from the resources dir.
   - from: data/aleph.db
     to: aleph.db
-    directCopy: true
+  # Whisper.cpp CLI + runtime DLLs, resolved via resourceDir()/whisper in packaged app.
+  - from: sdk/whisper/win32
+    to: whisper
+  # Whisper GGML model (ggml-*.bin) — bundled if present, otherwise downloaded to userData/models.
+  - from: models/whisper
+    to: models/whisper
   # NDI runtime library, loaded dynamically via koffi.
   - from: sdk/ndi/windows/Processing.NDI.Lib.x64.dll
     to: ndi/Processing.NDI.Lib.x64.dll
-    directCopy: true
   - from: sdk/ndi/macos/libndi.dylib
     to: ndi/libndi.dylib
-    directCopy: true
   - from: sdk/ndi/linux/libndi.so
     to: ndi/libndi.so
-    directCopy: true
 
 win:
   target:
