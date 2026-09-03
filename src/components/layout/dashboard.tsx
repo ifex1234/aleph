@@ -11,15 +11,13 @@ export function Dashboard() {
   return (
     <div
       style={{
-        position: "fixed",
-        inset: "0px",
         display: "grid",
         // The `auto` row hosts the warning banner and collapses to 0 when
         // there is nothing to warn about.
         gridTemplateRows: "56px auto minmax(0, 2fr) minmax(0, 3fr)",
         overflow: "hidden",
       }}
-      className="bg-background"
+      className="flex-1 bg-background min-h-0"
     >
       {/* Row 1: Transport Bar */}
       <div className="col-span-4">

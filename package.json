@@ -51,7 +51,7 @@
     "fabric": "^7.4.0",
     "fuse.js": "^7.5.0",
     "koffi": "^2.14.0",
-    "lucide-react": "^1.28.0",
+    "lucide-react": "^1.40.0",
     "onnxruntime-node": "^1.29.0",
     "radix-ui": "^1.6.7",
     "react": "^19.2.8",
