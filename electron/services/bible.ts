@@ -77,16 +77,40 @@ function conn(): Database.Database | null {
     return null
   }
   try {
-    db = new Database(file, { readonly: true })
+    db = new Database(file, { readonly: true, allowExtension: true } as any)
     db.pragma("query_only = 1")
     db.pragma("mmap_size = 268435456")
     // Load sqlite-vec extension if available (optional — FTS5 works without it)
     try {
       const vec = require("sqlite-vec")
-      vec.load(db)
+      const fs = require("node:fs") as typeof import("node:fs")
+      const path = require("node:path")
+      let loadable: string | null = null
+      try { loadable = vec.getLoadablePath() } catch {}
+      info(`[bible] vec getLoadablePath=${loadable} exists=${loadable ? fs.existsSync(loadable) : false}`)
+      if (loadable && fs.existsSync(loadable)) {
+        ;(db as any).loadExtension(loadable)
+      } else {
+        // Try explicit unpacked locations (packaged app)
+        const candidates = [
+          path.join(process.resourcesPath ?? "", "app.asar.unpacked", "node_modules", "sqlite-vec-windows-x64", "vec0.dll"),
+          path.join(path.dirname(process.resourcesPath ?? ""), "app.asar.unpacked", "node_modules", "sqlite-vec-windows-x64", "vec0.dll"),
+          path.join(process.cwd(), "node_modules", "sqlite-vec-windows-x64", "vec0.dll"),
+          loadable ?? "",
+        ].filter(Boolean)
+        let loaded = false
+        for (const p of candidates) {
+          info(`[bible] vec trying ${p} exists=${fs.existsSync(p)}`)
+          if (fs.existsSync(p)) {
+            try { ;(db as any).loadExtension(p); loaded = true; break } catch (e2) { warn(`[bible] vec loadExtension ${p} failed:`, e2 as any) }
+          }
+        }
+        if (!loaded) vec.load(db) // final fallback via package helper
+      }
       vecLoaded = true
       info(`[bible] sqlite-vec ${ (db.prepare("SELECT vec_version()").get() as any)["vec_version()"] }`)
-    } catch {
+    } catch (e) {
+      warn(`[bible] sqlite-vec load failed (vec search disabled, FTS5 still works):`, e as any)
       // vec table queries will no-op; FTS5 still works
     }
     info(`[bible] opened ${file}`)

@@ -21,9 +21,12 @@ asarUnpack:
   - node_modules/sqlite-vec-*/**
 
 extraResources:
-  # Bible database, resolved at runtime from the resources dir.
+  # Bible database (now 197MB with vec_verses 31103x1024), resolved at runtime from resources dir.
   - from: data/aleph.db
     to: aleph.db
+  # Qwen3-INT8 embedding model (598MB) for fully offline semantic search — vec needs it for query embedding
+  - from: models/qwen3-embedding-0.6b-int8
+    to: models/qwen3-embedding-0.6b-int8
   # Whisper.cpp CLI + runtime DLLs, resolved via resourceDir()/whisper in packaged app.
   - from: sdk/whisper/win32
     to: whisper

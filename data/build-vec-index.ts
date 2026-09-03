@@ -76,8 +76,8 @@ async function main() {
   const hasSentenceEmbedding = outputNames.includes("sentence_embedding")
   console.log(`  Outputs: ${outputNames.join(", ")} ${hasSentenceEmbedding ? "(sentence_embedding)" : "(mean-pool)"}`)
 
-  // Open DB and load vec extension
-  const db = new Database(DB_PATH)
+  // Open DB and load vec extension (allowExtension needed for vec0)
+  const db = new Database(DB_PATH, { allowExtension: true } as any)
   vec.load(db as any)
   console.log(`  ✅ sqlite-vec ${ (db.prepare("SELECT vec_version()").get() as any)["vec_version()"] }`)
 

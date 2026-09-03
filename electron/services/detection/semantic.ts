@@ -108,7 +108,7 @@ export function embeddingStatus(): EmbedderStatus {
 }
 
 /** Lazily load onnxruntime-node, tokenizer, and the vector index. */
-function load(): void {
+async function load(): Promise<void> {
   if (loadAttempted) return
   loadAttempted = true
 
@@ -133,9 +133,10 @@ function load(): void {
     if (!hasLocalTokenizer) {
       warn("[semantic] tokenizer.json not found next to model; fetching from the HF hub")
     }
-    const tok = tf.AutoTokenizer.fromSync(
+    // 4.2.0 uses async from_pretrained (fromSync was removed in Xenova->HF rename)
+    const tok = await (tf.AutoTokenizer as any).from_pretrained(
       hasLocalTokenizer ? modelDir : "Qwen/Qwen3-Embedding-0.6B",
-      { localFilesOnly: hasLocalTokenizer }
+      { local_files_only: hasLocalTokenizer }
     )
     tokenizer = {
       encode: (text: string) => {

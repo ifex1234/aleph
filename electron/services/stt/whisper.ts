@@ -32,7 +32,7 @@ import {
  * Overrides: ALEPH_WHISPER_BIN / ALEPH_WHISPER_MODEL.
  */
 
-const WINDOW_MS = 5000
+const WINDOW_MS = 3000
 const BYTES_PER_MS = (WHISPER_SAMPLE_RATE * 2) / 1000
 const WINDOW_BYTES = WINDOW_MS * BYTES_PER_MS
 const MIN_FINAL_BYTES = BYTES_PER_MS * 500 // skip sub-0.5 s stop-time tails
@@ -46,7 +46,7 @@ export interface WhisperPaths {
   model: string
 }
 
-const DEFAULT_MODEL_FILE = "ggml-large-v3-turbo-q8_0.bin"
+const DEFAULT_MODEL_FILE = "ggml-tiny.bin"
 
 function firstExisting(candidates: Array<string | undefined>): string | null {
   for (const candidate of candidates) {

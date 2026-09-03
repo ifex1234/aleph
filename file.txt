@@ -55,3 +55,6 @@ Notes
 - Deepgram bills per minute of audio processed (15s increments)
 - Promo prices are limited-time; reg prices ~40% higher
 - FX volatile - update ₦1,530 assumption before quoting
+
+
+

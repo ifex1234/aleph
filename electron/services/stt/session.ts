@@ -11,6 +11,7 @@ import {
   getVerse,
 } from "../bible"
 import * as semantic from "../detection/semantic"
+import { fuseRrf } from "../detection/fusion"
 import { emitAll } from "../events"
 import { info, warn, error as logError } from "../logger"
 import { sharedState } from "../state"
@@ -287,7 +288,7 @@ async function processDetectionJob(transcript: string, isFinal: boolean): Promis
   if (directFound) {
     info("[DET-SEMANTIC] Skipped — utterance is a spoken reference")
   } else {
-    runSemanticDetection(transcript)
+    await runSemanticDetection(transcript)
   }
 }
 
@@ -354,42 +355,93 @@ function resolveResult(
   }
 }
 
-/** FTS5-only pass on finals (vector search deliberately skipped live). */
-function runSemanticDetection(transcript: string): void {
+/** Hybrid live pass: FTS5 ∪ sqlite-vec (quotes → John 3:16 even without book name). */
+async function runSemanticDetection(transcript: string): Promise<void> {
   const fts = searchVersesBm25(transcript, 10)
-  if (fts.length === 0) return
 
-  const FTS5_RANK0_CONFIDENCE = 0.75
-  const FTS5_CONFIDENCE_DECAY = 0.04
-  const FTS5_MIN_CONFIDENCE = 0.5
+  // Vector leg — uses vec_verses inside aleph.db (<5ms) if Qwen INT8 loaded
+  let vectorHits: Array<{ id: number; cosine: number }> = []
+  if (semantic.isReady() && transcript.split(/\s+/).length >= 4) {
+    try {
+      const qvec = await semantic.embed(transcript)
+      if (qvec) vectorHits = semantic.searchIndex(qvec, 10)
+    } catch (e) {
+      warn("[DET-SEMANTIC] vec embed failed:", e)
+    }
+  }
 
-  const results = fts
-    .map((hit, rank) => ({ hit, rank }))
-    .filter(({ hit, rank }) => {
-      const c = FTS5_RANK0_CONFIDENCE - rank * FTS5_CONFIDENCE_DECAY
-      hit.rank = -c // reuse rank field to carry confidence
-      return c >= FTS5_MIN_CONFIDENCE
-    })
-    .map(({ hit, rank }) => {
-      const row = getVerse(state.activeTranslationId, hit.book_number, hit.chapter, hit.verse)
+  if (fts.length === 0 && vectorHits.length === 0) return
+
+  // If only one leg has hits, keep old FTS-only confidence mapping for speed
+  if (vectorHits.length === 0) {
+    const FTS5_RANK0_CONFIDENCE = 0.75
+    const FTS5_CONFIDENCE_DECAY = 0.04
+    const FTS5_MIN_CONFIDENCE = 0.5
+    const results = fts
+      .map((hit, rank) => ({ hit, rank }))
+      .filter(({ hit, rank }) => {
+        const c = FTS5_RANK0_CONFIDENCE - rank * FTS5_CONFIDENCE_DECAY
+        hit.rank = -c
+        return c >= FTS5_MIN_CONFIDENCE
+      })
+      .map(({ hit, rank }) => {
+        const row = getVerse(state.activeTranslationId, hit.book_number, hit.chapter, hit.verse)
+        return {
+          verse_ref: `${hit.book_name} ${hit.chapter}:${hit.verse}`,
+          verse_text: row?.text ?? "",
+          book_name: hit.book_name,
+          book_number: hit.book_number,
+          chapter: hit.chapter,
+          verse: hit.verse,
+          confidence: FTS5_RANK0_CONFIDENCE - rank * FTS5_CONFIDENCE_DECAY,
+          source: "semantic",
+          auto_queued: false,
+          transcript_snippet: transcript.slice(0, 100),
+          is_chapter_only: false,
+        }
+      })
+      .filter((r) => r.verse_text !== "")
+    if (results.length === 0) return
+    info(`[DET-SEMANTIC] Found ${results.length} FTS hits`)
+    emitAll("verse_detections", results)
+    return
+  }
+
+  // Fuse both legs via RRF — handles paraphrases like "God loved the world so much" → John 3:16
+  const fused = fuseRrf(
+    vectorHits.map((h) => {
+      const row = require("../bible").getVerseById(h.id)
+      if (!row) return null
+      return { id: h.id, book_number: row.book_number, chapter: row.chapter, verse: row.verse, cosine: h.cosine }
+    }).filter((r): r is NonNullable<typeof r> => r !== null),
+    fts.map((h) => ({ book_number: h.book_number, chapter: h.chapter, verse: h.verse, rank: -h.rank, phrase_match: h.phrase_match })),
+    10
+  )
+
+  const results = fused
+    .map((f) => {
+      const row = getVerse(state.activeTranslationId, f.key.book_number, f.key.chapter, f.key.verse)
+      const text = row?.text ?? ""
+      const bookName = row?.book_name ?? ""
+      if (!text) return null
       return {
-        verse_ref: `${hit.book_name} ${hit.chapter}:${hit.verse}`,
-        verse_text: row?.text ?? "",
-        book_name: hit.book_name,
-        book_number: hit.book_number,
-        chapter: hit.chapter,
-        verse: hit.verse,
-        confidence: FTS5_RANK0_CONFIDENCE - rank * FTS5_CONFIDENCE_DECAY,
+        verse_ref: `${bookName} ${f.key.chapter}:${f.key.verse}`,
+        verse_text: text,
+        book_name: bookName,
+        book_number: f.key.book_number,
+        chapter: f.key.chapter,
+        verse: f.key.verse,
+        confidence: f.sources.includes("semantic") ? Math.max(0.6, f.similarity) : 0.75,
         source: "semantic",
         auto_queued: false,
         transcript_snippet: transcript.slice(0, 100),
         is_chapter_only: false,
       }
     })
-    .filter((r) => r.verse_text !== "")
+    .filter((r): r is NonNullable<typeof r> => r !== null)
 
   if (results.length === 0) return
-  info(`[DET-SEMANTIC] Found ${results.length} FTS hits`)
+  info(`[DET-SEMANTIC] Found ${results.length} hits (vec ${vectorHits.length} + FTS ${fts.length})`)
   emitAll("verse_detections", results)
 }
 
