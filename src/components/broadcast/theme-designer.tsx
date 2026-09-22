@@ -39,7 +39,7 @@ export function ThemeDesigner() {
       }
     >
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
 
         <DialogPrimitive.Content
           className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-background text-foreground outline-none"
@@ -50,20 +50,23 @@ export function ThemeDesigner() {
           </DialogPrimitive.Title>
 
           {/* Top bar */}
-          <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border px-4 bg-card">
+          <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-card px-4">
             <span className="text-xl font-semibold text-foreground">
               Theme Designer
             </span>
 
             <div className="flex-1" />
 
-            <Button variant="outline" onClick={handleDiscard}>
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              onClick={handleDiscard}
+            >
               <TrashIcon className="size-4" />
               Discard
             </Button>
             <Button
-
-              className="bg-primary text-primary-foreground hover:bg-primary/80"
+              className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/80"
               onClick={handleSave}
             >
               <SaveIcon className="size-4" />
@@ -72,6 +75,7 @@ export function ThemeDesigner() {
             <Button
               variant="ghost"
               onClick={handleClose}
+              className="cursor-pointer"
             >
               <XIcon strokeWidth={2} />
               Close

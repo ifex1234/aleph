@@ -91,3 +91,6 @@ export const LogOutIcon: LucideIcon
 export const LogOut: LucideIcon
 export const LayoutDashboardIcon: LucideIcon
 export const LayoutDashboard: LucideIcon
+export const MinusIcon: LucideIcon
+export const SquareIcon: LucideIcon
+export const CopyIcon: LucideIcon

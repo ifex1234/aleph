@@ -357,6 +357,27 @@ const TRANSLATIONS_META: Array<{
     license: "Biblical Studies Press",
   },
   {
+    file: "Tyndale.json",
+    abbreviation: "Tyndale",
+    title: "Tyndale Bible (1534)",
+    language: "en",
+    license: "Public Domain",
+  },
+  {
+    file: "Geneva.json",
+    abbreviation: "Geneva",
+    title: "Geneva Bible (1599)",
+    language: "en",
+    license: "Public Domain",
+  },
+  {
+    file: "Bishops.json",
+    abbreviation: "Bishops",
+    title: "Bishops' Bible (1568)",
+    language: "en",
+    license: "Public Domain",
+  },
+  {
     file: "NIV.json",
     abbreviation: "NIV",
     title: "New International Version",

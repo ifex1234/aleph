@@ -1,4 +1,4 @@
-import Database from "better-sqlite3"
+﻿import Database from "better-sqlite3"
 import fs from "node:fs"
 import { bibleDbPath } from "./paths"
 import { error, info, warn } from "./logger"
@@ -10,7 +10,7 @@ import { error, info, warn } from "./logger"
  */
 
 // ---------------------------------------------------------------------------
-// Row shapes — identical to the serde structs the frontend expects.
+// Row shapes ΓÇö identical to the serde structs the frontend expects.
 // ---------------------------------------------------------------------------
 
 export interface Translation {
@@ -71,7 +71,7 @@ function conn(): Database.Database | null {
   const file = bibleDbPath()
   if (!fs.existsSync(file)) {
     warn(
-      `[bible] database not found at ${file} — run "npm run download:bible-data && npm run build:bible" to build it`
+      `[bible] database not found at ${file} ΓÇö run "npm run download:bible-data && npm run build:bible" to build it`
     )
     openFailed = true
     return null
@@ -80,7 +80,7 @@ function conn(): Database.Database | null {
     db = new Database(file, { readonly: true, allowExtension: true } as any)
     db.pragma("query_only = 1")
     db.pragma("mmap_size = 268435456")
-    // Load sqlite-vec extension if available (optional — FTS5 works without it)
+    // Load sqlite-vec extension if available (optional ΓÇö FTS5 works without it)
     try {
       const vec = require("sqlite-vec")
       const fs = require("node:fs") as typeof import("node:fs")
@@ -212,7 +212,7 @@ export function getTranslationVersesForSearch(
     .all(translationId) as VerseSearchRow[]
 }
 
-/** Row by primary key — used to resolve embedding-index ids. */
+/** Row by primary key ΓÇö used to resolve embedding-index ids. */
 export function getVerseById(id: number): Verse | null {
   const c = requireConn()
   if (!c) return null
@@ -332,7 +332,7 @@ function tierHits(raw: string[], limit: number, language: string): Bm25Hit[] {
 }
 
 /**
- * The exact three-tier ladder: phrase → AND of significant words → OR of
+ * The exact three-tier ladder: phrase ΓåÆ AND of significant words ΓåÆ OR of
  * rare words, de-duplicated per (book, chapter, verse) keeping the earliest
  * (best-tier) occurrence.
  */
@@ -341,7 +341,7 @@ export function searchVersesBm25(query: string, limit: number): Bm25Hit[] {
 
   // Tier 1: the whole input as a quoted phrase.
   const phrase = query
-    .replace(/[^a-zA-Z0-9 '’]/g, " ")
+    .replace(/[^a-zA-Z0-9 'ΓÇÖ]/g, " ")
     .replace(/\s+/g, " ")
     .trim()
   const results: Bm25Hit[] = phrase
@@ -395,7 +395,7 @@ export function searchVersesBm25(query: string, limit: number): Bm25Hit[] {
 }
 
 // ---------------------------------------------------------------------------
-// sqlite-vec vector search — replaces brute-force flat .bin scan.
+// sqlite-vec vector search ΓÇö replaces brute-force flat .bin scan.
 // Uses the vec_verses virtual table created by data/build-vec-index.ts
 // ---------------------------------------------------------------------------
 
@@ -445,7 +445,7 @@ export function vecIndexStats(): { count: number; dim: number } | null {
   if (!c || !vecLoaded) return null
   try {
     const row = c.prepare("SELECT COUNT(*) as c FROM vec_verses").get() as { c: number }
-    // Dim via vec0 metadata — probe one row
+    // Dim via vec0 metadata ΓÇö probe one row
     const sample = c.prepare("SELECT embedding FROM vec_verses LIMIT 1").get() as any
     const dim = sample?.embedding?.length ?? 0
     return { count: row.c, dim }

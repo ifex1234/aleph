@@ -17,7 +17,7 @@ export function Dashboard() {
         gridTemplateRows: "56px auto minmax(0, 2fr) minmax(0, 3fr)",
         overflow: "hidden",
       }}
-      className="flex-1 bg-background min-h-0"
+      className="min-h-0 flex-1 bg-background"
     >
       {/* Row 1: Transport Bar */}
       <div className="col-span-4">
@@ -52,34 +52,5 @@ export function Dashboard() {
         <DetectionsPanel />
       </div>
     </div>
-    // <div
-    //   style={{
-    //     position: "fixed",
-    //     inset: "6px",
-    //     display: "grid",
-    //     gridTemplateColumns: "320px 1fr 1fr 340px",
-    //     gridTemplateRows: "64px 2fr 3fr",
-    //     gap: "6px",
-    //     overflow: "hidden",
-    //   }}
-    //   className="bg-background"
-    // >
-    //   {/* Row 1: Transport Bar */}
-    //   <div className="col-span-4">
-    //     <TransportBar />
-    //   </div>
-
-    //   {/* Row 2: 4 panels */}
-    //   <TranscriptPanel />
-    //   <PreviewPanel />
-    //   <LiveOutputPanel />
-    //   <QueuePanel />
-
-    //   {/* Row 3: Search + Detections (own grid, independent of top row columns) */}
-    //   <div className="col-span-4 grid min-h-0 grid-cols-[2fr_1fr] gap-[6px]">
-    //     <SearchPanel />
-    //     <DetectionsPanel />
-    //   </div>
-    // </div>
   )
 }

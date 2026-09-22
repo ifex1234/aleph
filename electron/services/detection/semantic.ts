@@ -1,4 +1,4 @@
-import fs from "node:fs"
+﻿import fs from "node:fs"
 import path from "node:path"
 import { modelDirCandidates, embeddingFileCandidates } from "../paths"
 import { warn } from "../logger"
@@ -7,7 +7,7 @@ import { hasVecIndex, searchVecVerses } from "../bible"
 /**
  * Optional semantic (embedding) search. Loads the same assets the Rust
  * backend used:
- *   models/qwen3-embedding-0.6b[-int8]/…  + tokenizer.json
+ *   models/qwen3-embedding-0.6b[-int8]/ΓÇª  + tokenizer.json
  *   embeddings/kjv-qwen3-0.6b.bin         (flat f32 vectors)
  *   embeddings/kjv-qwen3-0.6b-ids.bin     (flat i64 verse ids)
  *
@@ -46,7 +46,7 @@ function firstExisting(candidates: string[]): string | null {
     try {
       if (candidate && fs.existsSync(candidate)) return candidate
     } catch {
-      // Unreadable path — keep looking.
+      // Unreadable path ΓÇö keep looking.
     }
   }
   return null
@@ -69,7 +69,7 @@ function findModelDir(): string | null {
  * True when any semantic-search asset is absent from every known location,
  * i.e. the first-run downloader still has work to do.
  * With sqlite-vec, the vec_verses table inside aleph.db satisfies the index
- * — flat .bin files are a legacy fallback.
+ * ΓÇö flat .bin files are a legacy fallback.
  */
 export function assetsMissing(): boolean {
   if (findModelDir() === null) return true
@@ -125,7 +125,7 @@ async function load(): Promise<void> {
 
     // Tokenizer: prefer the tokenizer.json shipped/downloaded next to the
     // model so production runs fully offline; fall back to the HF hub id
-    // (dev convenience only — it caches outside our control).
+    // (dev convenience only ΓÇö it caches outside our control).
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const tf = require("@huggingface/transformers")
     const localTokenizer = path.join(modelDir, "tokenizer.json")
@@ -242,7 +242,7 @@ export async function embed(text: string): Promise<Float32Array | null> {
 }
 
 /**
- * Cosine scan — prefers sqlite-vec (<5ms C), falls back to brute-force flat index.
+ * Cosine scan ΓÇö prefers sqlite-vec (<5ms C), falls back to brute-force flat index.
  */
 export function searchIndex(queryVec: Float32Array, k: number): Array<{ id: number; cosine: number }> {
   // Fast path: sqlite-vec virtual table (distance = 1 - cosine for cosine metric)

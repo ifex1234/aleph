@@ -1,4 +1,4 @@
-import { DeepgramStreamClient, type SttEvent } from "./deepgram"
+﻿import { DeepgramStreamClient, type SttEvent } from "./deepgram"
 import { WhisperLocalClient } from "./whisper"
 import { CaptureManager, type CaptureDeviceInfo, type CaptureStatusEvent } from "../audio/capture"
 import { DirectDetector } from "../detection/detector"
@@ -18,7 +18,7 @@ import { sharedState } from "../state"
 
 /**
  * Transcription session manager: the Node port of src-tauri's stt.rs
- * command layer — audio fan-in, Deepgram streaming, the sequential
+ * command layer ΓÇö audio fan-in, Deepgram streaming, the sequential
  * detection worker (direct on partials; reading-mode + FTS on finals),
  * and voice translation switching.
  */
@@ -38,7 +38,7 @@ let tickTimer: NodeJS.Timeout | null = null
 let testTimeout: NodeJS.Timeout | null = null
 let currentGain = 1
 
-// Shared detection state — persists across sessions like the Rust managed
+// Shared detection state ΓÇö persists across sessions like the Rust managed
 // state did, so merger cooldowns survive a restart of transcription.
 const detector = new DirectDetector()
 const merger = new DetectionMerger()
@@ -202,7 +202,7 @@ export async function stopTranscription(): Promise<void> {
   const stopping = client
 
   if (stopping instanceof WhisperLocalClient) {
-    // Drain pending windows first — mode stays "stt" so trailing speech
+    // Drain pending windows first ΓÇö mode stays "stt" so trailing speech
     // still produces transcript + detection events. Bounded by a timeout
     // so a stuck inference process can't hang the stop request.
     await Promise.race([
@@ -256,7 +256,7 @@ function handleTranscript(transcript: string, isFinal: boolean, confidence: numb
     detectQueue.push({ transcript, isFinal })
     void runDetectWorker()
   } else {
-    warn("[detect] queue full — dropping transcript fragment")
+    warn("[detect] queue full ΓÇö dropping transcript fragment")
   }
 }
 
@@ -286,7 +286,7 @@ async function processDetectionJob(transcript: string, isFinal: boolean): Promis
 
   checkReadingMode(transcript, directFound)
   if (directFound) {
-    info("[DET-SEMANTIC] Skipped — utterance is a spoken reference")
+    info("[DET-SEMANTIC] Skipped ΓÇö utterance is a spoken reference")
   } else {
     await runSemanticDetection(transcript)
   }
@@ -355,11 +355,11 @@ function resolveResult(
   }
 }
 
-/** Hybrid live pass: FTS5 ∪ sqlite-vec (quotes → John 3:16 even without book name). */
+/** Hybrid live pass: FTS5 Γê¬ sqlite-vec (quotes ΓåÆ John 3:16 even without book name). */
 async function runSemanticDetection(transcript: string): Promise<void> {
   const fts = searchVersesBm25(transcript, 10)
 
-  // Vector leg — uses vec_verses inside aleph.db (<5ms) if Qwen INT8 loaded
+  // Vector leg ΓÇö uses vec_verses inside aleph.db (<5ms) if Qwen INT8 loaded
   let vectorHits: Array<{ id: number; cosine: number }> = []
   if (semantic.isReady() && transcript.split(/\s+/).length >= 4) {
     try {
@@ -407,7 +407,7 @@ async function runSemanticDetection(transcript: string): Promise<void> {
     return
   }
 
-  // Fuse both legs via RRF — handles paraphrases like "God loved the world so much" → John 3:16
+  // Fuse both legs via RRF ΓÇö handles paraphrases like "God loved the world so much" ΓåÆ John 3:16
   const fused = fuseRrf(
     vectorHits.map((h) => {
       const row = require("../bible").getVerseById(h.id)
@@ -483,7 +483,7 @@ function checkReadingMode(transcript: string, directFound: boolean): void {
     if (rmBook !== 0) {
       const mentioned = detector.mentionedBooks(transcript)
       if (mentioned.length > 0 && !mentioned.includes(rmBook)) {
-        info("[READING] Skipping — utterance names a different book")
+        info("[READING] Skipping ΓÇö utterance names a different book")
         return
       }
     }
@@ -502,7 +502,7 @@ function checkReadingMode(transcript: string, directFound: boolean): void {
         const startVerse = change.start_verse ?? 1
         const startText = chapterVerses.find((v) => v.verse === startVerse)?.text
         if (!startText) {
-          warn(`[READING] Ignoring chapter change — verse ${startVerse} not present`)
+          warn(`[READING] Ignoring chapter change ΓÇö verse ${startVerse} not present`)
           return
         }
         readingMode.start(
@@ -543,7 +543,7 @@ function decideReadingRestart(bookNumber: number, chapter: number): boolean {
     // Direct detections are always high confidence in this port.
     return true
   }
-  return true // same book, different chapter — natural progression
+  return true // same book, different chapter ΓÇö natural progression
 }
 
 // ---------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 import { useBroadcastStore } from "@/stores/broadcast-store"
+import { useGalleryStore } from "@/stores"
 import { pickThemeBackgroundImage } from "@/lib/theme-designer-files"
 import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
@@ -9,9 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
 import { SurfaceControls } from "@/components/broadcast/surface-properties"
 import { buildColorWithOpacity, parseColorOpacity } from "@/lib/color-utils"
+import { UploadIcon, FileTextIcon as GalleryIcon } from "lucide-react"
 
 function SolidSection() {
   const draftTheme = useBroadcastStore((s) => s.draftTheme)
@@ -164,30 +165,71 @@ function GradientSection() {
 function ImageSection() {
   const draftTheme = useBroadcastStore((s) => s.draftTheme)
   const update = useBroadcastStore((s) => s.updateDraftNested)
+  const galleryImages = useGalleryStore((s) => s.images)
 
   if (!draftTheme || !draftTheme.background.image) return null
 
   const image = draftTheme.background.image
   const tint = image.tint ? parseColorOpacity(image.tint) : { hex: "#000000", opacity: 50 }
 
+  const isGalleryImage = galleryImages.some((img) => img.dataUrl === image.url)
+
   return (
     <div className="flex flex-col gap-3">
       {/* Image Source */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground">Background Image</label>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full"
-          onClick={() => {
-            void (async () => {
-              const dataUrl = await pickThemeBackgroundImage()
-              if (dataUrl) update("background.image.url", dataUrl)
-            })()
-          }}
-        >
-          Change Image
-        </Button>
+        <div className="flex items-center gap-2">
+          <Select
+            value={isGalleryImage ? image.url : "upload"}
+            onValueChange={(value) => {
+              if (value === "upload") {
+                void (async () => {
+                  const dataUrl = await pickThemeBackgroundImage()
+                  if (dataUrl) update("background.image.url", dataUrl)
+                })()
+              } else {
+                update("background.image.url", value)
+              }
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select image source" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="upload" className="flex items-center gap-2">
+                <UploadIcon className="h-4 w-4" />
+                <span>Upload New Image</span>
+              </SelectItem>
+              {galleryImages.length > 0 && (
+                <>
+                  <SelectItem value="" disabled className="text-xs text-muted-foreground px-2 py-1">
+                    Gallery Images
+                  </SelectItem>
+                  {galleryImages.map((img) => (
+                    <SelectItem
+                      key={img.id}
+                      value={img.dataUrl}
+                      className="flex items-center gap-2 relative"
+                    >
+                      <div className="relative w-8 h-8 flex-shrink-0">
+                        <img
+                          src={img.dataUrl}
+                          alt={img.name}
+                          className="w-full h-full object-cover rounded border border-border"
+                        />
+                      </div>
+                      <span className="truncate max-w-[150px]">{img.name}</span>
+                      {image.url === img.dataUrl && (
+                        <GalleryIcon className="h-4 w-4 text-primary ml-auto" />
+                      )}
+                    </SelectItem>
+                  ))}
+                </>
+              )}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Fit Mode */}

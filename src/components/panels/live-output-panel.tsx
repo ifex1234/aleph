@@ -57,7 +57,7 @@ export function LiveOutputPanel() {
       data-slot="live-output-panel"
       className={cn(
         "flex min-h-0 flex-col overflow-hidden rounded-lg border border-border bg-card",
-        isLive && "shadow-[inset_0_2px_0_0_oklch(0.577_0.245_27.325_/_0.3)]"
+        isLive && "shadow-[inset_0_2px_0_0_oklch(0.577_0.245_27.325/0.3)]"
       )}
     >
       <PanelHeader title="Live display">
@@ -67,7 +67,7 @@ export function LiveOutputPanel() {
         >
           <span
             className={cn(
-              "text-[0.625rem] font-medium uppercase tracking-wider transition-colors",
+              "text-[0.625rem] font-medium tracking-wider uppercase transition-colors",
               autoLive ? "text-foreground" : "text-muted-foreground"
             )}
           >
@@ -83,7 +83,7 @@ export function LiveOutputPanel() {
         <label className="ml-2 flex items-center gap-2">
           <span
             className={cn(
-              "text-[0.625rem] font-medium uppercase tracking-wider transition-colors",
+              "text-[0.625rem] font-medium tracking-wider uppercase transition-colors",
               isLive ? "text-primary" : "text-muted-foreground"
             )}
           >

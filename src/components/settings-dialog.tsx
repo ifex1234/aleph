@@ -29,6 +29,7 @@ import {
   GraduationCapIcon,
 } from "lucide-react"
 import { LevelMeter } from "@/components/ui/level-meter"
+import { Switch } from "@/components/ui/switch"
 import { useAudioTest } from "@/hooks/use-audio-test"
 import { useSettingsStore } from "@/stores"
 import { useTranscriptStore } from "@/stores/transcript-store"
@@ -94,6 +95,9 @@ function AudioSection() {
 
   const [devices, setDevices] = useState<DeviceInfo[]>([])
   const [loading, setLoading] = useState(true)
+  const [paraphraseEnabled, setParaphraseEnabled] = useState(false)
+  const [paraphraseStatus, setParaphraseStatus] = useState<{ state: string; file: string | null; bytesDone: number; bytesTotal: number; error: string | null } | null>(null)
+  const [hasSemantic, setHasSemantic] = useState(false)
 
   const loadDevices = useCallback(async () => {
     try {
@@ -111,6 +115,34 @@ function AudioSection() {
   useEffect(() => {
     loadDevices()
   }, [])
+
+  // Check semantic/paraphrase status (lean installer ~200MB, download ~720MB on WiFi when enabled)
+  useEffect(() => {
+    let cancelled = false
+    const check = async () => {
+      try {
+        const s = await invoke<{ has_semantic: boolean; warning: string | null }>("detection_status")
+        if (!cancelled) setHasSemantic(s.has_semantic)
+        const st = await invoke<{ state: string; file: string | null; bytesDone: number; bytesTotal: number; error: string | null }>("semantic_download_status")
+        if (!cancelled) {
+          setParaphraseStatus(st)
+          setParaphraseEnabled(s.has_semantic || st.state === "running" || st.state === "ready")
+        }
+      } catch {}
+    }
+    check()
+    const id = setInterval(check, 1000)
+    return () => { cancelled = true; clearInterval(id) }
+  }, [])
+
+  const handleParaphraseToggle = async (checked: boolean) => {
+    if (checked) {
+      setParaphraseEnabled(true)
+      try { await invoke("semantic_download_start") } catch {}
+    } else {
+      setParaphraseEnabled(false)
+    }
+  }
 
   // gain is 0.0-2.0 in store, display as 0-100%
   const gainPercent = Math.round((gain / 2.0) * 100)
@@ -174,6 +206,42 @@ function AudioSection() {
           Amplifies the incoming audio signal before transcription. 50% is unity
           gain.
         </p>
+      </div>
+
+      {/* Paraphrase search (semantic) — lean ~200MB installer, ~720MB download on WiFi */}
+      <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/30 p-3">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-0.5">
+            <label className="text-xs font-medium text-foreground">Paraphrase search</label>
+            <p className="text-[0.625rem] leading-relaxed text-muted-foreground">
+              Detect quoted verses like “for God so loved the world” without the book name. Requires a one-time download (~720MB) on WiFi.
+            </p>
+          </div>
+          <Switch checked={paraphraseEnabled} onCheckedChange={handleParaphraseToggle} disabled={paraphraseStatus?.state === "running"} />
+        </div>
+        {paraphraseEnabled && (
+          <div className="flex flex-col gap-1">
+            {hasSemantic ? (
+              <p className="text-[0.625rem] font-medium text-primary">✓ Paraphrase ready — quoted verses will auto-display</p>
+            ) : paraphraseStatus?.state === "running" ? (
+              <>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                  <div className="h-full bg-primary transition-all" style={{ width: `${Math.round((paraphraseStatus.bytesDone / Math.max(paraphraseStatus.bytesTotal, 1)) * 100)}%` }} />
+                </div>
+                <p className="text-[0.625rem] text-muted-foreground">
+                  Downloading {paraphraseStatus.file ?? "assets"} — {(paraphraseStatus.bytesDone / 1024 / 1024).toFixed(1)} / {(paraphraseStatus.bytesTotal / 1024 / 1024).toFixed(1)} MB
+                </p>
+              </>
+            ) : paraphraseStatus?.state === "failed" ? (
+              <p className="text-[0.625rem] text-red-500">Download failed: {paraphraseStatus.error} — will retry. Check internet / GitHub release assets.</p>
+            ) : (
+              <p className="text-[0.625rem] text-muted-foreground">Download will start on WiFi — keep app open. ~720MB (model + vec). Lean FTS5 still works offline.</p>
+            )}
+          </div>
+        )}
+        {!paraphraseEnabled && (
+          <p className="text-[0.625rem] text-muted-foreground">Lean mode: ~200MB installer, FTS5 + direct refs only. Toggle on for paraphrased quotes.</p>
+        )}
       </div>
     </div>
   )

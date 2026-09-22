@@ -10,6 +10,7 @@ import { TooltipProvider } from "@/components/ui/tooltip.tsx"
 import { hydrateSettings } from "@/stores/settings-store"
 import { hydrateBibleStore, initBiblePersistence } from "@/stores/bible-store"
 import { hydrateBroadcastThemes } from "@/stores/broadcast-store"
+import { hydrateGalleryImages } from "@/stores/gallery-store"
 
 // Frontend warnings, errors and uncaught rejections only exist in devtools
 // otherwise, so the logs a user sends us would say nothing about them.
@@ -23,7 +24,14 @@ forwardConsoleToLog()
 // bible store so the UI reflects the user's choices immediately.
 invoke("stop_transcription")
   .catch(() => {})
-  .then(() => Promise.all([hydrateSettings(), hydrateBibleStore(), hydrateBroadcastThemes()]))
+  .then(() =>
+    Promise.all([
+      hydrateSettings(),
+      hydrateBibleStore(),
+      hydrateBroadcastThemes(),
+      hydrateGalleryImages(),
+    ])
+  )
   .then(() => initBiblePersistence())
   .finally(() => {
     createRoot(document.getElementById("root")!).render(

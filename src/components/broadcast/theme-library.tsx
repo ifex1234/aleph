@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
 import { useBroadcastStore } from "@/stores"
+import { useGalleryStore } from "@/stores"
 import { CanvasVerse } from "@/components/ui/canvas-verse"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -18,17 +19,16 @@ import {
   HeartIcon,
   MoreHorizontalIcon,
   SearchIcon,
-  DownloadIcon,
-  UploadIcon,
   CheckCircleIcon,
   PinIcon,
   PinOffIcon,
   EditIcon,
   Trash2Icon,
+  UploadIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { importTheme, exportTheme } from "@/lib/theme-designer-files"
 import { NewThemeDialog } from "./new-theme-dialog"
+import { GalleryDialog } from "@/components/gallery-dialog"
 import type { BroadcastTheme, VerseRenderData } from "@/types"
 
 type FilterTab = "all" | "pinned" | "custom"
@@ -272,9 +272,17 @@ export function ThemeLibrary() {
         </TabsList>
       </Tabs>
 
-      {/* Import / Export */}
+      {/* Gallery / Import / Export */}
       <div className="flex gap-1.5 px-3 pb-3">
         <Button
+          variant="outline"
+          className="flex-1 border-border bg-transparent"
+          onClick={() => useGalleryStore.getState().toggleOpen()}
+        >
+          <UploadIcon className="size-2.5" />
+          Upload images
+        </Button>
+        {/* <Button
           variant="outline"
           className="flex-1 border-border bg-transparent"
           onClick={() => {
@@ -293,8 +301,8 @@ export function ThemeLibrary() {
         >
           <UploadIcon className="size-2.5" />
           Import
-        </Button>
-        <Button
+        </Button> */}
+        {/* <Button
           variant="outline"
           className="flex-1 border-border bg-transparent"
           onClick={() => {
@@ -315,8 +323,10 @@ export function ThemeLibrary() {
         >
           <DownloadIcon className="size-2.5" />
           Export
-        </Button>
+        </Button> */}
       </div>
+
+      <GalleryDialog />
 
       {/* Theme list */}
       <ScrollArea className="min-h-0 flex-1">

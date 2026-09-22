@@ -1,6 +1,7 @@
 import { LevelMeter } from "@/components/ui/level-meter"
 import { LiveIndicator } from "@/components/ui/live-indicator"
 import { MicIcon } from "lucide-react"
+import { SettingsDialog } from "@/components/settings-dialog"
 import { ThemeDesigner } from "@/components/broadcast/theme-designer"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { useAudioStore, useTranscriptStore } from "@/stores"
@@ -27,7 +28,7 @@ export function TransportBar() {
         </div>
         <LiveIndicator active={isTranscribing} />
         <ThemeDesigner />
-        {/* <SettingsDialog /> */}
+        <SettingsDialog />
       </div>
     </div>
   )
