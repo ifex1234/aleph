@@ -9,14 +9,11 @@ import { PricingSection } from "../_components/sections/pricing-section"
 import { FaqSection } from "../_components/sections/faq-section"
 import { FinalCtaSection } from "../_components/sections/final-cta-section"
 import { SiteFooter } from "../_components/sections/site-footer"
-import { getGitHubStars } from "../_lib/site"
 
 export default async function Home() {
-  const stars = await getGitHubStars()
-
   return (
     <>
-      <SiteNav stars={stars} />
+      <SiteNav />
       <main>
         <HeroSection />
         <StatsSection />

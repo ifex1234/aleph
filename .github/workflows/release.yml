@@ -3,10 +3,10 @@ name: Release
 # Ship a release by bumping "version" in package.json, then:
 #   git tag v0.8.3
 #   git push origin v0.8.3
-# Tag name should match package.json (vX.Y.Z ↔ X.Y.Z). The Windows
-# installer + auto-update metadata are published to GitHub Releases,
-# which is where users download the app and where the in-app updater
-# looks for new versions.
+# Tag name should match package.json (vX.Y.Z ↔ X.Y.Z). Installers are
+# published to GitHub Releases under stable filenames (see `artifactName`
+# in electron-builder.yml), which is where users download the app and
+# where the in-app updater looks for new versions.
 
 on:
   push:
@@ -17,8 +17,15 @@ permissions:
   contents: write
 
 jobs:
-  release-windows:
-    runs-on: windows-latest
+  release:
+    strategy:
+      matrix:
+        # macOS runners are Apple Silicon; the dmg is arm64-only.
+        include:
+          - os: windows-latest
+          - os: macos-latest
+          - os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 

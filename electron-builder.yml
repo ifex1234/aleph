@@ -19,22 +19,14 @@ asarUnpack:
   - node_modules/onnxruntime-web/**
 
 extraResources:
-  # Bible database, resolved at runtime from the resources dir.
+  # Bible + hymnal databases, resolved at runtime from the resources dir.
+  # Kept top-level: every platform ships the same data files. Native
+  # binaries below are split per platform (platform lists merge with this
+  # one) so installers don't carry other OSs' runtimes.
   - from: data/aleph.db
     to: aleph.db
-  # Hymnal database, resolved at runtime from the resources dir.
   - from: data/hymns.db
     to: hymns.db
-  # Whisper.cpp CLI + runtime DLLs, resolved via resourceDir()/whisper in packaged app.
-  - from: sdk/whisper/win32
-    to: whisper
-  # NDI runtime library, loaded dynamically via koffi.
-  - from: sdk/ndi/windows/Processing.NDI.Lib.x64.dll
-    to: ndi/Processing.NDI.Lib.x64.dll
-  - from: sdk/ndi/macos/libndi.dylib
-    to: ndi/libndi.dylib
-  - from: sdk/ndi/linux/libndi.so
-    to: ndi/libndi.so
 
 # Updates are served from GitHub Releases (see .github/workflows/release.yml).
 # electron-updater in the packaged app checks these releases and prompts
@@ -51,6 +43,18 @@ win:
   target:
     - nsis
   icon: build-resources/icons/icon.ico
+  # Stable installer filename across versions so the website's direct
+  # download link never goes stale when the version number changes.
+  artifactName: "Aleph-windows-x64-setup.${ext}"
+  extraResources:
+    # Whisper.cpp CLI + runtime DLLs, resolved via resourceDir()/whisper.
+    # Windows-only: macOS/Linux builds ship without the CLI and the app
+    # falls back to its install guidance (see download-whisper-bin.ts).
+    - from: sdk/whisper/win32
+      to: whisper
+    # NDI runtime library, loaded dynamically via koffi.
+    - from: sdk/ndi/windows/Processing.NDI.Lib.x64.dll
+      to: ndi/Processing.NDI.Lib.x64.dll
 
 nsis:
   # Small delta downloads instead of the full installer on every update.
@@ -61,11 +65,19 @@ mac:
     - dmg
   icon: build-resources/icons/icon.icns
   category: public.app-category.reference
+  artifactName: "Aleph-macos-arm64.${ext}"
+  extraResources:
+    - from: sdk/ndi/macos/libndi.dylib
+      to: ndi/libndi.dylib
 
 linux:
   target:
     - AppImage
   icon: build-resources/icons
   category: Utility
+  artifactName: "Aleph-linux-x86_64.${ext}"
+  extraResources:
+    - from: sdk/ndi/linux/libndi.so
+      to: ndi/libndi.so
 
 npmRebuild: true

@@ -1,25 +1,21 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { IconPlus } from "@tabler/icons-react";
-import { Container } from "../ui/container";
-import { Reveal } from "../ui/reveal";
-import { SectionHeading } from "./section-heading";
-import { cn } from "../../_lib/utils";
-import { FAQS } from "./faq-section.data";
+import { useState } from "react"
+import { IconPlus } from "@tabler/icons-react"
+import { Container } from "../ui/container"
+import { Reveal } from "../ui/reveal"
+import { SectionHeading } from "./section-heading"
+import { cn } from "../../_lib/utils"
+import { FAQS } from "./faq-section.data"
 
 export function FaqSection() {
   // Good default: first answer visible so the list reads as
   // interactive on first paint — users discover the pattern instantly.
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section
-      id="faq"
-      aria-labelledby="faq-heading"
-      className="py-20 lg:py-[128px]"
-    >
-      <Container className="flex flex-col gap-10 md:gap-14 lg:gap-[52px]">
+    <section id="faq" aria-labelledby="faq-heading" className="py-20 lg:py-32">
+      <Container className="flex flex-col gap-10 md:gap-14 lg:gap-13">
         <Reveal>
           <SectionHeading id="faq-heading">Questions, answered</SectionHeading>
         </Reveal>
@@ -30,13 +26,13 @@ export function FaqSection() {
             itemType="https://schema.org/FAQPage"
           >
             {FAQS.map((faq, i) => {
-              const open = openIndex === i;
-              const buttonId = `faq-button-${i}`;
-              const panelId = `faq-panel-${i}`;
+              const open = openIndex === i
+              const buttonId = `faq-button-${i}`
+              const panelId = `faq-panel-${i}`
               return (
                 <div
                   key={faq.question}
-                  className={cn(i > 0 && "border-t border-border-strong")}
+                  className={cn(i > 0 && "border-border-strong border-t")}
                   itemScope
                   itemProp="mainEntity"
                   itemType="https://schema.org/Question"
@@ -48,13 +44,15 @@ export function FaqSection() {
                       aria-expanded={open}
                       aria-controls={panelId}
                       onClick={() => setOpenIndex(open ? null : i)}
-                      className="pressable group flex w-full items-center justify-between gap-6 py-8 text-left transition-[background-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-surface/60 active:bg-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-inset"
+                      className="pressable group hover:bg-surface/60 flex w-full items-center justify-between gap-6 py-8 text-left transition-[background-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:outline-none focus-visible:ring-inset active:bg-foreground/5"
                     >
                       <span
                         itemProp="name"
                         className={cn(
-                          "text-xl font-medium leading-8 tracking-[-0.02em] transition-[color] duration-200 ease md:text-2xl md:tracking-[-0.04em]",
-                          open ? "text-foreground" : "text-foreground/90 group-hover:text-foreground"
+                          "ease text-xl leading-8 font-medium tracking-[-0.02em] transition-[color] duration-200 md:text-2xl md:tracking-[-0.04em]",
+                          open
+                            ? "text-foreground"
+                            : "text-foreground/90 group-hover:text-foreground"
                         )}
                       >
                         {faq.question}
@@ -93,7 +91,7 @@ export function FaqSection() {
                       <div className="min-h-0 overflow-hidden">
                         <p
                           className={cn(
-                            "pb-8 pr-12 text-[17px] leading-6 tracking-[-0.01em] text-muted-foreground transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]",
+                            "pr-12 pb-8 text-[17px] leading-6 tracking-[-0.01em] text-muted-foreground transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]",
                             open
                               ? "translate-y-0 opacity-100"
                               : "pointer-events-none -translate-y-1 opacity-0"
@@ -105,11 +103,11 @@ export function FaqSection() {
                     </div>
                   </dd>
                 </div>
-              );
+              )
             })}
           </dl>
         </Reveal>
       </Container>
     </section>
-  );
+  )
 }

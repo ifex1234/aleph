@@ -20,14 +20,14 @@ export const SITE = {
     latestRelease: "https://github.com/ifex1234/aleph/releases/latest",
     // `/releases/latest` resolves to the newest published, non-prerelease
     // release, so these track each tagged release with no hand re-upload.
-    // The Windows filename is pinned by `artifactName` in
-    // electron-builder.yml, so it stays identical across versions. macOS and
-    // Linux have no CI builds yet, so those buttons land on the release list
-    // until their direct asset links exist.
+    // Filenames are pinned by `artifactName` in electron-builder.yml, so
+    // they stay identical across versions. macOS builds are Apple Silicon.
     downloadWindows:
       "https://github.com/ifex1234/aleph/releases/latest/download/Aleph-windows-x64-setup.exe",
-    downloadMac: "https://github.com/ifex1234/aleph/releases/latest",
-    downloadLinux: "https://github.com/ifex1234/aleph/releases/latest",
+    downloadMac:
+      "https://github.com/ifex1234/aleph/releases/latest/download/Aleph-macos-arm64.dmg",
+    downloadLinux:
+      "https://github.com/ifex1234/aleph/releases/latest/download/Aleph-linux-x86_64.AppImage",
     discussions: "https://github.com/ifex1234/aleph/discussions",
     stars: { fallback: 221 },
   },

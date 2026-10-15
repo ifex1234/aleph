@@ -16,7 +16,7 @@ const FREE_FEATURES = [
 const PRO_FEATURES = [
   "Nova-3 streaming boosted with Bible keyterms",
   "Use your personal Deepgram key — billed by them, near $0.73 per two-hour sermon",
-  "Their $200 starting credit stretches to about 273 sermons (years of weekly gatherings)",
+  "Their $200 starting credit stretches to about 273 sermons (Approximateley 5years of weekly 2-hour gatherings)",
   "Swifter, sharper live spotting for bigger auditoriums",
 ] as const
 
@@ -31,7 +31,7 @@ export function PricingSection() {
         <Reveal>
           <SectionHeading
             id="pricing-heading"
-            subtitle="The app stays free and open source for good. Cloud transcription is the only thing that can cost money — and only when you opt into it."
+            subtitle="The app is free and will forever remain free. Cloud transcription is the only thing that can cost money — and only when you opt into it."
           >
             Simple, honest pricing
           </SectionHeading>
@@ -41,7 +41,7 @@ export function PricingSection() {
             <div className="hover:bg-surface flex h-full w-full flex-col gap-6 border border-border bg-background p-8 transition-[background-color,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] md:p-10">
               <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium tracking-[0.08em] text-muted-foreground uppercase">
-                  Free
+                  Free offline service · No API key
                 </p>
                 <p className="text-[34px] leading-none font-medium tracking-[-0.04em] text-foreground">
                   ₦0
@@ -68,7 +68,7 @@ export function PricingSection() {
               </ul>
               <div className="mt-auto pt-2">
                 <Button href={SITE.repo.releases} variant="primary">
-                  Download, then add key
+                  Download on Windows, macOS or Linux
                 </Button>
               </div>
             </div>
@@ -88,7 +88,7 @@ export function PricingSection() {
               </p>
               <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium tracking-[0.08em] text-muted-foreground uppercase">
-                  Pro · Your own API key
+                  Online service · Your own API key
                 </p>
                 <p className="text-[34px] leading-none font-medium tracking-[-0.04em] text-foreground">
                   ~$0.73{" "}
@@ -137,9 +137,9 @@ export function PricingSection() {
         <Reveal>
           <p className="text-center text-[15px] leading-6 text-muted-foreground">
             Around ₦4,480 monthly for four weekly gatherings, once the starter
-            credit is spent. Nothing goes to Aleph — no membership, no login,
-            no per-minute surcharge. Figures track Deepgram&apos;s promo
-            pricing; naira amounts drift with exchange rates.
+            credit is spent. Nothing goes to Aleph — no membership, no login, no
+            per-minute surcharge. Figures track Deepgram&apos;s promo pricing;
+            naira amounts drift with exchange rates.
           </p>
         </Reveal>
       </Container>
