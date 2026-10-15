@@ -6,17 +6,17 @@ const STEPS = [
   {
     no: "1",
     title: "Download the app",
-    body: "Free for Windows and macOS",
+    body: "Free for Windows, macOS and Linux — hymns included offline",
   },
   {
     no: "2",
-    title: "Connect your audio input",
-    body: "Works with any audio setup",
+    title: "Connect audio & pick a theme",
+    body: "Any mixer feed plus animated gradient or image theme",
   },
   {
     no: "3",
-    title: "Start your service",
-    body: "Verses appear automatically",
+    title: "Run the whole service",
+    body: "Verses, hymns, lyrics, slides and timer via NDI",
   },
 ] as const;
 
@@ -38,8 +38,8 @@ export function QuickStartSection() {
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3 md:[&>*]:-ml-px md:[&>*]:-mt-px">
           {STEPS.map((s, i) => (
-            <Reveal key={s.no} delay={i * 80} className="flex">
-              <div className="flex h-full w-full min-h-[320px] flex-col justify-between gap-8 border border-border-strong p-8 md:min-h-[400px]">
+            <Reveal key={s.no} delay={Math.min(i * 80, 160)} className="flex">
+              <div className="flex h-full w-full min-h-[320px] flex-col justify-between gap-8 border border-border-strong p-8 transition-[background-color,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-surface md:min-h-[400px]">
                 <p className="text-2xl font-medium leading-8 tracking-[-0.04em] text-foreground">
                   {s.no}
                 </p>

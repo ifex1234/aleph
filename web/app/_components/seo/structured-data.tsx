@@ -59,15 +59,17 @@ export function StructuredData() {
         },
         publisher: { "@id": ORG_ID },
         featureList: [
-          "Real-time speech transcription from live sermon audio",
-          "Automatic Bible verse detection from explicit citations and quoted passages",
-          "Broadcast-ready scripture overlays via NDI",
+          "Real-time AI verse detection from live sermon audio",
+          "13,700+ offline hymns with stanza presentation",
+          "Song lyrics slides with auto section detection",
+          "Image, video and PDF slide decks",
+          "Sermon notes with auto-capture and service timer",
+          "Animated themes and multi-output NDI for OBS and vMix",
           "Multi-translation support: KJV, ESV, NIV, NKJV, NLT",
-          "Direct integration with OBS Studio and vMix",
-          "Free and open source",
+          "Free and open source with silent auto-updates",
         ],
         keywords:
-          "Bible verse detection, sermon transcription, NDI overlay, church broadcast, live scripture",
+          "Bible verse detection, sermon transcription, NDI overlay, church broadcast, live scripture, hymn projection, worship lyrics, church slides, service timer",
       },
       {
         "@type": "FAQPage",

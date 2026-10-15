@@ -25,7 +25,7 @@ type AsLink = Common &
 type ButtonProps = AsButton | AsLink;
 
 const base =
-  "inline-flex items-center justify-center gap-[10px] rounded-full whitespace-nowrap font-medium tracking-[-0.3px] transition-colors transition-transform duration-200 ease-out will-change-transform hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60";
+  "pressable lift-hover inline-flex items-center justify-center gap-[10px] rounded-full whitespace-nowrap font-medium tracking-[-0.3px] transition-[transform,background-color,color,border-color,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60";
 
 const sizes: Record<Size, string> = {
   md: "px-[14px] py-[6px] text-[15px] leading-6",
@@ -33,9 +33,10 @@ const sizes: Record<Size, string> = {
 };
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-primary-foreground hover:bg-primary/90",
+  primary:
+    "bg-primary text-primary-foreground shadow-[0_1px_2px_rgba(220,38,38,0.24)] hover:bg-primary/90 hover:shadow-[0_4px_16px_rgba(220,38,38,0.28)]",
   secondary:
-    "bg-surface-strong text-foreground hover:bg-foreground/10",
+    "bg-surface-strong text-foreground hover:bg-foreground/10 hover:border-border-strong",
   ghost:
     "border border-border-strong bg-transparent text-foreground hover:bg-foreground/5",
 };

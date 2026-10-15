@@ -17,7 +17,7 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        "relative flex h-full w-full flex-col items-center gap-4 border border-border bg-background p-8 text-center transition-colors duration-300 hover:bg-surface md:p-10",
+        "group relative flex h-full w-full flex-col items-center gap-4 border border-border bg-background p-8 text-center transition-[background-color,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-surface hover:border-border-strong md:p-10",
         className
       )}
     >
@@ -26,7 +26,7 @@ export function FeatureCard({
         stroke={1.75}
         aria-hidden
         className={cn(
-          "shrink-0",
+          "group-icon shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]",
           iconTone === "accent" ? "text-accent" : "text-foreground"
         )}
       />

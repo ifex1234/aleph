@@ -4,7 +4,7 @@ import "./globals.css";
 import { SITE } from "./_lib/site";
 import { StructuredData } from "./_components/seo/structured-data";
 
-const TITLE = `${SITE.name} — AI Bible verse detection for live sermons`;
+const TITLE = `${SITE.name} — Free worship suite for live scripture, hymns & song`;
 const OG_TITLE = `${SITE.name} — ${SITE.tagline}`;
 
 export const metadata: Metadata = {
@@ -32,6 +32,13 @@ export const metadata: Metadata = {
     "vMix scripture overlay",
     "church livestream tools",
     "speech-to-scripture",
+    "hymn projection software",
+    "offline hymnal",
+    "worship lyrics projection",
+    "church slides software",
+    "service timer",
+    "animated worship backgrounds",
+    "multi-output NDI",
     "Aleph",
   ],
   authors: [{ name: SITE.legalName, url: SITE.repo.url }],

@@ -3,8 +3,16 @@ import { Container } from "../ui/container";
 import { Reveal } from "../ui/reveal";
 import { SectionHeading } from "./section-heading";
 
-const WITHOUT = ["Manual verse typing", "Delays", "Missed references"];
-const WITH = ["Automatic detection", "Instant display", "Smooth live flow"];
+const WITHOUT = [
+  "Verse app + hymn book + slides + timer",
+  "Manual typing between apps",
+  "Missed references & dead air",
+];
+const WITH = [
+  "Verses, hymns, lyrics, slides, notes, timer",
+  "One-click stanza & slide to air",
+  "Animated themes on multi-output NDI",
+];
 
 export function ComparisonSection() {
   return (
@@ -14,7 +22,12 @@ export function ComparisonSection() {
     >
       <Container className="flex flex-col gap-10 md:gap-14 lg:gap-16">
         <Reveal>
-          <SectionHeading id="comparison-heading">Why Aleph</SectionHeading>
+          <SectionHeading
+            id="comparison-heading"
+            subtitle="Stop juggling four apps on Sunday morning. Aleph carries scripture, song and stage in one operator view."
+          >
+            Why Aleph
+          </SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 md:[&>*]:-ml-px md:[&>*]:-mt-px">
           <Reveal className="flex">
@@ -46,7 +59,7 @@ function ComparisonCard({
   const iconColor =
     tone === "positive" ? "text-accent" : "text-red-500";
   return (
-    <div className="flex h-full w-full flex-col gap-2 border border-border-strong p-8 opacity-90">
+    <div className="flex h-full w-full flex-col gap-2 border border-border-strong p-8 opacity-90 transition-[background-color,border-color,opacity] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:opacity-100 hover:bg-surface">
       <h3 className="text-lg font-medium leading-6 tracking-[-0.01em] text-foreground">
         {title}
       </h3>

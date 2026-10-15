@@ -8,17 +8,17 @@ const AUDIENCE = [
   {
     icon: IconUsers,
     title: "Church media teams",
-    body: "Reduce manual work during services for individuals and teams",
+    body: "One operator runs verses, hymns, lyrics and slides — no app-switching mid-service",
   },
   {
     icon: IconVideo,
     title: "Livestream operators",
-    body: "Keep broadcasts clean and responsive",
+    body: "Multi-output NDI with per-screen themes for stream, sanctuary and overflow",
   },
   {
     icon: IconBuildingChurch,
-    title: "Ministries & events",
-    body: "Handle large-scale live production easily",
+    title: "Worship leaders & events",
+    body: "13,700+ offline hymns, song library and timer for rehearsals to revivals",
   },
 ] as const;
 

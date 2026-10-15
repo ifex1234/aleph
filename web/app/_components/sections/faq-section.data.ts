@@ -4,7 +4,7 @@ export const FAQS: readonly Faq[] = [
   {
     question: "What is Aleph?",
     answer:
-      "Aleph is a free, open-source desktop app that detects Bible verses in real time from live sermon audio. It listens to a sermon feed, transcribes speech as it happens, identifies scripture references — including paraphrased quotations — and renders broadcast-ready overlays via NDI for OBS, vMix, and other live production tools. Aleph is built with Tauri v2, a React frontend, and a Rust backend.",
+      "Aleph is a free, open-source worship suite for live services. It detects Bible verses in real time from sermon audio, projects 13,700+ offline hymns and song lyrics, runs image/video/PDF slides, captures sermon notes and runs a service timer — all through animated themes and multi-output NDI for OBS, vMix and sanctuary screens. Built with Tauri v2, React and Rust.",
   },
   {
     question: "Does Aleph work during live sermons?",
@@ -14,17 +14,32 @@ export const FAQS: readonly Faq[] = [
   {
     question: "What equipment do I need to run Aleph?",
     answer:
-      "You need a computer running Windows or macOS with an internet connection, an audio feed from your sound system, and a projector or display screen. Aleph works with your existing audio setup — no specialized hardware required.",
+      "You need a computer running Windows, macOS or Linux, an audio feed from your sound system, and a projector or display screen. Aleph works with your existing audio setup and outputs via NDI to OBS, vMix or directly — no specialized hardware required.",
   },
   {
     question: "What Bible translations does Aleph support?",
     answer:
-      "Aleph supports KJV, ESV, NIV, NKJV, NLT, and more. You can switch between translations on-the-fly from the operator panel, and each translation is stored locally in your app database for offline use.",
+      "Aleph supports KJV, ESV, NIV, NKJV, NLT, and more. You can switch between translations on-the-fly from the operator panel, and each translation is stored locally in your app database for offline use. Verse ranges preserve gaps (e.g. 1, 3, 5) and auto-refetch when you change translation.",
+  },
+  {
+    question: "How do the hymns work? Do I need internet?",
+    answer:
+      "No internet needed during service. Aleph ships with 13,700+ hymns and 69,600+ stanzas bundled in a local database with full-text search by number, title, first line or any lyric. Filter by hymnal group, open a hymn to see words, music, key, meter and category, then click any stanza to present it live with tune and sheet-music links in context.",
+  },
+  {
+    question: "Can Aleph handle songs, slides and timers too?",
+    answer:
+      "Yes — that's the point. Save songs with auto-detected Verse/Chorus/Bridge sections, build image/video/PDF slide decks with fade transitions and 1–9 cues, and run stopwatch or countdown with lap times and red under-10-seconds alerts. The Live panel switches between Verse, Timer, Lyrics, Slides and Blank without ever clearing what's on air by accident.",
+  },
+  {
+    question: "What about themes and multiple screens?",
+    answer:
+      "Design lower-thirds to fullscreen in the Theme Designer with text plates, shadows, outlines, image fills and animated gradients. Create unlimited NDI outputs — sanctuary, stream, overflow — each with its own theme and source name, all painted at full resolution even for DOM slides.",
   },
   {
     question: "How do I get started with Aleph?",
     answer:
-      "Download the free desktop app for Windows or macOS, connect your audio feed, and you're ready to go. Most teams are running in under five minutes. Full setup instructions and documentation are available in-app and on the GitHub repository.",
+      "Download the free desktop app for Windows, macOS or Linux, connect your audio feed, pick a theme and you're ready. Most teams are running in under five minutes. Updates install silently in the background — restart when ready. Full setup instructions are in-app and on GitHub.",
   },
   {
     question: "What happens if the pastor paraphrases a verse?",
@@ -44,7 +59,7 @@ export const FAQS: readonly Faq[] = [
   {
     question: "How much does Aleph cost?",
     answer:
-      "Aleph is completely free and open source. There is no subscription, no account required, and no usage limits. The full source code is available on GitHub.",
+      "Aleph itself is completely free and open source — no subscription, no account, no license fee. The Free tier transcribes offline with Whisper at ₦0 per sermon. If you want cloud speed, add your own Deepgram API key: their $200 free credit covers roughly 273 two-hour sermons, then about $0.73 (≈₦1,120) per sermon, paid directly to Deepgram.",
   },
   {
     question: "Does Aleph work with OBS Studio and vMix?",

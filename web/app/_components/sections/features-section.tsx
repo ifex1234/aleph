@@ -1,10 +1,13 @@
 import {
   IconAdjustmentsHorizontal,
+  IconBook,
+  IconClock,
   IconLayoutBoard,
   IconMicrophone,
+  IconMusic,
+  IconNotes,
+  IconPhoto,
   IconPlug,
-  IconScreenShare,
-  IconSearch,
 } from "@tabler/icons-react";
 import { Container } from "../ui/container";
 import { FeatureCard } from "../ui/feature-card";
@@ -22,33 +25,48 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     icon: IconMicrophone,
-    title: "Listens to Your Sermon Live",
-    body: "Aleph listens as the pastor speaks and turns the message into text instantly. No setup or typing needed. Just press start and let it run.",
+    title: "AI verse detection, live",
+    body: "Listens to sermon audio, transcribes in real time and surfaces verses from explicit references or paraphrased quotes. Operator stays in control — detections never clobber what's live.",
   },
   {
-    icon: IconSearch,
-    title: "Finds Bible Verses Automatically",
-    body: "Detects Bible verses from both direct references and spoken quotes. It understands imperfect speech and partial phrasing.",
+    icon: IconBook,
+    title: "13,700+ hymns, fully offline",
+    body: "Bundled hymnal with instant search by number, title, first line or any lyric. Click a stanza to present it live with words, music credits, key and meter.",
   },
   {
-    icon: IconScreenShare,
-    title: "Shows Verses On Screen Instantly",
-    body: "As soon as a verse is detected, it appears on screen right away. No delays. Your audience sees the scripture at the right moment.",
+    icon: IconMusic,
+    title: "Song lyrics that sing along",
+    body: "Save songs with auto-detected Verse / Chorus / Bridge sections. Each stanza becomes an auto-fitting themed slide with keyboard stepping and JSON import/export.",
   },
   {
-    icon: IconPlug,
-    title: "Works With Your Live Setup",
-    body: "Aleph connects easily to tools like OBS Studio and vMix. You don’t need to change how you already run your service. Just add it to your setup.",
+    icon: IconPhoto,
+    title: "Slides for announcements",
+    body: "Mix images, videos and PDFs in one deck. One-click to air, fade transitions, 1–9 direct cues, reorder and auto-save between restarts.",
   },
   {
     icon: IconLayoutBoard,
-    title: "Ready-to-Use Verse Designs",
-    body: "Choose from clean, pre-made styles for your verse overlays. Everything is already designed for you. Pick one and go live.",
+    title: "Living themes + multi-output NDI",
+    body: "Design lower-thirds to fullscreen in the Theme Designer, animate gradients with motion, then route per-screen themes to sanctuary, stream and overflow.",
+  },
+  {
+    icon: IconClock,
+    title: "Timer, notes & auto-updates",
+    body: "Stopwatch and countdown with lap times and pulsing red alerts, auto-captured sermon notes with export, and silent background updates that install on quit.",
+  },
+  {
+    icon: IconPlug,
+    title: "Works with OBS & vMix",
+    body: "Every content type — verse, hymn, lyrics, timer, slides, blank — paints to NDI at full resolution. Drop it into your existing production setup.",
+  },
+  {
+    icon: IconNotes,
+    title: "Sermon notes that keep up",
+    body: "Manual notes plus auto-capture from live transcription, with preview list, focus mode and one-click JSON backup to share between machines.",
   },
   {
     icon: IconAdjustmentsHorizontal,
-    title: "Simple Control During Service",
-    body: "See all detected verses in one place. Reorder, skip, or show any verse with a click. Stay in control without stress or switching between apps.",
+    title: "Simple control during service",
+    body: "Verse, timer, lyrics, slides and blank switcher in one Live panel. Keyboard-first stepping, verse-range navigation that preserves gaps like 1, 3, 5.",
   },
 ];
 
@@ -61,8 +79,11 @@ export function FeaturesSection() {
     >
       <Container className="flex flex-col gap-10 md:gap-14">
         <Reveal>
-          <SectionHeading id="features-heading">
-            Everything your media team needs
+          <SectionHeading
+            id="features-heading"
+            subtitle="Verse detection plus the rest of Sunday: hymns, lyrics, slides, notes and timer — themed once, live everywhere via NDI."
+          >
+            Everything your service needs
           </SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 md:[&>*]:-ml-px md:[&>*]:-mt-px lg:grid-cols-3">

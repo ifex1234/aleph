@@ -47,8 +47,8 @@ export function TestimonialsSection() {
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 md:[&>*]:-ml-px md:[&>*]:-mt-px lg:grid-cols-3">
           {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.handle} delay={(i % 3) * 80} className="flex">
-              <figure className="flex h-full w-full flex-col justify-between gap-8 border border-border-strong p-8">
+            <Reveal key={t.handle} delay={Math.min((i % 3) * 80, 160)} className="flex">
+              <figure className="flex h-full w-full flex-col justify-between gap-8 border border-border-strong p-8 transition-[background-color,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-surface">
                 <blockquote className="text-xl font-medium leading-8 tracking-[-0.02em] text-foreground md:text-2xl md:tracking-[-0.04em]">
                   {t.quote}
                 </blockquote>

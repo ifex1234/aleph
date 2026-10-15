@@ -1,10 +1,7 @@
-import { IconBrandGithub } from "@tabler/icons-react";
-import { Button } from "../ui/button";
-import { Container } from "../ui/container";
-import { DownloadButton } from "../ui/download-button";
-import { SITE } from "../../_lib/site";
+import { Container } from "../ui/container"
+import { DownloadButton } from "../ui/download-button"
 
-export function HeroSection({ stars }: { stars: number }) {
+export function HeroSection() {
   return (
     <section
       id="top"
@@ -16,42 +13,30 @@ export function HeroSection({ stars }: { stars: number }) {
         as="div"
         className="relative flex flex-col items-center gap-12 py-20 text-center md:py-24 lg:py-28"
       >
-        <div className="flex max-w-[830px] flex-col items-center gap-6">
-          <h1 className="text-balance font-medium tracking-[-0.035em] text-foreground text-[44px] leading-[1.05] sm:text-[56px] md:text-[72px] lg:text-[84px] lg:tracking-[-0.05em]">
-            <span>Your Pastor speaks. </span>
-            <span className="text-accent">Aleph finds the verse.</span>
+        <div className="hero-enter hero-enter-1 flex max-w-207.5 flex-col items-center gap-6">
+          <h1 className="text-[44px] leading-[1.05] font-medium tracking-[-0.035em] text-balance text-foreground sm:text-[56px] md:text-[72px] lg:text-[84px] lg:tracking-[-0.05em]">
+            <span>One app for the </span>
+            <span className="text-accent">whole service.</span>
           </h1>
-          <p className="text-pretty text-base leading-[1.5] text-muted-foreground sm:text-lg md:text-xl lg:text-2xl lg:leading-8">
-            Aleph listens to a live sermon audio feed, transcribes speech in
-            real time, detects Bible verse references (both explicit citations
-            and quoted passages), and renders them as broadcast-ready overlays
-            via NDI for live production.
+          <p className="text-base leading-normal text-pretty text-muted-foreground sm:text-lg md:text-xl lg:text-2xl lg:leading-8">
+            Aleph detects Bible verses live from sermon audio, projects 13,700+
+            offline hymns and song lyrics, runs slides, notes and timer — all
+            through animated themes and multi-output NDI for OBS, vMix and your
+            sanctuary screens.
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-4">
+        <div className="hero-enter hero-enter-2 flex flex-col items-center gap-4">
           <div className="flex flex-wrap items-center justify-center gap-3">
             <DownloadButton />
-            <Button
-              href={SITE.repo.url}
-              variant="secondary"
-              size="md"
-              aria-label={`Star Aleph on GitHub, ${stars} stars`}
-            >
-              <IconBrandGithub size={16} aria-hidden stroke={2} />
-              <span>
-                Star on GitHub{" "}
-                <span className="text-muted-foreground">• {stars}</span>
-              </span>
-            </Button>
           </div>
           <p className="text-[15px] leading-6 text-muted-foreground">
-            Available for Windows and macOS
+            Free for Windows, macOS and Linux • Offline hymns included
           </p>
         </div>
       </Container>
     </section>
-  );
+  )
 }
 
 function HeroGlow() {
@@ -64,5 +49,5 @@ function HeroGlow() {
           "radial-gradient(60% 50% at 50% 0%, rgba(220,38,38,0.18) 0%, rgba(220,38,38,0.05) 40%, transparent 70%)",
       }}
     />
-  );
+  )
 }

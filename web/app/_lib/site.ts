@@ -1,17 +1,17 @@
 export const SITE = {
   name: "Aleph",
   legalName: "openbezal",
-  tagline: "Your Pastor speaks. Aleph finds the verse.",
+  tagline: "The free worship suite for live scripture, hymns & song.",
   shortDescription:
-    "Real-time AI Bible verse detection for live sermons. Free, open-source, broadcast-ready via NDI.",
+    "AI verse detection, 13,700+ offline hymns, lyrics, slides, timer and broadcast-ready NDI themes. Free, open-source, for Windows, macOS and Linux.",
   description:
-    "Aleph listens to a live sermon audio feed, transcribes speech in real time, detects Bible verse references (both explicit citations and quoted passages), and renders them as broadcast-ready overlays via NDI for live production.",
+    "Aleph is a free, open-source worship suite: live AI Bible verse detection from sermon audio, 13,700+ offline hymns with stanza presentation, song lyrics slides, image/video/PDF slides, sermon notes, service timer, animated themes and multi-output NDI for OBS, vMix and live production.",
   url: "https://openaleph.com",
   locale: "en_US",
   twitterHandle: "@openbezal",
   founded: "2025",
   category: "ChurchSoftware",
-  operatingSystems: ["Windows", "macOS"],
+  operatingSystems: ["Windows", "macOS", "Linux"],
   repo: {
     owner: "openbezal",
     name: "aleph",
@@ -45,6 +45,8 @@ export const SITE = {
   stats: {
     languages: "2+",
     translations: "6+",
+    hymns: "13,700+",
+    hymnStanzas: "69,600+",
   },
 } as const;
 
