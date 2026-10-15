@@ -54,10 +54,19 @@ jobs:
       # `/releases/latest/download/<file>` 404'd for whichever assets
       # landed outside the object GitHub picked. All installers are
       # published exactly once by the `publish` job below.
-      - name: Provide whisper.cpp CLI
-        run: |
-          bun run download:whisper-bin
-          bun run electron/scripts/build-whisper-cli.mjs
+      # Windows uses the committed/official prebuilt; macOS and Linux
+      # compile from source (no universal prebuilt exists). Kept as two
+      # steps because download:whisper-bin exits 1 on non-Windows by
+      # design — chaining them with && would never reach the builder.
+      - name: Provide whisper.cpp CLI (Windows prebuilt)
+        if: runner.os == 'Windows'
+        run: bun run download:whisper-bin
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build whisper.cpp CLI (macOS/Linux)
+        if: runner.os != 'Windows'
+        run: bun run electron/scripts/build-whisper-cli.mjs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build installer (no publish)
