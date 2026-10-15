@@ -51,7 +51,22 @@ export function Button({
   const classes = cn(base, sizes[size], variants[variant], className);
 
   if ("href" in rest && rest.href) {
-    const { href, target, rel, ...anchorRest } = rest as AsLink;
+    const { href, target, rel, download, ...anchorRest } = rest as AsLink;
+    if (download !== undefined) {
+      // File downloads stay in the same tab (no target="_blank"): the
+      // browser handles the attachment response as a download, so the
+      // visitor never leaves the page for GitHub.
+      return (
+        <a
+          href={href}
+          download={download}
+          className={classes}
+          {...anchorRest}
+        >
+          {children}
+        </a>
+      );
+    }
     const isExternal = /^https?:\/\//.test(href);
     if (isExternal) {
       return (

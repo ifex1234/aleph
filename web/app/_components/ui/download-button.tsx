@@ -38,6 +38,7 @@ export function DownloadButton({
   return (
     <Button
       href={downloadHref(platform)}
+      download
       variant="primary"
       size={size}
       className={className}

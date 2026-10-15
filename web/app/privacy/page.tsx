@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { SiteNav } from "../_components/sections/site-nav";
-import { SiteFooter } from "../_components/sections/site-footer";
-import { Container } from "../_components/ui/container";
-import { SITE, getGitHubStars } from "../_lib/site";
+import type { Metadata } from "next"
+import { SiteNav } from "../_components/sections/site-nav"
+import { SiteFooter } from "../_components/sections/site-footer"
+import { Container } from "../_components/ui/container"
+import { SITE } from "../_lib/site"
 
-const LAST_UPDATED = "October 15, 2026";
+const LAST_UPDATED = "October 15, 2026"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     url: `${SITE.url}/privacy`,
     type: "article",
   },
-};
+}
 
 const SECTIONS = [
   {
@@ -84,19 +84,18 @@ const SECTIONS = [
       "If this policy changes, the updated date below moves with it and material changes are noted in the release notes. Continued use of the app after changes take effect means you accept the updated policy.",
     ],
   },
-];
+]
 
 export default async function PrivacyPage() {
-  const stars = await getGitHubStars();
   return (
     <>
-      <SiteNav stars={stars} />
+      <SiteNav />
       <main>
-        <Container className="max-w-[880px] py-20 md:py-24">
-          <p className="text-sm font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        <Container className="max-w-220 py-20 md:py-24">
+          <p className="text-sm font-medium tracking-[0.08em] text-muted-foreground uppercase">
             Legal
           </p>
-          <h1 className="mt-3 text-balance text-4xl font-medium leading-[1.05] tracking-[-0.035em] text-foreground sm:text-5xl">
+          <h1 className="mt-3 text-4xl leading-[1.05] font-medium tracking-[-0.035em] text-balance text-foreground sm:text-5xl">
             Privacy Policy
           </h1>
           <p className="mt-4 text-[15px] leading-6 text-muted-foreground">
@@ -108,12 +107,12 @@ export default async function PrivacyPage() {
                 key={s.id}
                 aria-labelledby={`${s.id}-heading`}
                 className={
-                  i > 0 ? "border-t border-border-strong py-8" : "pb-8"
+                  i > 0 ? "border-border-strong border-t py-8" : "pb-8"
                 }
               >
                 <h2
                   id={`${s.id}-heading`}
-                  className="text-xl font-medium leading-8 tracking-[-0.02em] text-foreground md:text-2xl"
+                  className="text-xl leading-8 font-medium tracking-[-0.02em] text-foreground md:text-2xl"
                 >
                   {s.heading}
                 </h2>
@@ -146,5 +145,5 @@ export default async function PrivacyPage() {
         }}
       />
     </>
-  );
+  )
 }
