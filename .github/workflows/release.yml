@@ -78,7 +78,18 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: release/*
+          # Explicit file list — NOT `release/*`. electron-builder also
+          # drops *-unpacked/ build directories next to the installers;
+          # globbing the whole dir would publish thousands of app-internal
+          # files (onnxruntime sources, maps, …) as release assets and
+          # collide on every re-run ("error updating release asset
+          # metadata … Not Found").
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
+            release/*.yml
+            release/*.blockmap
           if-no-files-found: error
 
   publish:
