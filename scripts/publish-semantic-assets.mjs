@@ -32,7 +32,7 @@ import { spawnSync } from "node:child_process"
 
 const PROJECT_ROOT = path.resolve(import.meta.dirname, "..")
 const STAGE_DIR = path.join(PROJECT_ROOT, "dist-assets")
-const DEFAULT_REPO = "openbezal/aleph"
+const DEFAULT_REPO = "ifex1234/aleph"
 
 // Must stay in sync with electron/services/semantic-download.ts.
 const ASSETS = [

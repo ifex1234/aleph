@@ -8,7 +8,7 @@ import {
 } from "@tabler/icons-react";
 import { Button } from "./button";
 import { usePlatform } from "../../_lib/use-platform";
-import { downloadHref } from "../../_lib/site";
+import { useDownload } from "../../_lib/use-download";
 
 const COPY: Record<
   "mac" | "windows" | "linux" | "other" | "default",
@@ -32,19 +32,25 @@ export function DownloadButton({
   className?: string;
 }) {
   const platform = usePlatform();
+  const { href, resolving, onClick } = useDownload(platform);
   const copy = COPY[platform ?? "default"];
   const Icon = copy.icon;
 
   return (
     <Button
-      href={downloadHref(platform)}
+      href={href}
       download
       variant="primary"
       size={size}
       className={className}
+      onClick={onClick}
+      aria-busy={resolving || undefined}
+      aria-live="polite"
     >
       <Icon size={16} aria-hidden stroke={2} />
-      <span suppressHydrationWarning>{copy.label}</span>
+      <span suppressHydrationWarning>
+        {resolving ? "Finding your download…" : copy.label}
+      </span>
     </Button>
   );
 }

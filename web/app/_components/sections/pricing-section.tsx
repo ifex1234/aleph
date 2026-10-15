@@ -1,10 +1,13 @@
+"use client"
+
 import { IconCheck } from "@tabler/icons-react"
 import { Button } from "../ui/button"
 import { Container } from "../ui/container"
 import { Reveal } from "../ui/reveal"
 import { SectionHeading } from "./section-heading"
-import { SITE } from "../../_lib/site"
 import { cn } from "../../_lib/utils"
+import { usePlatform } from "../../_lib/use-platform"
+import { useDownload } from "../../_lib/use-download"
 
 const FREE_FEATURES = [
   "Whisper transcription, running on-device once downloaded",
@@ -21,6 +24,8 @@ const PRO_FEATURES = [
 ] as const
 
 export function PricingSection() {
+  const platform = usePlatform()
+  const download = useDownload(platform)
   return (
     <section
       id="pricing"
@@ -67,8 +72,16 @@ export function PricingSection() {
                 ))}
               </ul>
               <div className="mt-auto pt-2">
-                <Button href={SITE.repo.releases} variant="primary">
-                  Download on Windows, macOS or Linux
+                <Button
+                  href={download.href}
+                  download
+                  variant="primary"
+                  onClick={download.onClick}
+                  aria-busy={download.resolving || undefined}
+                >
+                  {download.resolving
+                    ? "Finding your download…"
+                    : "Download on Windows, macOS or Linux"}
                 </Button>
               </div>
             </div>
@@ -119,8 +132,14 @@ export function PricingSection() {
                 ))}
               </ul>
               <div className="mt-auto space-x-3 pt-2">
-                <Button href={SITE.repo.releases} variant="primary">
-                  Download
+                <Button
+                  href={download.href}
+                  download
+                  variant="primary"
+                  onClick={download.onClick}
+                  aria-busy={download.resolving || undefined}
+                >
+                  {download.resolving ? "Finding your download…" : "Download"}
                 </Button>
                 <Button
                   href="https://deepgram.com"

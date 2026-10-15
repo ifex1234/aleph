@@ -1,6 +1,6 @@
 ---
 title: Speech-to-Text Engines
-description: Choose between local Whisper and cloud Deepgram, and configure either with the right environment variables.
+description: Choose between local Whisper and cloud Deepgram, and set either one up on your machine.
 icon: Mic
 ---
 
@@ -8,95 +8,98 @@ import { Callout } from "fumadocs-ui/components/callout";
 import { Card, Cards } from "fumadocs-ui/components/card";
 
 Aleph supports two STT engines, and you can swap between them at runtime
-from the settings dialog. They map cleanly to two different operating
+from Settings → STT. They map cleanly to two different operating
 modes: zero-marginal-cost local inference, or offload-to-the-cloud
 streaming.
 
 <Cards>
   <Card
     title="Whisper (local, free)"
-    description="Runs whisper.cpp on your machine — no API key, no internet, no per-minute billing. Higher first-build cost since whisper.cpp compiles from source."
+    description="Runs the whisper.cpp CLI on your machine — no API key, no internet, no per-minute billing. Costs a one-time ~400 MB model download."
   />
   <Card
     title="Deepgram (cloud, paid)"
-    description="Streams audio to Deepgram's WebSocket endpoint with a REST fallback. Lower latency and higher accuracy on long-form sermons; needs a paid API key."
+    description="Streams audio to Deepgram's WebSocket endpoint with a REST fallback. Lower latency and higher accuracy on long-form sermons; needs your own API key."
   />
 </Cards>
 
 ## Option 1: Whisper (recommended for most installs)
 
-The Whisper integration uses [`whisper.cpp`](https://github.com/ggerganov/whisper.cpp)
-through the `whisper-rs = "0.16"` Rust crate (gated behind the
-`whisper` feature on `aleph-stt`). The first `cargo build` compiles
-the C++ source via `bindgen`.
+The local engine shells out to the `whisper-cli` binary from
+[`whisper.cpp`](https://github.com/ggml-org/whisper.cpp), feeding it short
+audio windows as you preach. It needs two files: the binary and a GGML
+model (`ggml-large-v3-turbo-q8_0.bin`, ~394 MB from Hugging Face).
 
-The model file (`ggml-large-v3-turbo-q8_0.bin`) is downloaded once
-into `models/whisper/` as **phase 7** of `setup:all`. If you skipped
-or interrupted that phase, run it on its own:
+### Installed app
+
+Every installer now bundles the CLI — open Settings → STT and pick
+**Whisper**. (On older macOS/Linux builds that predate bundling, provide
+the binary yourself: `brew install whisper-cpp` and copy `whisper-cli`
+into `sdk/whisper/macos/`, or build from source into
+`sdk/whisper/linux/` — or simply point at any copy with
+`export ALEPH_WHISPER_BIN=/path/to/whisper-cli`.)
+
+### Building from source
+
+From the repo root, run both scripts (each skips work that's already done,
+so re-running is safe):
 
 ```bash
-bun run download:whisper
+bun run download:whisper-bin   # CLI binary (auto-downloads on Windows)
+bun run download:whisper       # model file → models/whisper/
 ```
 
-<Callout title="Build dependencies" type="info">
-You need **CMake** and **libclang** on your `PATH` for the Rust
-build to succeed. macOS gets these from Homebrew
-(`brew install cmake`) plus the Xcode CLT. Linux gets them from your
-package manager. Windows installs them via `bun run setup:windows`.
-See [Platform setup](/docs/getting-started/platform-setup) for the
-exact commands.
+### How the app finds things
+
+The binary resolves by first match: `$ALEPH_WHISPER_BIN` →
+bundled resources → `sdk/whisper/&lt;platform&gt;/`
+→ `/opt/homebrew/bin/whisper-cli`, `/usr/local/bin/whisper-cli`.
+The model resolves similarly via `$ALEPH_WHISPER_MODEL`, preferring
+`ggml-large-v3-turbo-q8_0.bin` — but any `ggml-*.bin` you drop into
+`models/whisper/` works, so smaller models are a legitimate trade of
+accuracy for speed on modest hardware.
+
+<Callout title="Missing pieces surface in the UI" type="info">
+If the binary or model is absent, starting transcription fails with an
+actionable error telling you exactly which command to run — check the
+status indicator under the STT picker.
 </Callout>
 
 ## Option 2: Deepgram
 
-Deepgram is a cloud speech-to-text service that streams audio over a
-WebSocket. Aleph also has a REST fallback that re-uploads short windows if
-the WebSocket disconnects.
-
 ### 1. Get an API key
 
 Sign up at [deepgram.com](https://deepgram.com/) and copy your API key.
+Their $200 starter credit covers roughly 273 two-hour sermons.
 
-### 2. Add it to `.env`
+### 2. Add it in the app
 
-Create a `.env` file in the project root:
+Open Settings → STT, paste the key, and choose **Deepgram**. (Developers
+running from source can use `DEEPGRAM_API_KEY` in `.env` instead.)
 
-```bash
-DEEPGRAM_API_KEY=dg_your_key_here
-```
-
-Restart `bun run tauri dev` so the new key is picked up.
-
-### 3. Switch to Deepgram in the app
-
-Open Settings → STT and choose **Deepgram**. The status indicator shows
-WebSocket health in real time; if it falls back to REST, you'll see that
-labeled too.
-
-![Settings dialog with the STT engine picker showing Whisper and Deepgram options](/docs/screenshots/settings-stt-picker.png)
-
-*Settings → STT lets you flip between local Whisper and cloud Deepgram at runtime. The connection status indicator under the picker turns green when Deepgram's WebSocket is healthy and amber when it falls back to REST. **Click to expand.***
+The status indicator shows WebSocket health in real time; if it falls back
+to REST, you'll see that labeled too.
 
 ## Switching engines at runtime
 
-Both engines are wired into the same transcript stream, so you can switch
-without restarting the session. The active translation, sermon context,
+Both engines feed the same transcript stream, so you can switch without
+restarting the session. The active translation, sermon context,
 and queue state are preserved across the swap.
 
 ## Comparing the two
 
 | | Whisper (local) | Deepgram (cloud) |
 | --- | --- | --- |
-| API cost | Free | Per-minute billing |
-| Internet required | No, after the model is downloaded | Yes (WebSocket) |
-| First-build time | Several minutes — `whisper.cpp` compiles via `bindgen` | Instant |
+| API cost | Free | Per-minute billing (your key) |
+| Internet required | No, after the one-time downloads | Yes (WebSocket) |
+| Setup cost | ~400 MB model download | Instant |
 | Long-form accuracy | Good | Excellent |
 | Punctuation | Decent | Excellent |
 | Works offline | Yes | No |
 
 Latency depends heavily on hardware and network conditions, so we
 don't publish a single number — Whisper benefits from any GPU/Metal
-acceleration `whisper-rs` can pick up, and Deepgram is bounded by the
+acceleration on the machine, and Deepgram is bounded by the
 round-trip to its nearest region. Pick whichever fits your install:
 Whisper for the no-cost local path, Deepgram for the lowest latency
 and best transcription quality on a reliable network.

@@ -17,14 +17,17 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  build:
     strategy:
       matrix:
         # macOS runners are Apple Silicon; the dmg is arm64-only.
         include:
           - os: windows-latest
+            artifact: installer-windows
           - os: macos-latest
+            artifact: installer-macos
           - os: ubuntu-latest
+            artifact: installer-linux
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -46,7 +49,44 @@ jobs:
           bun run data/build-bible-db.ts
           bun run data/build-hymns-db.ts
 
-      - name: Build + publish installer
-        run: npm run release
+      # NOTE: --publish never here. Publishing inside the matrix used to
+      # create one GitHub release PER platform job for the same tag, so
+      # `/releases/latest/download/<file>` 404'd for whichever assets
+      # landed outside the object GitHub picked. All installers are
+      # published exactly once by the `publish` job below.
+      - name: Provide whisper.cpp CLI
+        run: |
+          bun run download:whisper-bin
+          bun run electron/scripts/build-whisper-cli.mjs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build installer (no publish)
+        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: release/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download installers
+        uses: actions/download-artifact@v4
+        with:
+          pattern: installer-*
+          merge-multiple: true
+          path: installers
+
+      # Single release object for the tag: every platform asset plus the
+      # electron-updater metadata (latest*.yml, blockmaps) lands together,
+      # so direct download links and in-app updates resolve every file.
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: installers/**/*

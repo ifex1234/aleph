@@ -1,6 +1,6 @@
 # Aleph marketing site
 
-Next.js 16 marketing site for [Aleph](https://openaleph.com). Static-only — no API routes, no server actions. Deployed to GitHub Pages on push to `main`.
+Next.js 16 marketing site for [Aleph](https://aleph.zeravest.com). Static-only — no API routes, no server actions. Deployed to GitHub Pages on push to `main`.
 
 ## Develop
 
@@ -22,7 +22,7 @@ Outputs a static site to `web/out/`.
 
 ## Deploy
 
-Pushes to `main` that touch `web/**` trigger `.github/workflows/deploy-web.yml`, which builds the static export and publishes it to GitHub Pages at [https://openaleph.com](https://openaleph.com).
+Pushes to `main` that touch `web/**` trigger `.github/workflows/deploy-web.yml`, which builds the static export and publishes it to GitHub Pages at [https://aleph.zeravest.com](https://aleph.zeravest.com).
 
 To trigger a deploy without code changes (e.g., to refresh the GitHub stars count baked into the page), use the **Run workflow** button on the *Deploy web to GitHub Pages* action in the GitHub UI.
 

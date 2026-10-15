@@ -1,12 +1,12 @@
 export const SITE = {
   name: "Aleph",
-  legalName: "openbezal",
+  legalName: "Zeravest Technologies",
   tagline: "Every verse, hymn and song — live on screen.",
   shortDescription:
     "Free open-source church presentation suite: AI sermon-verse spotting, 13,700+ offline hymns, lyrics and decks over NDI for Windows, macOS and Linux.",
   description:
     "Aleph is a free, open-source presentation suite for worship gatherings: live AI passage spotting from sermon audio, 13,700+ offline hymns with stanza display, congregational song lyrics, image, video and PDF decks, sermon notes, a service timer, motion themes and multi-output NDI for OBS, vMix and sanctuary production.",
-  url: "https://openaleph.com",
+  url: "https://aleph.zeravest.com",
   locale: "en_US",
   twitterHandle: "@openbezal",
   founded: "2025",
@@ -32,10 +32,10 @@ export const SITE = {
     stars: { fallback: 221 },
   },
   socials: {
-    github: "https://github.com/openbezal/aleph",
+    github: "https://github.com/ifex1234/aleph",
     twitter: "https://x.com/openbezal",
     linkedin: "https://www.linkedin.com/company/openbezal",
-    email: "mailto:hello@openbezal.com",
+    email: "mailto:info@zeravest.ng",
   },
   stats: {
     languages: "2+",

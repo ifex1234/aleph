@@ -60,7 +60,7 @@ const SECTIONS = [
     id: "website",
     heading: "This website",
     body: [
-      "These pages are pre-rendered static files: no accounts, no cookies, no tracking scripts. The GitHub star count shown on the homepage is fetched server-side from the public GitHub API. Following outbound links (GitHub, X, LinkedIn) or emailing hello@openbezal.com puts you under those services' own policies.",
+      "These pages are pre-rendered static files: no accounts, no cookies, no tracking scripts. The GitHub star count shown on the homepage is fetched server-side from the public GitHub API. Following outbound links (GitHub, X, LinkedIn) or emailing info@zeravest.ng puts you under those services' own policies.",
     ],
   },
   {
@@ -74,7 +74,7 @@ const SECTIONS = [
     id: "rights",
     heading: "Your rights and contact",
     body: [
-      "Because Aleph holds no cloud copy of your data, there is nothing to request, export or delete from us — everything is already in your hands, on your machine. For privacy questions, email hello@openbezal.com and include “Privacy” in the subject.",
+      "Because Aleph holds no cloud copy of your data, there is nothing to request, export or delete from us — everything is already in your hands, on your machine. For privacy questions, email info@zeravest.ng and include “Privacy” in the subject.",
     ],
   },
   {

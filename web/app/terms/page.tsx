@@ -25,7 +25,7 @@ const SECTIONS = [
     id: "deal",
     heading: "The deal in one paragraph",
     body: [
-      "Aleph is free, open-source software released under the MIT license, published on GitHub by openbezal. You may download, use, study and modify it. The full license text in the repository controls where it differs from this summary.",
+      "Aleph is free, open-source software released under the MIT license, published on GitHub by Zeravest Technologies. You may download, use, study and modify it. The full license text in the repository controls where it differs from this summary.",
     ],
   },
   {
@@ -88,7 +88,7 @@ const SECTIONS = [
     id: "changes",
     heading: "Changes and contact",
     body: [
-      "These terms may change; the updated date below moves with each revision and continued use means acceptance. Questions about these terms go to hello@openbezal.com with “Terms” in the subject.",
+      "These terms may change; the updated date below moves with each revision and continued use means acceptance. Questions about these terms go to info@zeravest.ng with “Terms” in the subject.",
     ],
   },
 ]

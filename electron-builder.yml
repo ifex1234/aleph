@@ -69,6 +69,10 @@ mac:
   extraResources:
     - from: sdk/ndi/macos/libndi.dylib
       to: ndi/libndi.dylib
+    # whisper-cli, built from source in CI (release.yml) — same layout
+    # the app resolves first via resourceDir()/whisper.
+    - from: sdk/whisper/macos
+      to: whisper
 
 linux:
   target:
@@ -79,5 +83,7 @@ linux:
   extraResources:
     - from: sdk/ndi/linux/libndi.so
       to: ndi/libndi.so
+    - from: sdk/whisper/linux
+      to: whisper
 
 npmRebuild: true
