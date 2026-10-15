@@ -19,5 +19,6 @@ export function bridge(): AlephBridge {
   if (!b) {
     throw new Error("Aleph bridge unavailable (running outside Electron?)")
   }
+  console.log("[bridge] accessed")
   return b
 }

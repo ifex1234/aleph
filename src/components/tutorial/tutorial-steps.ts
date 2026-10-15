@@ -74,6 +74,42 @@ export const TUTORIAL_STEPS: Step[] = [
   },
   {
     ...STEP_DEFAULTS,
+    target: '[data-tour="lyrics"]',
+    title: "Lyrics",
+    content:
+      "Write songs with verses separated by blank lines. Present a song, then step through verses from the Live display footer or with the arrow keys.",
+    placement: "right",
+    spotlightPadding: 4,
+  },
+  {
+    ...STEP_DEFAULTS,
+    target: '[data-tour="hymns"]',
+    title: "Hymns",
+    content:
+      "Browse over 13,000 hymns by number, title, or first line. Click any stanza to present it live.",
+    placement: "right",
+    spotlightPadding: 4,
+  },
+  {
+    ...STEP_DEFAULTS,
+    target: '[data-tour="slides"]',
+    title: "Slides",
+    content:
+      "Add image, video, or PDF slides for announcements. Click a slide to present it, then navigate with the footer controls.",
+    placement: "right",
+    spotlightPadding: 4,
+  },
+  {
+    ...STEP_DEFAULTS,
+    target: '[data-tour="notes"]',
+    title: "Notes",
+    content:
+      "Keep service notes handy in a side panel that never goes live.",
+    placement: "right",
+    spotlightPadding: 4,
+  },
+  {
+    ...STEP_DEFAULTS,
     target: '[data-tour="broadcast"]',
     title: "Broadcast",
     content:
@@ -95,5 +131,14 @@ export const TUTORIAL_STEPS: Step[] = [
     content:
       "Configure audio input, Bible translations, display mode, remote control, and API keys.",
     placement: "bottom",
+  },
+  {
+    ...STEP_DEFAULTS,
+    target: '[data-tour="support"]',
+    title: "Support",
+    content:
+      "Support Aleph's development, explore sister apps, and find donation details.",
+    placement: "right",
+    spotlightPadding: 4,
   },
 ]

@@ -10,6 +10,7 @@ import { initSemanticDownload } from "./services/semantic-download"
 import { capture } from "./services/stt/session"
 import { shutdownNdi } from "./services/ndi"
 import { oscServer, httpServer } from "./ipc"
+import { initAutoUpdater } from "./services/updater"
 
 /**
  * Electron main process. Loads the Vite-built renderer (or the dev server),
@@ -119,6 +120,12 @@ if (!app.requestSingleInstanceLock()) {
     initRuntime()
     // Fetch semantic-search assets on first run of packaged builds.
     initSemanticDownload()
+    // Background update checks (packaged builds only) with restart prompt.
+    try {
+      initAutoUpdater()
+    } catch (e) {
+      warn("[main] auto-updater init failed:", e)
+    }
 
     const main = createMainWindow()
     void main

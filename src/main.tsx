@@ -11,6 +11,9 @@ import { hydrateSettings } from "@/stores/settings-store"
 import { hydrateBibleStore, initBiblePersistence } from "@/stores/bible-store"
 import { hydrateBroadcastThemes } from "@/stores/broadcast-store"
 import { hydrateGalleryImages } from "@/stores/gallery-store"
+import { hydrateNotesStore } from "@/stores/notes-store"
+import { hydrateLyricsStore } from "@/stores/lyrics-store"
+import { hydrateSlidesStore } from "@/stores/slides-store"
 
 // Frontend warnings, errors and uncaught rejections only exist in devtools
 // otherwise, so the logs a user sends us would say nothing about them.
@@ -30,6 +33,9 @@ invoke("stop_transcription")
       hydrateBibleStore(),
       hydrateBroadcastThemes(),
       hydrateGalleryImages(),
+      hydrateNotesStore(),
+      hydrateLyricsStore(),
+      hydrateSlidesStore(),
     ])
   )
   .then(() => initBiblePersistence())

@@ -1,0 +1,28 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aleph notes panel with service notes">
+  <rect width="1280" height="720" fill="#010106"/>
+  <rect x="320" y="36" width="640" height="648" rx="12" fill="#18181B" stroke="#26262B" stroke-width="1.5"/>
+  <text x="352" y="88" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="600" fill="#FFFFFF">Notes</text>
+  <text x="928" y="88" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="26" fill="#9F9FA9">✕</text>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="352" y="110" width="576" height="72" rx="8" fill="#27272A" stroke="#FB2C36" stroke-width="1.5"/>
+    <text x="368" y="138" font-size="19" font-weight="600" fill="#FFFFFF">Sunday Service Notes</text>
+    <text x="368" y="162" font-size="16" fill="#9F9FA9">Updated 9:41 AM · 128 words</text>
+    <rect x="352" y="192" width="576" height="72" rx="8" fill="#18181B" stroke="#26262B" stroke-width="1"/>
+    <text x="368" y="220" font-size="19" fill="#FFFFFF">Prayer Points</text>
+    <text x="368" y="244" font-size="16" fill="#9F9FA9">Updated Yesterday · 46 words</text>
+    <rect x="352" y="274" width="576" height="72" rx="8" fill="#18181B" stroke="#26262B" stroke-width="1"/>
+    <text x="368" y="302" font-size="19" fill="#FFFFFF">Announcement Drafts</text>
+    <text x="368" y="326" font-size="16" fill="#9F9FA9">Updated Friday · 73 words</text>
+  </g>
+  <line x1="352" y1="368" x2="928" y2="368" stroke="#26262B" stroke-width="1.5"/>
+  <text x="352" y="404" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600" fill="#FFFFFF">Sunday Service Notes</text>
+  <g font-family="Georgia, serif" font-size="21" fill="#D8D8DC">
+    <text x="352" y="444">Opening prayer — Pastor James, 5 min.</text>
+    <text x="352" y="478">Worship set: Amazing Grace, Great Is</text>
+    <text x="352" y="512">Thy Faithfulness, It Is Well.</text>
+    <text x="352" y="546">Sermon: Romans 8 — "No Condemnation".</text>
+    <text x="352" y="580">Close with benediction + announcements.</text>
+  </g>
+  <rect x="352" y="604" width="150" height="40" rx="8" fill="#FB2C36"/>
+  <text x="427" y="630" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="600" fill="#FFFFFF">Save Note</text>
+</svg>

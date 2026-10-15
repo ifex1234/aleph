@@ -199,6 +199,25 @@ export function getVerse(
   return (row as Verse | undefined) ?? null
 }
 
+export function getVerseRange(
+  translationId: number,
+  bookNumber: number,
+  chapter: number,
+  startVerse: number,
+  endVerse: number
+): Verse[] {
+  const c = requireConn()
+  if (!c) return []
+  if (startVerse > endVerse) return []
+  return c
+    .prepare(
+      `SELECT ${VERSE_COLUMNS} FROM verses v
+       WHERE v.translation_id = ? AND v.book_number = ? AND v.chapter = ? AND v.verse BETWEEN ? AND ?
+       ORDER BY v.verse`
+    )
+    .all(translationId, bookNumber, chapter, startVerse, endVerse) as Verse[]
+}
+
 export function getTranslationVersesForSearch(
   translationId: number
 ): VerseSearchRow[] {

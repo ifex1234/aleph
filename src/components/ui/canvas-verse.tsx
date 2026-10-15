@@ -1,5 +1,9 @@
 import { useRef, useEffect, useState, useCallback, memo } from "react"
 import { onThemeFontsLoaded, renderVerse } from "@/lib/verse-renderer"
+import {
+  allowBackgroundMotion,
+  isMotionEnabled,
+} from "@/lib/background-motion"
 import { preloadThemeImages, themeImageCache } from "@/lib/theme-image-cache"
 import type { BroadcastTheme, VerseRenderData } from "@/types"
 import { cn } from "@/lib/utils"
@@ -32,29 +36,33 @@ export const CanvasVerse = memo(function CanvasVerse({
     return () => observer.disconnect()
   }, [])
 
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current
-    if (!canvas || containerWidth === 0) return
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
+  const draw = useCallback(
+    (timeMs?: number) => {
+      const canvas = canvasRef.current
+      if (!canvas || containerWidth === 0) return
+      const ctx = canvas.getContext("2d")
+      if (!ctx) return
 
-    const dpr = window.devicePixelRatio || 1
-    const aspectRatio = theme.resolution.width / theme.resolution.height
-    const displayW = containerWidth
-    const displayH = displayW / aspectRatio
+      const dpr = window.devicePixelRatio || 1
+      const aspectRatio = theme.resolution.width / theme.resolution.height
+      const displayW = containerWidth
+      const displayH = displayW / aspectRatio
 
-    canvas.width = displayW * dpr
-    canvas.height = displayH * dpr
-    canvas.style.width = `${displayW}px`
-    canvas.style.height = `${displayH}px`
+      canvas.width = displayW * dpr
+      canvas.height = displayH * dpr
+      canvas.style.width = `${displayW}px`
+      canvas.style.height = `${displayH}px`
 
-    ctx.scale(dpr, dpr)
-    const scale = displayW / theme.resolution.width
-    renderVerse(ctx, theme, verse, {
-      scale,
-      imageCache: themeImageCache(),
-    })
-  }, [theme, verse, containerWidth])
+      ctx.scale(dpr, dpr)
+      const scale = displayW / theme.resolution.width
+      renderVerse(ctx, theme, verse, {
+        scale,
+        imageCache: themeImageCache(),
+        timeMs,
+      })
+    },
+    [theme, verse, containerWidth]
+  )
 
   // Preload every image the theme uses so the renderer finds them in the cache.
   useEffect(() => {
@@ -65,6 +73,20 @@ export const CanvasVerse = memo(function CanvasVerse({
   useEffect(() => {
     draw()
   }, [draw])
+
+  // Lively animated gradient background: redraw every frame while motion is
+  // enabled. Static themes keep the single-shot draw above. Honors the OS
+  // reduced-motion setting by staying on the static frame.
+  useEffect(() => {
+    if (!isMotionEnabled(theme) || !allowBackgroundMotion()) return
+    let raf = 0
+    const tick = () => {
+      draw(performance.now())
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [theme, draw])
 
   // Redraw once theme webfonts load so early frames drawn against fallback
   // font metrics are corrected.

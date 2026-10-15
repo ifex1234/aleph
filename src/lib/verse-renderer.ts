@@ -9,6 +9,7 @@ import {
   type RichInlineLine,
 } from "@chenglou/pretext/rich-inline"
 import { imageContentBox } from "@/lib/theme-image-cache"
+import { motionAngle, motionRadialCenter } from "@/lib/background-motion"
 import type {
   BroadcastTheme,
   SurfaceFill,
@@ -178,19 +179,29 @@ export function wrapText(
   return lines
 }
 
-export interface VerseInlineHandle {
+export interface VerseInlineBlock {
   prepared: PreparedRichInline
-  /** Per-item kind, indexed by RichInlineFragment.itemIndex. */
+  /** Per-item kind, indexed by RichInlineFragment.itemIndex within this block. */
   kinds: ("word" | "verseNum")[]
+}
+
+export interface VerseInlineHandle {
+  /** One flow block per hard line break (`\n`) in the verse text. */
+  blocks: VerseInlineBlock[]
   wordFont: string
   verseNumFont: string
 }
 
 /**
- * Compile verse segments into a pretext rich-inline flow: verse numbers are
+ * Compile verse segments into pretext rich-inline flows: verse numbers are
  * their own atomic items so they wrap, measure, and draw with their own font
  * size. Numbers scale proportionally with the auto-fitted verse size; when
  * superscript is off they render at the full verse size (colour still applies).
+ *
+ * Newlines in segment text are hard line breaks: each `\n`-separated run
+ * becomes its own block so hymn stanzas keep their line structure while
+ * still auto-fitting. Text without newlines (e.g. Bible verses) compiles to
+ * a single block, exactly as before.
  */
 export function prepareVerseInline(
   theme: BroadcastTheme,
@@ -208,37 +219,65 @@ export function prepareVerseInline(
   const verseNumFont = `${vt.fontWeight} ${verseNumFontSize}px "${vt.fontFamily}", serif`
   const letterSpacing = vt.letterSpacing > 0 ? vt.letterSpacing : undefined
 
-  const items: RichInlineItem[] = []
-  const kinds: ("word" | "verseNum")[] = []
+  const blocks: Array<{ items: RichInlineItem[]; kinds: ("word" | "verseNum")[] }> = [
+    { items: [], kinds: [] },
+  ]
   for (const segment of verse.segments) {
     if (vn.visible && segment.verseNumber !== undefined) {
-      items.push({
+      const current = blocks[blocks.length - 1]
+      current.items.push({
         text: `${segment.verseNumber} `,
         font: verseNumFont,
         letterSpacing,
         break: "never",
       })
-      kinds.push("verseNum")
+      current.kinds.push("verseNum")
     }
-    const text = applyTextTransform(segment.text, transform).trim()
-    if (text) {
-      items.push({ text: `${text} `, font: wordFont, letterSpacing })
-      kinds.push("word")
-    }
+    const pieces = applyTextTransform(segment.text, transform).split("\n")
+    pieces.forEach((piece, pieceIndex) => {
+      if (pieceIndex > 0) blocks.push({ items: [], kinds: [] })
+      const text = piece.trim()
+      if (!text) return
+      const current = blocks[blocks.length - 1]
+      current.items.push({ text: `${text} `, font: wordFont, letterSpacing })
+      current.kinds.push("word")
+    })
   }
-  if (!items.length) return null
+  // Fully-empty verse: same as before (callers treat null as "no verse").
+  if (blocks.every((b) => b.items.length === 0)) return null
 
-  return { prepared: prepareRichInline(items), kinds, wordFont, verseNumFont }
+  return {
+    // Interior empty blocks are kept: they lay out as blank lines so
+    // intentional spacing in the text survives measurement and drawing.
+    blocks: blocks.map((b) => ({
+      prepared: prepareRichInline(b.items),
+      kinds: b.kinds,
+    })),
+    wordFont,
+    verseNumFont,
+  }
 }
 
 function layoutVerseLines(
   handle: VerseInlineHandle,
   maxWidth: number
-): RichInlineLine[] {
-  const lines: RichInlineLine[] = []
-  walkRichInlineLineRanges(handle.prepared, Math.max(1, maxWidth), (range) => {
-    lines.push(materializeRichInlineLineRange(handle.prepared, range))
-  })
+): Array<{ line: RichInlineLine; kinds: ("word" | "verseNum")[] }> {
+  const lines: Array<{ line: RichInlineLine; kinds: ("word" | "verseNum")[] }> = []
+  for (const block of handle.blocks) {
+    if (block.kinds.length === 0) {
+      lines.push({
+        line: { fragments: [], width: 0, end: { itemIndex: 0, segmentIndex: 0, graphemeIndex: 0 } },
+        kinds: block.kinds,
+      })
+      continue
+    }
+    walkRichInlineLineRanges(block.prepared, Math.max(1, maxWidth), (range) => {
+      lines.push({
+        line: materializeRichInlineLineRange(block.prepared, range),
+        kinds: block.kinds,
+      })
+    })
+  }
   return lines
 }
 
@@ -434,7 +473,8 @@ function drawBackground(
   ctx: CanvasRenderingContext2D,
   theme: BroadcastTheme,
   rect: VerseLayoutRect,
-  imageCache?: Map<string, HTMLImageElement>
+  imageCache?: Map<string, HTMLImageElement>,
+  timeMs = 0
 ): void {
   const { width, height } = theme.resolution
   const bg = theme.background
@@ -450,7 +490,8 @@ function drawBackground(
       let grad: CanvasGradient
 
       if (bg.gradient.type === "linear") {
-        const angle = (bg.gradient.angle * Math.PI) / 180
+        const angle =
+          (motionAngle(bg.gradient.angle, bg.motion, timeMs) * Math.PI) / 180
         const cx = rect.x + rect.width / 2
         const cy = rect.y + rect.height / 2
         const len =
@@ -462,12 +503,17 @@ function drawBackground(
           cy + Math.sin(angle) * len
         )
       } else {
+        // With motion the highlight drifts on a small orbit; otherwise it
+        // sits dead center, exactly as before.
+        const center = motionRadialCenter(bg.motion, timeMs)
+        const cx = rect.x + center.x * rect.width
+        const cy = rect.y + center.y * rect.height
         grad = ctx.createRadialGradient(
-          rect.x + rect.width / 2,
-          rect.y + rect.height / 2,
+          cx,
+          cy,
           0,
-          rect.x + rect.width / 2,
-          rect.y + rect.height / 2,
+          cx,
+          cy,
           Math.max(rect.width, rect.height) / 2
         )
       }
@@ -735,7 +781,7 @@ function drawVerseText(
   }
 
   let currentY = startY
-  for (const [index, line] of lines.entries()) {
+  for (const [index, { line, kinds }] of lines.entries()) {
     const isJustifiedLine =
       verseAlign === "justify" &&
       index < lines.length - 1 &&
@@ -758,7 +804,7 @@ function drawVerseText(
       cursorX += fragment.gapBefore + (i > 0 ? extraGap : 0)
       drawFragment(
         fragment.text,
-        handle.kinds[fragment.itemIndex],
+        kinds[fragment.itemIndex],
         cursorX,
         currentY
       )
@@ -960,14 +1006,22 @@ export function measureVerseHeight(
   if (!handle) {
     return { height: lineHeightPx, maxLineWidth: 1 }
   }
-  const stats = measureRichInlineStats(handle.prepared, Math.max(1, textRectWidth))
-  const maxLineWidth =
-    verseAlign === "justify" && stats.lineCount > 1
-      ? textRectWidth
-      : stats.maxLineWidth
+  let totalLines = 0
+  let maxLineWidth = 1
+  for (const block of handle.blocks) {
+    if (block.kinds.length === 0) {
+      // Blank hard-break line still occupies a line of height.
+      totalLines += 1
+      continue
+    }
+    const stats = measureRichInlineStats(block.prepared, Math.max(1, textRectWidth))
+    totalLines += Math.max(1, stats.lineCount)
+    maxLineWidth = Math.max(maxLineWidth, stats.maxLineWidth)
+  }
   return {
-    height: Math.max(1, stats.lineCount) * lineHeightPx,
-    maxLineWidth: Math.max(1, maxLineWidth),
+    height: Math.max(1, totalLines) * lineHeightPx,
+    maxLineWidth:
+      verseAlign === "justify" && totalLines > 1 ? textRectWidth : Math.max(1, maxLineWidth),
   }
 }
 
@@ -1382,8 +1436,14 @@ function renderVerseImpl(
     ctx.globalAlpha = options.opacity
   }
 
-  // Draw background
-  drawBackground(ctx, scaledTheme, metrics.backgroundRect, options?.imageCache)
+  // Draw background (animated when the theme enables gradient motion)
+  drawBackground(
+    ctx,
+    scaledTheme,
+    metrics.backgroundRect,
+    options?.imageCache,
+    options?.timeMs
+  )
 
   // The container behind the reference + verse block, then each element's own
   // plate on top of it.
@@ -1449,3 +1509,5 @@ function renderVerseImpl(
   ctx.restore()
   return metrics
 }
+
+export { drawBackground }

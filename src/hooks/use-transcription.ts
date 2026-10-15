@@ -4,6 +4,7 @@ import { toast } from "sonner"
 import { useAudioStore } from "@/stores/audio-store"
 import { useSettingsStore } from "@/stores/settings-store"
 import { useTranscriptStore } from "@/stores/transcript-store"
+import { useNotesStore } from "@/stores/notes-store"
 import { mark } from "@/lib/latency-marks"
 import { useTauriEvent } from "./use-tauri-event"
 
@@ -104,11 +105,13 @@ export function useTranscription(options?: UseTranscriptionOptions) {
   })
 
   useTauriEvent<TranscriptPartialPayload>("transcript_partial", (payload) => {
+    console.log("[transcript] partial received:", payload.text)
     mark(`transcript_partial received "${payload.text.slice(0, 30)}"`)
     useTranscriptStore.getState().setPartial(payload.text)
   })
 
   useTauriEvent<TranscriptPartialPayload>("transcript_final", (payload) => {
+    console.log("[transcript] final received:", payload.text)
     mark(`transcript_final received "${payload.text.slice(0, 30)}"`)
     useTranscriptStore.getState().addSegment({
       id: crypto.randomUUID(),
@@ -118,6 +121,15 @@ export function useTranscription(options?: UseTranscriptionOptions) {
       words: [],
       timestamp: Date.now(),
     })
+
+    // Auto-save to notes: append to active note or create new one
+    const notesState = useNotesStore.getState()
+    if (notesState.notes.length > 0 && notesState.activeNoteId) {
+      notesState.appendToActiveNote(payload.text)
+    } else {
+      // Create a new note from this transcription segment
+      notesState.createNoteFromTranscription(payload.text)
+    }
   })
 
   const onMissingApiKey = options?.onMissingApiKey

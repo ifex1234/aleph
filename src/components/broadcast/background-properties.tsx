@@ -91,6 +91,45 @@ function GradientSection() {
         </div>
       )}
 
+      {/* Motion — lively animated background */}
+      <div className="flex flex-col gap-1.5 border-t pt-3">
+        <div className="flex items-center justify-between">
+          <h4 className="text-xs font-semibold">Motion</h4>
+          <input
+            type="checkbox"
+            checked={draftTheme.background.motion?.enabled ?? false}
+            onChange={(e) => {
+              if (e.target.checked) {
+                update("background.motion", { enabled: true, speed: 12 })
+              } else {
+                update("background.motion.enabled", false)
+              }
+            }}
+            className="h-4 w-4 rounded border-input accent-primary"
+          />
+        </div>
+        {draftTheme.background.motion?.enabled && (
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium text-muted-foreground">Speed</label>
+              <span className="text-xs tabular-nums text-muted-foreground">
+                {draftTheme.background.motion.speed}&deg;/s
+              </span>
+            </div>
+            <Slider
+              min={1}
+              max={90}
+              step={1}
+              value={[draftTheme.background.motion.speed]}
+              onValueChange={([v]) => update("background.motion.speed", v)}
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Rotates linear gradients; drifts the radial highlight.
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* Color Stop 1 */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground">Color Stop 1</label>

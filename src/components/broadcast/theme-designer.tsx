@@ -20,11 +20,15 @@ export function ThemeDesigner() {
   }, [isDesignerOpen, draftTheme, themes])
 
   const handleDiscard = () => {
-    useBroadcastStore.getState().discardDraft()
+    const store = useBroadcastStore.getState()
+    store.discardDraft()
+    store.setDesignerOpen(false)
   }
 
   const handleSave = () => {
-    useBroadcastStore.getState().saveDraft()
+    const store = useBroadcastStore.getState()
+    store.saveDraft()
+    store.setDesignerOpen(false)
   }
 
   const handleClose = () => {

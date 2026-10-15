@@ -5,9 +5,10 @@ export type {
   TranscriptEventPayload,
 } from "./transcript"
 export type { Translation, Book, Verse, CrossReference } from "./bible"
+export type { Hymn, HymnStanza, HymnTune, HymnGroup } from "./hymn"
 export type { QueueItem } from "./queue"
 export type { DetectionResult, DetectionStatus, ReadingAdvance, SemanticSearchResult } from "./detection"
-export type { BroadcastTheme, VerseRenderData, VerseSegment, RenderOptions } from "./broadcast"
+export type { BroadcastTheme, VerseRenderData, VerseSegment, RenderOptions, BroadcastContent, BroadcastContentType, TimerContent, LyricsContent, LyricsSlideContent, VerseSlide, VerseSlidesContent, ImageSlide, SlidesContent, SlideMediaKind } from "./broadcast"
 export type {
   BroadcastOutput,
   BroadcastOutputNdiSettings,

@@ -116,6 +116,24 @@ describe("normalizeTheme", () => {
     const normalized = normalizeTheme(stackedBase)
     expect(normalized.verseNumbers).toEqual(stackedBase.verseNumbers)
   })
+
+  it("preserves gradient motion settings", () => {
+    const theme: BroadcastTheme = {
+      ...stackedBase,
+      background: {
+        ...stackedBase.background,
+        motion: { enabled: true, speed: 12 },
+      },
+    }
+    expect(normalizeTheme(theme).background.motion).toEqual({
+      enabled: true,
+      speed: 12,
+    })
+  })
+
+  it("leaves motion absent for legacy themes", () => {
+    expect(normalizeTheme(stackedBase).background.motion).toBeUndefined()
+  })
 })
 
 describe("seedFreeBoxesFromMetrics", () => {

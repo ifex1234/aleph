@@ -64,6 +64,23 @@ async function fetchVerse(
   })
 }
 
+async function fetchVerseRange(
+  bookNumber: number,
+  chapter: number,
+  startVerse: number,
+  endVerse: number,
+  translationId?: number
+) {
+  const id = translationId ?? useBibleStore.getState().activeTranslationId
+  return invoke<Verse[]>("get_verse_range", {
+    translationId: id,
+    bookNumber,
+    chapter,
+    startVerse,
+    endVerse,
+  })
+}
+
 async function searchVerses(
   query: string,
   limit = 20,
@@ -258,6 +275,7 @@ export const bibleActions = {
   findLoadedVerse,
   stepVerse,
   fetchVerse,
+  fetchVerseRange,
   searchVerses,
   semanticSearch,
   loadCrossReferences,

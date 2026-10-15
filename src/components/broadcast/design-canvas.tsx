@@ -6,6 +6,10 @@ import {
   renderVerse,
   type VerseLayoutMetrics,
 } from "@/lib/verse-renderer"
+import {
+  allowBackgroundMotion,
+  isMotionEnabled,
+} from "@/lib/background-motion"
 import { seedFreeBoxesFromMetrics, SAMPLE_VERSE } from "@/lib/theme-migrations"
 import { preloadThemeImages, themeImageCache } from "@/lib/theme-image-cache"
 import { Button } from "@/components/ui/button"
@@ -301,6 +305,30 @@ export function DesignCanvas() {
     })
   }, [draftTheme])
 
+  // Lively preview: repaint the workspace bitmap on a throttle while the
+  // draft theme has motion enabled, so gradients visibly animate as you
+  // tune them. Skipped while dragging (the drag sync owns the frame) and
+  // when the OS prefers reduced motion. Layout/regions are untouched —
+  // only the background frame advances.
+  const motionPreviewOn =
+    !!draftTheme && isMotionEnabled(draftTheme) && allowBackgroundMotion()
+  useEffect(() => {
+    if (!motionPreviewOn) return
+    const timer = setInterval(() => {
+      const canvas = fabricRef.current
+      const ws = objectsRef.current.workspace
+      if (!canvas || !ws || draggingRef.current) return
+      const theme = useBroadcastStore.getState().draftTheme
+      if (!theme || !isMotionEnabled(theme)) return
+      const { bitmap } = renderThemeBitmap(theme, performance.now())
+      ws.set({
+        fill: new fabric.Pattern({ source: bitmap, repeat: "no-repeat" }),
+      })
+      canvas.requestRenderAll()
+    }, 100)
+    return () => clearInterval(timer)
+  }, [motionPreviewOn])
+
   useEffect(() => {
     const refRegion = objectsRef.current.referenceRegion
     const verseRegion = objectsRef.current.verseRegion
@@ -526,6 +554,7 @@ function drawTransparencyCheckerboard(ctx: CanvasRenderingContext2D): void {
 
 function renderThemeBitmap(
   theme: BroadcastTheme,
+  timeMs?: number,
 ): { bitmap: HTMLCanvasElement; metrics: ReturnType<typeof renderVerse> } {
   const offscreen = document.createElement("canvas")
   offscreen.width = WS_WIDTH
@@ -535,6 +564,7 @@ function renderThemeBitmap(
 
   const metrics = renderVerse(ctx, theme, SAMPLE_VERSE, {
     imageCache: themeImageCache(),
+    timeMs,
   })
   if (theme.background.type === "transparent") {
     drawTransparencyCheckerboard(ctx)

@@ -42,6 +42,16 @@ export function bibleDbPath(): string {
   )
 }
 
+/** The hymnal SQLite database, bundled or from the dev checkout. */
+export function hymnsDbPath(): string {
+  return (
+    firstExisting([
+      path.join(resourceDir(), "hymns.db"),
+      path.join(projectRoot(), "data", "hymns.db"),
+    ]) ?? path.join(projectRoot(), "data", "hymns.db")
+  )
+}
+
 const NDI_LIB_NAMES: Partial<Record<NodeJS.Platform, string>> = {
   win32: "Processing.NDI.Lib.x64.dll",
   darwin: "libndi.dylib",

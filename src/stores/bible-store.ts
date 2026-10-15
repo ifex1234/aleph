@@ -23,6 +23,10 @@ interface BibleState {
   searchResults: Verse[]
   semanticResults: SemanticSearchResult[]
   selectedVerse: Verse | null
+  /** When a range is selected for Program preview, all verses in the range. Null means preview is single-verse (selectedVerse) or empty. */
+  selectedVerses: Verse[] | null
+  /** Exact verse numbers for the preview range (for disjoint like 1,3,5). Null for contiguous. */
+  selectedVerseNumbers: number[] | null
   currentChapter: Verse[]
   crossReferences: CrossReference[]
   pendingNavigation: PendingNavigation | null
@@ -44,6 +48,7 @@ interface BibleState {
   setSearchResults: (results: Verse[]) => void
   setSemanticResults: (results: SemanticSearchResult[]) => void
   selectVerse: (verse: Verse | null) => void
+  selectVerses: (verses: Verse[] | null, verseNumbers?: number[] | null) => void
   setCurrentChapter: (verses: Verse[]) => void
   setCrossReferences: (refs: CrossReference[]) => void
   setPendingNavigation: (nav: PendingNavigation | null) => void
@@ -57,6 +62,8 @@ export const useBibleStore = create<BibleState>((set) => ({
   searchResults: [],
   semanticResults: [],
   selectedVerse: null,
+  selectedVerses: null,
+  selectedVerseNumbers: null,
   currentChapter: [],
   crossReferences: [],
   pendingNavigation: null,
@@ -68,7 +75,13 @@ export const useBibleStore = create<BibleState>((set) => ({
   setBooks: (books) => set({ books }),
   setSearchResults: (searchResults) => set({ searchResults }),
   setSemanticResults: (semanticResults) => set({ semanticResults }),
-  selectVerse: (selectedVerse) => set({ selectedVerse }),
+  selectVerse: (selectedVerse) => set({ selectedVerse, selectedVerses: null, selectedVerseNumbers: null }),
+  selectVerses: (verses, verseNumbers = null) =>
+    set({
+      selectedVerses: verses,
+      selectedVerseNumbers: verseNumbers,
+      selectedVerse: verses?.[0] ?? null,
+    }),
   setCurrentChapter: (currentChapter) => set({ currentChapter }),
   setCrossReferences: (crossReferences) => set({ crossReferences }),
   setPendingNavigation: (pendingNavigation) => set({ pendingNavigation }),

@@ -30,8 +30,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useBible, bibleActions, findLoadedVerse } from "@/hooks/use-bible"
-import { presentVerse } from "@/hooks/use-broadcast"
-import { useBibleStore, useQueueStore } from "@/stores"
+import { presentVerse, presentVerseRange, parseVerseRangeInput } from "@/hooks/use-broadcast"
+import { toast } from "sonner"
+import { useBibleStore, useBroadcastStore, useQueueStore } from "@/stores"
 import type { Book, Verse, SemanticSearchResult } from "@/types"
 import { Input } from "@/components/ui/input"
 import { searchContextWithFuse } from "@/lib/context-search"
@@ -115,6 +116,7 @@ export function SearchPanel() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const [chapter, setChapter] = useState(1)
   const [contextQuery, setContextQuery] = useState("")
+  const [verseRange, setVerseRange] = useState("")
 
   // EasyWorship-style autocomplete
   const [quickInput, setQuickInput] = useState("")
@@ -179,6 +181,23 @@ export function SearchPanel() {
       )?.id ?? null,
     [currentChapter, selectedVerse]
   )
+
+  // Highlight all verses in the active live range when viewing that chapter
+  const liveSourceRange = useBroadcastStore((s) => s.liveSourceRange)
+  const liveSourceRangeNumbers = useBroadcastStore((s) => s.liveSourceRangeNumbers)
+  const liveRangeVerseIds = useMemo(() => {
+    if (!selectedBook || !liveSourceRange) return new Set<number>()
+    if (
+      liveSourceRange.bookNumber !== selectedBook.book_number ||
+      liveSourceRange.chapter !== chapter
+    ) return new Set<number>()
+    const wanted = liveSourceRangeNumbers?.length
+      ? new Set(liveSourceRangeNumbers)
+      : new Set(Array.from({ length: liveSourceRange.endVerse - liveSourceRange.startVerse + 1 }, (_, i) => liveSourceRange.startVerse + i))
+    const ids = new Set<number>()
+    for (const v of currentChapter) if (wanted.has(v.verse)) ids.add(v.id)
+    return ids
+  }, [selectedBook, chapter, liveSourceRange, liveSourceRangeNumbers, currentChapter])
 
   // After a chapter reloads in a different translation the verse rows carry new
   // ids, so re-point the selection at the row that is actually on screen.
@@ -285,6 +304,46 @@ export function SearchPanel() {
     bibleActions.selectVerse(verse)
     void presentVerse(verse)
   }, [])
+
+  const handlePresentVerseRange = useCallback(() => {
+    if (!selectedBook || !verseRange.trim()) {
+      toast.error("Select a book/chapter and enter a verse range")
+      return
+    }
+
+    const verseNumbers = parseVerseRangeInput(verseRange)
+    if (verseNumbers.length === 0) {
+      toast.error("Invalid verse range format (e.g. 1-3 or 1,2,5)")
+      return
+    }
+
+    // Validate against the loaded chapter length when available
+    if (currentChapter.length > 0) {
+      const maxVerse = Math.max(...currentChapter.map((v) => v.verse))
+      const outOfRange = verseNumbers.filter((n) => n > maxVerse)
+      if (outOfRange.length > 0) {
+        toast.error(`Chapter ${chapter} has only ${maxVerse} verses`)
+        return
+      }
+    }
+
+    const startVerse = Math.min(...verseNumbers)
+    const endVerse = Math.max(...verseNumbers)
+    const isContiguous = verseNumbers.length === endVerse - startVerse + 1 && verseNumbers.every((n, i) => n === startVerse + i)
+    const label = isContiguous
+      ? `${startVerse === endVerse ? `${startVerse}` : `${startVerse}-${endVerse}`}`
+      : verseNumbers.join(",")
+
+    toast.info(`Presenting ${selectedBook.name} ${chapter}:${label}`)
+    void presentVerseRange(
+      selectedBook.book_number,
+      chapter,
+      startVerse,
+      endVerse,
+      isContiguous ? undefined : { verseNumbers }
+    )
+    setVerseRange("")
+  }, [selectedBook, chapter, verseRange, currentChapter])
 
   // Arrow key navigation. Up and Down run the same stepping action the remote
   // bible_next / bible_prev commands do, so the two surfaces cannot diverge.
@@ -658,7 +717,7 @@ export function SearchPanel() {
               <h3 className="text-sm font-semibold text-foreground">
                 {selectedBook.name} {chapter}
               </h3> : null}
-            {selectedBook ? <div className="flex items-center gap-1">
+            {selectedBook ? <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="icon-xs"
@@ -683,6 +742,36 @@ export function SearchPanel() {
             </div> : null}
           </div>
 
+          {/* Verse Range Selector */}
+          {selectedBook && (
+            <div className="flex shrink-0 items-center gap-2 border-b border-border px-3 py-1.5 min-h-8">
+              <div className="flex items-center gap-1.5 flex-1">
+                <label className="text-xs text-muted-foreground shrink-0">Range:</label>
+                <Input
+                  type="text"
+                  value={verseRange}
+                  onChange={(e) => setVerseRange(e.target.value)}
+                  placeholder="e.g., 1-3 or 1,2,5"
+                  className="h-7 text-xs flex-1 max-w-[200px]"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && verseRange.trim()) {
+                      handlePresentVerseRange()
+                    }
+                  }}
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handlePresentVerseRange}
+                  disabled={!verseRange.trim()}
+                  className="h-7 shrink-0"
+                >
+                  Present Range
+                </Button>
+              </div>
+            </div>
+          )}
+
 
           {/* SCROLLABLE: Verse list only */}
           <div className="min-h-0 flex-1 overflow-y-auto">
@@ -694,7 +783,7 @@ export function SearchPanel() {
                   onClick={() => handleVerseClick(verse)}
                   className={cn(
                     "group flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors",
-                    verse.id === effectiveSelectedVerseId
+                    verse.id === effectiveSelectedVerseId || liveRangeVerseIds.has(verse.id)
                       ? "border border-primary/50 bg-primary/10"
                       : "border border-transparent hover:bg-muted/50"
                   )}

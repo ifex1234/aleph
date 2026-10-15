@@ -31,6 +31,10 @@ export const Grid3X3Icon: LucideIcon
 export const GripVerticalIcon: LucideIcon
 export const HeartIcon: LucideIcon
 export const HelpCircleIcon: LucideIcon
+export const HeartHandshakeIcon: LucideIcon
+export const ExternalLinkIcon: LucideIcon
+export const ImageIcon: LucideIcon
+export const LayoutGridIcon: LucideIcon
 export const KeyIcon: LucideIcon
 export const LoaderCircleIcon: LucideIcon
 export const MaximizeIcon: LucideIcon
@@ -53,6 +57,8 @@ export const RefreshCwIcon: LucideIcon
 export const SaveIcon: LucideIcon
 export const SearchIcon: LucideIcon
 export const SettingsIcon: LucideIcon
+export const Settings2Icon: LucideIcon
+export const Settings2: LucideIcon
 export const SparklesIcon: LucideIcon
 export const SunIcon: LucideIcon
 export const Trash2Icon: LucideIcon
@@ -69,8 +75,6 @@ export const TerminalSquareIcon: LucideIcon
 export const SquareTerminalIcon: LucideIcon
 export const BotIcon: LucideIcon
 export const Bot: LucideIcon
-export const Settings2Icon: LucideIcon
-export const Settings2: LucideIcon
 export const FrameIcon: LucideIcon
 export const Frame: LucideIcon
 export const PieChartIcon: LucideIcon
@@ -94,3 +98,18 @@ export const LayoutDashboard: LucideIcon
 export const MinusIcon: LucideIcon
 export const SquareIcon: LucideIcon
 export const CopyIcon: LucideIcon
+export const PauseIcon: LucideIcon
+export const RotateCcwIcon: LucideIcon
+export const FlagIcon: LucideIcon
+export const NotebookPen: LucideIcon
+export const NotebookPenIcon: LucideIcon
+export const Loader: LucideIcon
+export const LoaderIcon: LucideIcon
+export const Menu: LucideIcon
+export const MenuIcon: LucideIcon
+export const Music: LucideIcon
+export const MusicIcon: LucideIcon
+export const Presentation: LucideIcon
+export const PresentationIcon: LucideIcon
+export const Images: LucideIcon
+export const ImagesIcon: LucideIcon

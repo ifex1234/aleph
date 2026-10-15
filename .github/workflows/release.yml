@@ -1,0 +1,45 @@
+name: Release
+
+# Ship a release by bumping "version" in package.json, then:
+#   git tag v0.8.3
+#   git push origin v0.8.3
+# Tag name should match package.json (vX.Y.Z ↔ X.Y.Z). The Windows
+# installer + auto-update metadata are published to GitHub Releases,
+# which is where users download the app and where the in-app updater
+# looks for new versions.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Download Bible sources
+        run: bun run data/download-sources.ts
+
+      - name: Build databases
+        run: |
+          bun run data/build-bible-db.ts
+          bun run data/build-hymns-db.ts
+
+      - name: Build + publish installer
+        run: npm run release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

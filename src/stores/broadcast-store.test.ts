@@ -25,12 +25,13 @@ describe("broadcast store sync", () => {
     vi.resetModules()
   })
 
-  it("syncBroadcastOutput emits current theme and verse to the main output window when live", async () => {
+  it("syncBroadcastOutput emits current theme and verse content to the main output window when live", async () => {
     const { useBroadcastStore } = await import("./broadcast-store")
     const theme = useBroadcastStore.getState().themes[0]
     useBroadcastStore.setState({
       isLive: true,
-      liveVerse: sampleLiveVerse,
+      activeContentType: "verse",
+      verseContent: sampleLiveVerse,
     })
     useBroadcastStore.getState().setActiveTheme(theme.id)
 
@@ -40,10 +41,13 @@ describe("broadcast store sync", () => {
     expect(emitToMock).toHaveBeenCalledTimes(1)
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-main",
-      "broadcast:verse-update",
+      "broadcast:content-update",
       expect.objectContaining({
         theme: expect.objectContaining({ id: theme.id }),
-        verse: expect.objectContaining({ reference: "John 3:16" }),
+        content: expect.objectContaining({
+          type: "verse",
+          verse: expect.objectContaining({ reference: "John 3:16" }),
+        }),
       }),
     )
   })
@@ -69,7 +73,7 @@ describe("broadcast store sync", () => {
       monitorIndex: 1,
       ndi: ndiDefaults,
     })
-    useBroadcastStore.setState({ isLive: true, liveVerse: sampleLiveVerse })
+    useBroadcastStore.setState({ isLive: true, activeContentType: "verse", verseContent: sampleLiveVerse })
 
     emitToMock.mockClear()
     useBroadcastStore.getState().syncBroadcastOutput()
@@ -77,17 +81,17 @@ describe("broadcast store sync", () => {
     expect(emitToMock).toHaveBeenCalledTimes(3)
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-main",
-      "broadcast:verse-update",
+      "broadcast:content-update",
       expect.objectContaining({ theme: expect.objectContaining({ id: themeA.id }) }),
     )
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-out-b",
-      "broadcast:verse-update",
+      "broadcast:content-update",
       expect.objectContaining({ theme: expect.objectContaining({ id: themeB.id }) }),
     )
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-out-c",
-      "broadcast:verse-update",
+      "broadcast:content-update",
       expect.objectContaining({ theme: expect.objectContaining({ id: themeA.id }) }),
     )
   })
@@ -114,7 +118,7 @@ describe("broadcast store sync", () => {
     expect(emitToMock).toHaveBeenCalledTimes(1)
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-main",
-      "broadcast:verse-update",
+      "broadcast:content-update",
       expect.anything(),
     )
   })
@@ -153,7 +157,7 @@ describe("broadcast store sync", () => {
     expect(emitToMock).toHaveBeenCalledTimes(1)
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-out-b",
-      "broadcast:verse-update",
+      "broadcast:content-update",
       expect.objectContaining({ theme: expect.objectContaining({ name: "tweaked" }) }),
     )
   })
@@ -219,7 +223,8 @@ describe("broadcast store sync", () => {
     const { useBroadcastStore } = await import("./broadcast-store")
     useBroadcastStore.setState({
       isLive: false,
-      liveVerse: sampleLiveVerse,
+      activeContentType: "verse",
+      verseContent: sampleLiveVerse,
     })
 
     emitToMock.mockClear()
@@ -228,40 +233,43 @@ describe("broadcast store sync", () => {
     expect(emitToMock).toHaveBeenCalledTimes(1)
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-main",
-      "broadcast:verse-update",
-      expect.objectContaining({ verse: null }),
+      "broadcast:content-update",
+      expect.objectContaining({ content: expect.objectContaining({ verse: null }) }),
     )
   })
 
   it("setLive pushes the persisted live verse to outputs when toggled on", async () => {
     const { useBroadcastStore } = await import("./broadcast-store")
-    useBroadcastStore.setState({ isLive: false, liveVerse: sampleLiveVerse })
+    useBroadcastStore.setState({ isLive: false, activeContentType: "verse", verseContent: sampleLiveVerse })
 
     emitToMock.mockClear()
     useBroadcastStore.getState().setLive(true)
 
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-main",
-      "broadcast:verse-update",
+      "broadcast:content-update",
       expect.objectContaining({
-        verse: expect.objectContaining({ reference: "John 3:16" }),
+        content: expect.objectContaining({
+          type: "verse",
+          verse: expect.objectContaining({ reference: "John 3:16" }),
+        }),
       }),
     )
   })
 
   it("setLive blanks the outputs when toggled off without clearing the stored verse", async () => {
     const { useBroadcastStore } = await import("./broadcast-store")
-    useBroadcastStore.setState({ isLive: true, liveVerse: sampleLiveVerse })
+    useBroadcastStore.setState({ isLive: true, activeContentType: "verse", verseContent: sampleLiveVerse })
 
     emitToMock.mockClear()
     useBroadcastStore.getState().setLive(false)
 
     expect(emitToMock).toHaveBeenCalledWith(
       "broadcast-main",
-      "broadcast:verse-update",
-      expect.objectContaining({ verse: null }),
+      "broadcast:content-update",
+      expect.objectContaining({ content: expect.objectContaining({ verse: null }) }),
     )
-    expect(useBroadcastStore.getState().liveVerse).toEqual(sampleLiveVerse)
+    expect(useBroadcastStore.getState().verseContent).toEqual(sampleLiveVerse)
   })
 
   it("autoLive defaults to on and can be toggled", async () => {
@@ -289,6 +297,7 @@ describe("broadcast store sync", () => {
     useBroadcastStore.getState().setLiveVerse(sampleLiveVerse, source)
 
     expect(useBroadcastStore.getState().liveVerse).toEqual(sampleLiveVerse)
+    expect(useBroadcastStore.getState().verseContent).toEqual(sampleLiveVerse)
     expect(useBroadcastStore.getState().liveSourceVerse).toEqual(source)
   })
 })

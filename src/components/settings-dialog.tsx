@@ -36,6 +36,7 @@ import { useTranscriptStore } from "@/stores/transcript-store"
 import { useTutorialStore } from "@/stores/tutorial-store"
 import { useSettingsDialogStore } from "@/lib/settings-dialog"
 import { REMOTE_EVENTS } from "@/lib/remote-events"
+import { SupportSection } from "@/components/settings/support-section"
 import type { DeviceInfo } from "@/types/audio"
 
 /* -------------------------------------------------------------------------- */
@@ -51,6 +52,7 @@ type NavSection =
   | "remote"
   | "diagnostics"
   | "help"
+  | "support"
 
 /* -------------------------------------------------------------------------- */
 /*  Section: Audio                                                            */
@@ -509,6 +511,7 @@ const sectionTitles: Record<NavSection, string> = {
   "api-keys": "API Keys",
   diagnostics: "Diagnostics",
   help: "Help",
+  support: "Support",
 }
 
 /* -------------------------------------------------------------------------- */
@@ -954,6 +957,7 @@ const sectionComponents: Record<NavSection, React.FC> = {
   "api-keys": ApiKeysSection,
   diagnostics: DiagnosticsSection,
   help: HelpSection,
+  support: SupportSection,
 }
 
 /*  Main dialog                                                               */

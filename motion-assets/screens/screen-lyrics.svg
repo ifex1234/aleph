@@ -1,0 +1,29 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aleph lyrics slide showing Amazing Grace verse 1">
+  <defs>
+    <linearGradient id="lyr-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0B0B14"/>
+      <stop offset="1" stop-color="#010106"/>
+    </linearGradient>
+    <radialGradient id="lyr-glow" cx="0.5" cy="0.85" r="0.6">
+      <stop offset="0" stop-color="#DC2626" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#DC2626" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#lyr-bg)"/>
+  <rect width="1280" height="720" fill="url(#lyr-glow)"/>
+  <text x="640" y="120" text-anchor="middle" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#9F9FA9">Amazing Grace</text>
+  <text x="640" y="160" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="20" fill="#9F9FA9">Verse 1</text>
+  <text x="640" y="300" text-anchor="middle" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="48" fill="#FFFFFF">
+    <tspan x="640" dy="0">Amazing grace! how sweet the sound</tspan>
+    <tspan x="640" dy="76">That saved a wretch like me!</tspan>
+    <tspan x="640" dy="76">I once was lost, but now am found,</tspan>
+    <tspan x="640" dy="76">Was blind, but now I see.</tspan>
+  </text>
+  <g fill="#3A3A40">
+    <circle cx="596" cy="620" r="8"/>
+    <circle cx="640" cy="620" r="8"/>
+    <circle cx="684" cy="620" r="8"/>
+  </g>
+  <circle cx="596" cy="620" r="8" fill="#FFFFFF"/>
+  <text x="1150" y="628" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="22" fill="#9F9FA9">1 / 3</text>
+</svg>

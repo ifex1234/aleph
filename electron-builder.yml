@@ -22,6 +22,9 @@ extraResources:
   # Bible database, resolved at runtime from the resources dir.
   - from: data/aleph.db
     to: aleph.db
+  # Hymnal database, resolved at runtime from the resources dir.
+  - from: data/hymns.db
+    to: hymns.db
   # Whisper.cpp CLI + runtime DLLs, resolved via resourceDir()/whisper in packaged app.
   - from: sdk/whisper/win32
     to: whisper
@@ -33,10 +36,25 @@ extraResources:
   - from: sdk/ndi/linux/libndi.so
     to: ndi/libndi.so
 
+# Updates are served from GitHub Releases (see .github/workflows/release.yml).
+# electron-updater in the packaged app checks these releases and prompts
+# to restart once a newer version has downloaded.
+publish:
+  provider: github
+  owner: ifex1234
+  repo: aleph
+  # Publish immediately on tag push so users can download and auto-update
+  # picks it up (auto-updater ignores drafts and prereleases).
+  releaseType: release
+
 win:
   target:
     - nsis
   icon: build-resources/icons/icon.ico
+
+nsis:
+  # Small delta downloads instead of the full installer on every update.
+  differentialPackage: true
 
 mac:
   target:

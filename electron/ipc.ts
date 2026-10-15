@@ -1,6 +1,7 @@
 import { app, BrowserWindow, dialog } from "electron"
 import fs from "node:fs"
 import * as bible from "./services/bible"
+import * as hymns from "./services/hymns"
 import { pipeline, detectionStatusResult } from "./services/detection-runtime"
 import {
   ensureSemanticAssets,
@@ -68,6 +69,15 @@ const handlers: Record<string, Handler> = {
       num(a.verse)
     ),
 
+  get_verse_range: (a) =>
+    bible.getVerseRange(
+      num(a.translationId),
+      num(a.bookNumber),
+      num(a.chapter),
+      num(a.startVerse),
+      num(a.endVerse)
+    ),
+
   search_verses: (a) =>
     bible.searchVerses(str(a.query), num(a.translationId), num(a.limit) || 20),
 
@@ -76,6 +86,27 @@ const handlers: Record<string, Handler> = {
 
   get_cross_references: (a) =>
     bible.getCrossReferences(num(a.bookNumber), num(a.chapter), num(a.verse)),
+
+  list_hymn_groups: () => hymns.listHymnGroups(),
+
+  search_hymns: (a) =>
+    hymns.searchHymns(
+      str(a.query ?? ""),
+      typeof a.group === "string" && a.group.length > 0 ? a.group : null,
+      num(a.limit) || 25
+    ),
+
+  browse_hymns: (a) =>
+    hymns.browseHymns(
+      typeof a.group === "string" && a.group.length > 0 ? a.group : null,
+      num(a.limit) || 50
+    ),
+
+  get_hymn: (a) => hymns.getHymn(str(a.id)),
+
+  get_hymn_stanzas: (a) => hymns.getHymnStanzas(str(a.id)),
+
+  get_hymn_tunes: (a) => hymns.getHymnTunes(str(a.id)),
 
   get_active_translation: () => sharedState().activeTranslationId,
 

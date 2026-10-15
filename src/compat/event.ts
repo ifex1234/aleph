@@ -29,6 +29,7 @@ function ensureGlobalListener(): void {
   }
   if (!anyBridge.addEventListener) return
   anyBridge.addEventListener((name, payload) => {
+    console.log(`[compat] event received: "${name}"`, payload)
     for (const entry of listeners) {
       if (entry.event === name) {
         try {
@@ -44,6 +45,7 @@ function ensureGlobalListener(): void {
     }
   })
   globalRegistered = true
+  console.log("[compat] global listener registered")
 }
 
 /**
@@ -56,9 +58,11 @@ export async function listen<T>(event: string, handler: Handler<T>): Promise<Unl
   const wrapped = handler as Handler<unknown>
   const entry: Entry = { id, event, wrapped }
   listeners.add(entry)
+  console.log(`[compat] listen registered for "${event}" (id: ${id})`)
 
   return () => {
     listeners.delete(entry)
+    console.log(`[compat] listen unregistered for "${event}" (id: ${id})`)
   }
 }
 

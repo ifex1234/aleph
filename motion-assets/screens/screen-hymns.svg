@@ -1,0 +1,26 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aleph hymns panel showing hymn E19 stanzas">
+  <rect width="1280" height="720" fill="#010106"/>
+  <rect x="320" y="36" width="640" height="648" rx="12" fill="#18181B" stroke="#26262B" stroke-width="1.5"/>
+  <text x="352" y="88" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="600" fill="#FFFFFF">Hymns</text>
+  <text x="928" y="88" text-anchor="end" font-family="Inter, Arial, sans-serif" font-size="26" fill="#9F9FA9">✕</text>
+  <rect x="352" y="110" width="576" height="44" rx="8" fill="#27272A"/>
+  <text x="368" y="138" font-family="Inter, Arial, sans-serif" font-size="20" fill="#9F9FA9">Search number, title, first line…</text>
+  <rect x="352" y="164" width="576" height="36" rx="8" fill="#27272A"/>
+  <text x="368" y="188" font-family="Inter, Arial, sans-serif" font-size="18" fill="#9F9FA9">All groups</text>
+  <text x="352" y="240" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="600" fill="#FFFFFF">Hymn E19 · 19</text>
+  <text x="352" y="264" font-family="Inter, Arial, sans-serif" font-size="17" fill="#9F9FA9">"Great is Thy faithfulness," O God my Father,</text>
+  <text x="352" y="292" font-family="Inter, Arial, sans-serif" font-size="15" fill="#9F9FA9">Words: Thomas O. Chisholm · Music: William M. Runyan</text>
+  <text x="352" y="313" font-family="Inter, Arial, sans-serif" font-size="15" fill="#9F9FA9">D Major · 11.10.11.10. with chorus · 3/4</text>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="352" y="332" width="576" height="76" rx="8" fill="#27272A"/>
+    <text x="368" y="358" font-size="15" font-weight="600" fill="#9F9FA9">Verse 1</text>
+    <text x="368" y="384" font-size="19" fill="#FFFFFF">"Great is Thy faithfulness," O God my…</text>
+    <rect x="352" y="418" width="576" height="76" rx="8" fill="#27272A" stroke="#FB2C36" stroke-width="2"/>
+    <text x="368" y="444" font-size="15" font-weight="600" fill="#FCA5A5">Chorus — on screen</text>
+    <text x="368" y="470" font-size="19" fill="#FFFFFF">"Great is Thy faithfulness!" Morning by…</text>
+    <rect x="352" y="504" width="576" height="76" rx="8" fill="#27272A"/>
+    <text x="368" y="530" font-size="15" font-weight="600" fill="#9F9FA9">Verse 2</text>
+    <text x="368" y="556" font-size="19" fill="#FFFFFF">Summer and winter, and springtime…</text>
+  </g>
+  <text x="352" y="624" font-family="Inter, Arial, sans-serif" font-size="16" fill="#9F9FA9">Click a stanza to present it live</text>
+</svg>

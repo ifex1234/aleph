@@ -57,7 +57,12 @@ vi.mock("@chenglou/pretext/rich-inline", () => {
   }
 })
 
-import { computeVerseLayoutMetrics, renderVerse } from "./verse-renderer"
+import {
+  computeVerseLayoutMetrics,
+  measureVerseHeight,
+  prepareVerseInline,
+  renderVerse,
+} from "./verse-renderer"
 import { BUILTIN_THEMES } from "./builtin-themes"
 
 function stubCtx(): CanvasRenderingContext2D {
@@ -247,6 +252,19 @@ function recordingCtx(): {
               /(\d+(?:\.\d+)?)px/.exec(String(props.font))?.[1] ?? 16
             )
             return { width: text.length * size * 0.6 } as TextMetrics
+          }
+        }
+        if (
+          prop === "createLinearGradient" ||
+          prop === "createRadialGradient"
+        ) {
+          return (...args: unknown[]) => {
+            calls.push({ method: String(prop), args })
+            return {
+              addColorStop: (...stopArgs: unknown[]) => {
+                calls.push({ method: "addColorStop", args: stopArgs })
+              },
+            }
           }
         }
         if (prop in props) return props[prop]
@@ -473,6 +491,99 @@ describe("surface fills", () => {
   })
 })
 
+describe("motion backgrounds", () => {
+  const linearBackground = (
+    motion: BroadcastTheme["background"]["motion"]
+  ): BroadcastTheme["background"] => ({
+    type: "gradient",
+    color: "#000000",
+    gradient: {
+      type: "linear",
+      angle: 0,
+      stops: [
+        { color: "#000000", position: 0 },
+        { color: "#ffffff", position: 100 },
+      ],
+    },
+    image: null,
+    motion,
+  })
+
+  const radialBackground = (
+    motion: BroadcastTheme["background"]["motion"]
+  ): BroadcastTheme["background"] => ({
+    ...linearBackground(motion),
+    gradient: {
+      type: "radial",
+      angle: 0,
+      stops: [
+        { color: "#1a1a3e", position: 0 },
+        { color: "#0a0a1a", position: 100 },
+      ],
+    },
+  })
+
+  const linearArgsAt = (
+    motion: BroadcastTheme["background"]["motion"],
+    timeMs?: number
+  ): number[] => {
+    const { ctx, calls } = recordingCtx()
+    const theme: BroadcastTheme = {
+      ...BUILTIN_THEMES[0],
+      background: linearBackground(motion),
+    }
+    renderVerse(ctx, theme, VERSE, { timeMs })
+    const grads = calls.filter((c) => c.method === "createLinearGradient")
+    expect(grads).toHaveLength(1)
+    return grads[0].args as number[]
+  }
+
+  it("draws identical linear gradients across frames without motion", () => {
+    expect(linearArgsAt(null, 5000)).toEqual(linearArgsAt(null, 0))
+  })
+
+  it("rotates the linear gradient with the clock", () => {
+    const motion = { enabled: true, speed: 12 }
+    const atZero = linearArgsAt(motion, 0)
+    // Angle 0 across a 1920x1080 frame: horizontal endpoints.
+    expect(atZero[0]).toBeCloseTo(960 - Math.sqrt(1920 ** 2 + 1080 ** 2) / 2, 5)
+    expect(atZero[1]).toBeCloseTo(540, 5)
+    // 5s at 12°/s rotates 60°: the endpoints must move.
+    expect(linearArgsAt(motion, 5000)).not.toEqual(atZero)
+  })
+
+  it("ignores motion on disabled or zero-speed settings", () => {
+    const theme = linearBackground({ enabled: false, speed: 12 })
+    expect(linearArgsAt(theme.motion, 5000)).toEqual(linearArgsAt(null, 0))
+    const stopped = linearBackground({ enabled: true, speed: 0 })
+    expect(linearArgsAt(stopped.motion, 5000)).toEqual(linearArgsAt(null, 0))
+  })
+
+  it("keeps the radial center fixed without motion and drifts it with motion", () => {
+    const radialArgsAt = (
+      motion: BroadcastTheme["background"]["motion"],
+      timeMs?: number
+    ): number[] => {
+      const { ctx, calls } = recordingCtx()
+      const theme: BroadcastTheme = {
+        ...BUILTIN_THEMES[0],
+        background: radialBackground(motion),
+      }
+      renderVerse(ctx, theme, VERSE, { timeMs })
+      const grads = calls.filter((c) => c.method === "createRadialGradient")
+      expect(grads).toHaveLength(1)
+      return grads[0].args as number[]
+    }
+
+    // Dead center on a 1920x1080 frame, radius half the long edge.
+    expect(radialArgsAt(null, 5000)).toEqual([960, 540, 0, 960, 540, 960])
+    const drifted = radialArgsAt({ enabled: true, speed: 12 }, 0)
+    expect(drifted[0]).toBeCloseTo(0.58 * 1920, 5)
+    expect(drifted[1]).toBeCloseTo(540, 5)
+    expect(drifted).not.toEqual([960, 540, 0, 960, 540, 960])
+  })
+})
+
 describe("computeVerseLayoutMetrics — background region", () => {
   it("covers the full canvas at 100% × 100%", () => {
     const metrics = computeVerseLayoutMetrics(stubCtx(), BUILTIN_THEMES[0], VERSE)
@@ -530,5 +641,75 @@ describe("computeVerseLayoutMetrics — background region", () => {
     expect(
       fills.some((c) => c.args[2] === 1920 && c.args[3] === 1080)
     ).toBe(false)
+  })
+})
+
+describe("verse hard line breaks", () => {
+  const theme = BUILTIN_THEMES[0]
+  const width = 1000
+  const size = 40
+  const lineH = size * theme.verseText.lineHeight
+
+  it("measures single-line verses as one line", () => {
+    const metrics = measureVerseHeight(
+      stubCtx(),
+      theme,
+      { reference: "Gen 1:1", segments: [{ verseNumber: 1, text: "aaa bbb" }] },
+      width,
+      size
+    )
+    expect(metrics.height).toBeCloseTo(lineH, 5)
+  })
+
+  it("keeps newline-separated runs on separate lines", () => {
+    const metrics = measureVerseHeight(
+      stubCtx(),
+      theme,
+      { reference: "Hymn E19 · Chorus", segments: [{ text: "aaa\nbbb" }] },
+      width,
+      size
+    )
+    expect(metrics.height).toBeCloseTo(2 * lineH, 5)
+  })
+
+  it("preserves blank lines", () => {
+    const metrics = measureVerseHeight(
+      stubCtx(),
+      theme,
+      { reference: "Hymn E19 · Verse 1", segments: [{ text: "aaa\n\nbbb" }] },
+      width,
+      size
+    )
+    expect(metrics.height).toBeCloseTo(3 * lineH, 5)
+  })
+
+  it("attaches verse numbers to the first line", () => {
+    const handle = prepareVerseInline(
+      theme,
+      { reference: "", segments: [{ verseNumber: 7, text: "aaa\nbbb" }] },
+      size
+    )!
+    expect(handle.blocks).toHaveLength(2)
+    expect(handle.blocks[0].kinds).toEqual(["verseNum", "word"])
+    expect(handle.blocks[1].kinds).toEqual(["word"])
+  })
+
+  it("auto-fits a multi-line stanza inside the text area", () => {
+    const stanza: VerseRenderData = {
+      reference: "Hymn E19 · Verse 1",
+      segments: [
+        {
+          text: [
+            '"Great is Thy faithfulness," O God my Father,',
+            "There is no shadow of turning with Thee;",
+            "Thou changest not, Thy compassions, they fail not;",
+            "As Thou hast been Thou forever wilt be.",
+          ].join("\n"),
+        },
+      ],
+    }
+    const metrics = computeVerseLayoutMetrics(stubCtx(), theme, stanza)
+    expect(metrics.verseRect).not.toBeNull()
+    expect(within(metrics.verseRect!, metrics.textRect)).toBe(true)
   })
 })

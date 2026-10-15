@@ -1,0 +1,22 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aleph live display showing John 3 verse 16">
+  <defs>
+    <linearGradient id="stage-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0B0B14"/>
+      <stop offset="1" stop-color="#010106"/>
+    </linearGradient>
+    <radialGradient id="stage-glow" cx="0.5" cy="0.18" r="0.55">
+      <stop offset="0" stop-color="#DC2626" stop-opacity="0.22"/>
+      <stop offset="0.6" stop-color="#DC2626" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#DC2626" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#stage-bg)"/>
+  <rect width="1280" height="720" fill="url(#stage-glow)"/>
+  <text x="640" y="212" text-anchor="middle" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="30" font-weight="600" letter-spacing="8" fill="#FCA5A5">JOHN 3:16 · KJV</text>
+  <text x="640" y="330" text-anchor="middle" font-family="Georgia, 'Source Serif 4', serif" font-size="62" fill="#FFFFFF">
+    <tspan x="640" dy="0">For God so loved the world, that he gave</tspan>
+    <tspan x="640" dy="88">his only begotten Son, that whosoever</tspan>
+    <tspan x="640" dy="88">believeth in him should not perish,</tspan>
+    <tspan x="640" dy="88">but have everlasting life.</tspan>
+  </text>
+</svg>

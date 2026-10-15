@@ -7,6 +7,13 @@ import type {
   BroadcastTheme,
   Verse,
   VerseRenderData,
+  BroadcastContent,
+  BroadcastContentType,
+  TimerContent,
+  LyricsContent,
+  LyricsSlideContent,
+  VerseSlidesContent,
+  SlidesContent,
 } from "@/types"
 import { MAIN_OUTPUT_ID, defaultNdiSettings, outputWindowLabel } from "@/types"
 import { BUILTIN_THEMES, LOWER_THIRDS, CLASSIC_DARK } from "@/lib/builtin-themes"
@@ -25,11 +32,30 @@ interface BroadcastState {
   /** Runtime on-air state per output id. Not persisted. */
   outputStatus: Record<string, BroadcastOutputStatus>
   isLive: boolean
+  /** Current content being displayed on the broadcast output. */
+  activeContentType: BroadcastContentType
+  /** The current content data for each type. */
+  verseContent: VerseRenderData | null
+  verseSlidesContent: VerseSlidesContent | null
+  timerContent: TimerContent | null
+  lyricsContent: LyricsContent | null
+  lyricsSlideContent: LyricsSlideContent | null
+  slidesContent: SlidesContent | null
+  /** Which source owns the lyrics channel: a user song or a presented hymn. */
+  lyricsSource: "song" | "hymn" | null
+  /** @deprecated Use verseContent instead. Kept for backward compatibility. */
   liveVerse: VerseRenderData | null
   // The Verse the live output was presented from, kept so it can be
   // re-presented (e.g. after a translation change). Preview selection never
   // writes this — only an explicit present does.
   liveSourceVerse: Verse | null
+  // When a range is presented (e.g. Genesis 1:1-3), this keeps the range
+  // coordinates so a translation switch can re-fetch the whole range. Null
+  // means the live output is a single verse (liveSourceVerse) or empty.
+  liveSourceRange: { bookNumber: number; chapter: number; startVerse: number; endVerse: number } | null
+  // For disjoint selections like "1,3,5" or "1-2,5" keep the exact set so a
+  // translation switch preserves holes rather than filling the bounding span.
+  liveSourceRangeNumbers: number[] | null
   // When on, detections auto-present to the live output. When off, the live
   // output only changes via explicit presents (manual operator control).
   autoLive: boolean
@@ -51,10 +77,18 @@ interface BroadcastState {
   togglePinTheme: (id: string) => void
   setActiveTheme: (id: string) => void
   setLive: (live: boolean) => void
-  setLiveVerse: (verse: VerseRenderData | null, source?: Verse | null) => void
+  setLiveVerse: (verse: VerseRenderData | null, source?: Verse | null, range?: { bookNumber: number; chapter: number; startVerse: number; endVerse: number } | null, rangeNumbers?: number[] | null) => void
   setAutoLive: (auto: boolean) => void
   syncBroadcastOutput: () => void
   syncBroadcastOutputFor: (outputId: string) => void
+  setActiveContentType: (type: BroadcastContentType) => void
+  setVerseContent: (verse: VerseRenderData | null) => void
+  setVerseSlidesContent: (slides: VerseSlidesContent | null) => void
+  setTimerContent: (timer: TimerContent | null) => void
+  setLyricsContent: (lyrics: LyricsContent | null) => void
+  setLyricsSlideContent: (content: LyricsSlideContent | null) => void
+  setSlidesContent: (content: SlidesContent | null) => void
+  setLyricsSource: (source: "song" | "hymn" | null) => void
 
   // Output management
   addOutput: (output: BroadcastOutput) => void
@@ -109,12 +143,20 @@ function setNestedValue(obj: Record<string, unknown>, path: string, value: unkno
 
 function emitDraftToBroadcast(state: BroadcastState): void {
   if (!state.draftTheme) return
-  const verse = state.isLive ? state.liveVerse : null
+  const content: BroadcastContent = {
+    type: state.activeContentType,
+    verse: state.isLive ? state.verseContent : null,
+    verseSlides: state.isLive ? state.verseSlidesContent : null,
+    timer: state.isLive ? state.timerContent : null,
+    lyrics: state.isLive ? state.lyricsContent : null,
+    lyricsSlide: state.isLive ? state.lyricsSlideContent : null,
+    slides: state.isLive ? state.slidesContent : null,
+  }
   for (const output of state.outputs) {
     if (output.themeId !== state.editingThemeId) continue
-    void emitTo(outputWindowLabel(output.id), "broadcast:verse-update", {
+    void emitTo(outputWindowLabel(output.id), "broadcast:content-update", {
       theme: state.draftTheme,
-      verse,
+      content,
     }).catch(() => {})
   }
 }
@@ -163,8 +205,18 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
   outputs: [defaultMainOutput()],
   outputStatus: {},
   isLive: false,
+  activeContentType: "verse",
+  verseContent: null,
+  verseSlidesContent: null,
+  timerContent: null,
+  lyricsContent: null,
+  lyricsSlideContent: null,
+  slidesContent: null,
+  lyricsSource: null,
   liveVerse: null,
   liveSourceVerse: null,
+  liveSourceRange: null,
+  liveSourceRangeNumbers: null,
   autoLive: true,
   isDesignerOpen: false,
   editingThemeId: null,
@@ -245,9 +297,19 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
     const theme = s.themes.find((t) => t.id === output.themeId) ?? s.themes[0]
     if (!theme) return
 
-    void emitTo(outputWindowLabel(outputId), "broadcast:verse-update", {
+    const content: BroadcastContent = {
+      type: s.activeContentType,
+      verse: s.isLive ? s.verseContent : null,
+      verseSlides: s.isLive ? s.verseSlidesContent : null,
+      timer: s.isLive ? s.timerContent : null,
+      lyrics: s.isLive ? s.lyricsContent : null,
+      lyricsSlide: s.isLive ? s.lyricsSlideContent : null,
+      slides: s.isLive ? s.slidesContent : null,
+    }
+
+    void emitTo(outputWindowLabel(outputId), "broadcast:content-update", {
       theme,
-      verse: s.isLive ? s.liveVerse : null,
+      content,
     }).catch(() => {})
   },
   syncBroadcastOutput: () => {
@@ -329,11 +391,46 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
     set({ isLive })
     get().syncBroadcastOutput()
   },
-  setLiveVerse: (liveVerse, source = null) => {
-    set({ liveVerse, liveSourceVerse: source })
+  setLiveVerse: (liveVerse, source = null, range = null, rangeNumbers = null) => {
+    if (liveVerse === null) {
+      set({ liveVerse: null, verseContent: null, liveSourceVerse: null, liveSourceRange: null, liveSourceRangeNumbers: null })
+    } else if (range) {
+      set({ liveVerse, verseContent: liveVerse, liveSourceVerse: source, liveSourceRange: range, liveSourceRangeNumbers: rangeNumbers ?? null })
+    } else {
+      set({ liveVerse, verseContent: liveVerse, liveSourceVerse: source, liveSourceRange: null, liveSourceRangeNumbers: null })
+    }
     get().syncBroadcastOutput()
   },
   setAutoLive: (autoLive) => set({ autoLive }),
+  setActiveContentType: (activeContentType) => {
+    set({ activeContentType })
+    get().syncBroadcastOutput()
+  },
+  setVerseContent: (verseContent) => {
+    set({ verseContent })
+    get().syncBroadcastOutput()
+  },
+  setVerseSlidesContent: (verseSlidesContent) => {
+    set({ verseSlidesContent })
+    get().syncBroadcastOutput()
+  },
+  setTimerContent: (timerContent) => {
+    set({ timerContent })
+    get().syncBroadcastOutput()
+  },
+  setLyricsContent: (lyricsContent) => {
+    set({ lyricsContent })
+    get().syncBroadcastOutput()
+  },
+  setLyricsSlideContent: (lyricsSlideContent) => {
+    set({ lyricsSlideContent })
+    get().syncBroadcastOutput()
+  },
+  setSlidesContent: (slidesContent) => {
+    set({ slidesContent })
+    get().syncBroadcastOutput()
+  },
+  setLyricsSource: (lyricsSource) => set({ lyricsSource }),
 
   // Designer
   setDesignerOpen: (isDesignerOpen) => {

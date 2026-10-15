@@ -1,0 +1,56 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aleph app window with transcript, live display and queue panels">
+  <rect x="8" y="8" width="1264" height="704" rx="14" fill="#010106" stroke="#26262B" stroke-width="1.5"/>
+  <circle cx="40" cy="38" r="7" fill="#FB2C36"/>
+  <circle cx="62" cy="38" r="7" fill="#3A3A40"/>
+  <circle cx="84" cy="38" r="7" fill="#3A3A40"/>
+  <text x="640" y="46" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="600" fill="#FFFFFF">Aleph</text>
+  <rect x="24" y="64" width="72" height="640" rx="10" fill="#18181B"/>
+  <g fill="none" stroke="#9F9FA9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(46, 96) scale(0.9)">
+      <path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>
+    </g>
+    <g transform="translate(46, 152) scale(0.9)" stroke="#FB2C36">
+      <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+    </g>
+    <g transform="translate(46, 208) scale(0.9)">
+      <path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/>
+    </g>
+  </g>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="112" y="64" width="300" height="400" rx="10" fill="#18181B" stroke="#26262B" stroke-width="1"/>
+    <text x="130" y="96" font-size="17" font-weight="600" fill="#FFFFFF">Transcript</text>
+    <circle cx="392" cy="90" r="6" fill="#FB2C36"/>
+    <text x="130" y="132" font-size="15" fill="#9F9FA9">"…as Paul writes in</text>
+    <text x="130" y="156" font-size="15" fill="#9F9FA9">Romans chapter eight,</text>
+    <text x="130" y="180" font-size="15" fill="#FFFFFF">verse twenty-eight…"</text>
+    <rect x="130" y="200" width="264" height="64" rx="8" fill="#27272A" stroke="#FB2C36" stroke-width="1.5"/>
+    <text x="142" y="226" font-size="15" font-weight="600" fill="#FFFFFF">Romans 8:28 detected</text>
+    <text x="142" y="248" font-size="13" fill="#9F9FA9">Present · Queue</text>
+    <rect x="428" y="64" width="560" height="400" rx="10" fill="#000000" stroke="#FB2C36" stroke-width="2"/>
+    <text x="708" y="100" text-anchor="middle" font-size="15" font-weight="600" fill="#FCA5A5">LIVE · ROMANS 8:28</text>
+    <text x="708" y="230" text-anchor="middle" font-family="Georgia, serif" font-size="40" fill="#FFFFFF">
+      <tspan x="708" dy="0">And we know that all things</tspan>
+      <tspan x="708" dy="58">work together for good…</tspan>
+    </text>
+    <text x="708" y="420" text-anchor="middle" font-size="15" fill="#9F9FA9">‹  1 / 1  ›</text>
+    <rect x="1004" y="64" width="252" height="400" rx="10" fill="#18181B" stroke="#26262B" stroke-width="1"/>
+    <text x="1022" y="96" font-size="17" font-weight="600" fill="#FFFFFF">Queue</text>
+    <rect x="1022" y="112" width="216" height="60" rx="8" fill="#27272A"/>
+    <text x="1034" y="136" font-size="14" font-weight="600" fill="#FFFFFF">John 3:16</text>
+    <text x="1034" y="158" font-size="13" fill="#9F9FA9">For God so loved…</text>
+    <rect x="1022" y="182" width="216" height="60" rx="8" fill="#18181B" stroke="#26262B"/>
+    <text x="1034" y="206" font-size="14" font-weight="600" fill="#FFFFFF">Psalm 23:1</text>
+    <text x="1034" y="228" font-size="13" fill="#9F9FA9">The LORD is my…</text>
+    <rect x="112" y="480" width="624" height="224" rx="10" fill="#18181B" stroke="#26262B" stroke-width="1"/>
+    <text x="130" y="512" font-size="17" font-weight="600" fill="#FFFFFF">Search</text>
+    <rect x="130" y="526" width="420" height="38" rx="8" fill="#27272A"/>
+    <text x="144" y="551" font-size="16" fill="#9F9FA9">Type book, chapter, verse…</text>
+    <text x="130" y="600" font-size="15" fill="#9F9FA9">Translations: KJV · NIV · ESV +20</text>
+    <text x="130" y="630" font-size="15" fill="#9F9FA9">Offline · NDI output ready</text>
+    <rect x="752" y="480" width="504" height="224" rx="10" fill="#18181B" stroke="#26262B" stroke-width="1"/>
+    <text x="770" y="512" font-size="17" font-weight="600" fill="#FFFFFF">Detections</text>
+    <text x="770" y="548" font-size="15" fill="#FFFFFF">✓ Romans 8:28 <tspan fill="#22C55E">98%</tspan></text>
+    <text x="770" y="578" font-size="15" fill="#9F9FA9">✓ John 3:16 <tspan fill="#9F9FA9">96%</tspan></text>
+    <text x="770" y="608" font-size="15" fill="#9F9FA9">✓ Psalm 23:1 <tspan fill="#9F9FA9">91%</tspan></text>
+  </g>
+</svg>
