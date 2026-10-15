@@ -4,9 +4,9 @@ import { SITE } from "../../_lib/site"
 
 export function StatsSection() {
   const items = [
-    { value: SITE.stats.hymns, label: "Offline hymns built in" },
-    { value: SITE.stats.translations, label: "Bible Translations" },
-    { value: "6-in-1", label: "Verses, hymns, lyrics, slides, notes, timer" },
+    { value: SITE.stats.hymns, label: "Hymns ready offline" },
+    { value: SITE.stats.translations, label: "Bible translations included" },
+    { value: "6-in-1", label: "One app, from verses to timer" },
   ]
 
   return (

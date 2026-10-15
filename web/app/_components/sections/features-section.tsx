@@ -25,48 +25,48 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     icon: IconMicrophone,
-    title: "AI verse detection, live",
-    body: "Listens to sermon audio, transcribes in real time and surfaces verses from explicit references or paraphrased quotes. Operator stays in control — detections never clobber what's live.",
+    title: "Live AI verse spotting",
+    body: "Follows the sermon feed, converts speech to text on the fly and pulls up passages from direct mentions or loose paraphrases. The operator stays in charge — suggestions never override what's already live.",
   },
   {
     icon: IconBook,
-    title: "13,700+ hymns, fully offline",
-    body: "Bundled hymnal with instant search by number, title, first line or any lyric. Click a stanza to present it live with words, music credits, key and meter.",
+    title: "13,700+ hymns without internet",
+    body: "A complete hymnal lives inside the app, searchable by number, title, opening line or any lyric. Open a hymn for credits, key and meter, then push any stanza to the screens in one click.",
   },
   {
     icon: IconMusic,
-    title: "Song lyrics that sing along",
-    body: "Save songs with auto-detected Verse / Chorus / Bridge sections. Each stanza becomes an auto-fitting themed slide with keyboard stepping and JSON import/export.",
+    title: "Lyrics that follow the song",
+    body: "Store songs with Verse, Chorus and Bridge parts picked out automatically. Every stanza becomes a self-sizing themed slide with keyboard stepping and JSON sharing.",
   },
   {
     icon: IconPhoto,
-    title: "Slides for announcements",
-    body: "Mix images, videos and PDFs in one deck. One-click to air, fade transitions, 1–9 direct cues, reorder and auto-save between restarts.",
+    title: "Announcements and slides",
+    body: "Combine pictures, clips and PDFs into a single deck. Put anything on air with one click, crossfade between cues, jump with keys 1–9, reorder freely — everything saves itself.",
   },
   {
     icon: IconLayoutBoard,
-    title: "Living themes + multi-output NDI",
-    body: "Design lower-thirds to fullscreen in the Theme Designer, animate gradients with motion, then route per-screen themes to sanctuary, stream and overflow.",
+    title: "Animated themes, many outputs",
+    body: "Craft everything from lower-thirds to full-screen layouts in the theme studio with motion gradients, then feed the sanctuary, stream and overflow each with its own look.",
   },
   {
     icon: IconClock,
-    title: "Timer, notes & auto-updates",
-    body: "Stopwatch and countdown with lap times and pulsing red alerts, auto-captured sermon notes with export, and silent background updates that install on quit.",
+    title: "Timer, notes and quiet updates",
+    body: "A stopwatch plus countdown with lap log and red under-ten-seconds warning, sermon notes captured by themselves with export, and background updates that apply when you quit.",
   },
   {
     icon: IconPlug,
-    title: "Works with OBS & vMix",
-    body: "Every content type — verse, hymn, lyrics, timer, slides, blank — paints to NDI at full resolution. Drop it into your existing production setup.",
+    title: "Fits your OBS & vMix rig",
+    body: "Each content kind — passage, hymn, lyrics, timer, slides, blank — renders to full-resolution NDI. Slot Aleph into the production chain you already own.",
   },
   {
     icon: IconNotes,
-    title: "Sermon notes that keep up",
-    body: "Manual notes plus auto-capture from live transcription, with preview list, focus mode and one-click JSON backup to share between machines.",
+    title: "Notes that write themselves",
+    body: "Jot thoughts by hand or let live transcription draft them for you, with a preview list, a calm focus view and one-click JSON backup for moving machines.",
   },
   {
     icon: IconAdjustmentsHorizontal,
-    title: "Simple control during service",
-    body: "Verse, timer, lyrics, slides and blank switcher in one Live panel. Keyboard-first stepping, verse-range navigation that preserves gaps like 1, 3, 5.",
+    title: "Calm control mid-service",
+    body: "One Live panel switches passage, timer, lyrics, slides and blank. Step with the keyboard and walk verse ranges while keeping gaps like 1, 3, 5 intact.",
   },
 ];
 
@@ -81,9 +81,9 @@ export function FeaturesSection() {
         <Reveal>
           <SectionHeading
             id="features-heading"
-            subtitle="Verse detection plus the rest of Sunday: hymns, lyrics, slides, notes and timer — themed once, live everywhere via NDI."
+            subtitle="Verse spotting plus the rest of the morning: hymns, lyrics, decks, notes and timing — styled once, live on all outputs through NDI."
           >
-            Everything your service needs
+            A full toolkit for service day
           </SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 md:[&>*]:-ml-px md:[&>*]:-mt-px lg:grid-cols-3">

@@ -4,7 +4,7 @@ import "./globals.css";
 import { SITE } from "./_lib/site";
 import { StructuredData } from "./_components/seo/structured-data";
 
-const TITLE = `${SITE.name} — Free worship suite for live scripture, hymns & song`;
+const TITLE = `${SITE.name} — Free church presentation suite for scripture, hymns & song`;
 const OG_TITLE = `${SITE.name} — ${SITE.tagline}`;
 
 export const metadata: Metadata = {
@@ -60,6 +60,14 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     url: SITE.url,
     locale: SITE.locale,
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: OG_TITLE,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -67,6 +75,7 @@ export const metadata: Metadata = {
     description: SITE.description,
     site: SITE.twitterHandle,
     creator: SITE.twitterHandle,
+    images: ["/twitter-image.png"],
   },
   robots: {
     index: true,

@@ -69,7 +69,7 @@ export default async function Image() {
               color: "#FFFFFF",
             }}
           >
-            Your Pastor speaks.
+            From pulpit to
           </div>
           <div
             style={{
@@ -80,7 +80,7 @@ export default async function Image() {
               color: "#dc2626",
             }}
           >
-            Aleph finds the verse.
+            every screen, instantly.
           </div>
           <div
             style={{
@@ -91,8 +91,8 @@ export default async function Image() {
               marginTop: 12,
             }}
           >
-            Real-time AI Bible verse detection for live sermons. Scripture
-            on screen the instant it&apos;s spoken — broadcast-ready via NDI.
+            Live scripture, 13,700+ offline hymns, lyrics and slides —
+            free worship presentation over NDI.
           </div>
         </div>
 
@@ -121,7 +121,7 @@ export default async function Image() {
               border: "1px solid rgba(255,255,255,0.18)",
             }}
           >
-            Windows · macOS
+            Windows · macOS · Linux
           </span>
           <span
             style={{

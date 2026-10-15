@@ -11,8 +11,8 @@ export function FinalCtaSection() {
             id="final-cta-heading"
             className="text-[40px] leading-[1.05] font-medium tracking-[-0.035em] text-balance text-foreground sm:text-[56px] md:text-[72px] lg:text-[84px] lg:tracking-tighter"
           >
-            Innovating church{" "}
-            <span className="text-accent">presentations with AI</span>
+            Give your congregation{" "}
+            <span className="text-accent">every single word</span>
           </h2>
         </Reveal>
         <Reveal className="flex flex-col items-center gap-4">
@@ -20,7 +20,7 @@ export function FinalCtaSection() {
             <DownloadButton />
           </div>
           <p className="text-[15px] leading-6 text-muted-foreground">
-            Free for Windows, macOS and Linux • Offline hymns included
+            Gratis for Windows, macOS and Linux • Hymns work offline
           </p>
         </Reveal>
       </Container>

@@ -42,7 +42,7 @@ export function TestimonialsSection() {
       <Container className="flex flex-col gap-10 md:gap-14 lg:gap-[62px]">
         <Reveal>
           <SectionHeading id="testimonials-heading">
-            Hear what people are saying!
+            Cherished by church teams
           </SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 md:[&>*]:-ml-px md:[&>*]:-mt-px lg:grid-cols-3">
@@ -61,7 +61,7 @@ export function TestimonialsSection() {
         </div>
         <Reveal className="flex justify-center">
           <Button href={SITE.socials.twitter} variant="secondary" size="lg">
-            See more reviews
+            More kind words on X
           </Button>
         </Reveal>
       </Container>

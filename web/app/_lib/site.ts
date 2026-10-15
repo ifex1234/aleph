@@ -1,11 +1,11 @@
 export const SITE = {
   name: "Aleph",
   legalName: "openbezal",
-  tagline: "The free worship suite for live scripture, hymns & song.",
+  tagline: "Every verse, hymn and song — live on screen.",
   shortDescription:
-    "AI verse detection, 13,700+ offline hymns, lyrics, slides, timer and broadcast-ready NDI themes. Free, open-source, for Windows, macOS and Linux.",
+    "Free open-source church presentation suite: AI sermon-verse spotting, 13,700+ offline hymns, lyrics and decks over NDI for Windows, macOS and Linux.",
   description:
-    "Aleph is a free, open-source worship suite: live AI Bible verse detection from sermon audio, 13,700+ offline hymns with stanza presentation, song lyrics slides, image/video/PDF slides, sermon notes, service timer, animated themes and multi-output NDI for OBS, vMix and live production.",
+    "Aleph is a free, open-source presentation suite for worship gatherings: live AI passage spotting from sermon audio, 13,700+ offline hymns with stanza display, congregational song lyrics, image, video and PDF decks, sermon notes, a service timer, motion themes and multi-output NDI for OBS, vMix and sanctuary production.",
   url: "https://openaleph.com",
   locale: "en_US",
   twitterHandle: "@openbezal",
@@ -13,27 +13,22 @@ export const SITE = {
   category: "ChurchSoftware",
   operatingSystems: ["Windows", "macOS", "Linux"],
   repo: {
-    owner: "openbezal",
+    owner: "ifex1234",
     name: "aleph",
-    url: "https://github.com/openbezal/aleph",
-    releases: "https://github.com/openbezal/aleph/releases",
-    latestRelease: "https://github.com/openbezal/aleph/releases/latest",
+    url: "https://github.com/ifex1234/aleph",
+    releases: "https://github.com/ifex1234/aleph/releases",
+    latestRelease: "https://github.com/ifex1234/aleph/releases/latest",
     // `/releases/latest` resolves to the newest published, non-prerelease
-    // release, so these track each tagged release with no hand re-upload. The
-    // release workflow ships a copy of each installer under these exact stable
-    // filenames (Tauri's own bundle names carry the version); keep them in sync
-    // with the `aliases` list in .github/workflows/build-release.yml or these
-    // links 404.
+    // release, so these track each tagged release with no hand re-upload.
+    // The Windows filename is pinned by `artifactName` in
+    // electron-builder.yml, so it stays identical across versions. macOS and
+    // Linux have no CI builds yet, so those buttons land on the release list
+    // until their direct asset links exist.
     downloadWindows:
-      "https://github.com/openbezal/aleph/releases/latest/download/Aleph-windows-x64-setup.exe",
-    // Apple Silicon only — the build matrix has no x86_64-apple-darwin target.
-    downloadMac:
-      "https://github.com/openbezal/aleph/releases/latest/download/Aleph-macos-arm64.dmg",
-    // AppImage runs on any distro without a package manager step, so it is the
-    // one-click choice; .deb and .rpm stay on the release page.
-    downloadLinux:
-      "https://github.com/openbezal/aleph/releases/latest/download/Aleph-linux-x86_64.AppImage",
-    discussions: "https://github.com/openbezal/aleph/discussions",
+      "https://github.com/ifex1234/aleph/releases/latest/download/Aleph-windows-x64-setup.exe",
+    downloadMac: "https://github.com/ifex1234/aleph/releases/latest",
+    downloadLinux: "https://github.com/ifex1234/aleph/releases/latest",
+    discussions: "https://github.com/ifex1234/aleph/discussions",
     stars: { fallback: 221 },
   },
   socials: {

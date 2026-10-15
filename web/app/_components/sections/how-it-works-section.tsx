@@ -13,22 +13,22 @@ const STEPS = [
   {
     icon: IconMicrophone,
     title: "Listen",
-    body: "Connect sermon audio. Aleph transcribes live and auto-captures notes and transcripts as you go.",
+    body: "Plug in your sermon audio. Aleph transcribes as people speak and files notes and transcripts on its own.",
   },
   {
     icon: IconSearch,
     title: "Detect & pick",
-    body: "Verses surface from quotes or references. Search 13,700+ hymns or your songs and slides in the same window.",
+    body: "Scriptures surface from quotes or citations. Search 13,700+ hymns, your songs and slide decks from the same window.",
   },
   {
     icon: IconPalette,
     title: "Theme once",
-    body: "Design lower-thirds to fullscreen with plates, shadows and animated gradients. Per-output themes for each screen.",
+    body: "Shape lower-thirds to full-screen looks with plates, shadows and moving gradients — a distinct theme per display.",
   },
   {
     icon: IconScreenShare,
     title: "Present everywhere",
-    body: "Verse, hymn stanza, lyrics, timer or slides air instantly via multi-output NDI to OBS, vMix and sanctuary.",
+    body: "Send verses, hymn stanzas, lyrics, timers or slides live through multi-output NDI to OBS, vMix and in-house screens.",
   },
 ] as const;
 
@@ -43,9 +43,9 @@ export function HowItWorksSection() {
         <Reveal>
           <SectionHeading
             id="how-it-works-heading"
-            subtitle="From first audio check to final benediction — one operator, one app, every moment covered."
+            subtitle="From the first audio check to the final blessing — a single operator with one app covers every moment."
           >
-            How it works
+            From sound check to benediction
           </SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 md:[&>*]:-ml-px md:[&>*]:-mt-px lg:grid-cols-4">

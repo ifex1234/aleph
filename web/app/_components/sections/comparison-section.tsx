@@ -4,14 +4,14 @@ import { Reveal } from "../ui/reveal";
 import { SectionHeading } from "./section-heading";
 
 const WITHOUT = [
-  "Verse app + hymn book + slides + timer",
-  "Manual typing between apps",
-  "Missed references & dead air",
+  "A verse app plus a hymnbook plus slides plus a timer",
+  "Retyping words while switching programs",
+  "Lost references and awkward silence",
 ];
 const WITH = [
-  "Verses, hymns, lyrics, slides, notes, timer",
-  "One-click stanza & slide to air",
-  "Animated themes on multi-output NDI",
+  "Passages, hymns, lyrics, decks, notes, timing",
+  "Any stanza or slide on air in one click",
+  "Motion themes across many NDI outputs",
 ];
 
 export function ComparisonSection() {
@@ -24,9 +24,9 @@ export function ComparisonSection() {
         <Reveal>
           <SectionHeading
             id="comparison-heading"
-            subtitle="Stop juggling four apps on Sunday morning. Aleph carries scripture, song and stage in one operator view."
+            subtitle="Retire the Sunday-morning scramble across four programs. Aleph holds scripture, song and stage cues in a single operator view."
           >
-            Why Aleph
+            Why teams switch
           </SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 md:[&>*]:-ml-px md:[&>*]:-mt-px">

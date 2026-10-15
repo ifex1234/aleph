@@ -5,18 +5,18 @@ import { SectionHeading } from "./section-heading";
 const STEPS = [
   {
     no: "1",
-    title: "Download the app",
-    body: "Free for Windows, macOS and Linux — hymns included offline",
+    title: "Fetch the app",
+    body: "Gratis for Windows, macOS and Linux — hymns ride along offline",
   },
   {
     no: "2",
-    title: "Connect audio & pick a theme",
-    body: "Any mixer feed plus animated gradient or image theme",
+    title: "Wire audio & choose a look",
+    body: "Any desk feed, plus drifting-gradient or picture styling",
   },
   {
     no: "3",
-    title: "Run the whole service",
-    body: "Verses, hymns, lyrics, slides and timer via NDI",
+    title: "Carry the full gathering",
+    body: "Passages, hymns, lyrics, decks and timing over NDI",
   },
 ] as const;
 
@@ -31,9 +31,9 @@ export function QuickStartSection() {
         <Reveal>
           <SectionHeading
             id="quick-start-heading"
-            subtitle="No account. No subscription to start. Just download, connect your audio feed, and Aleph handles everything else from the moment your service begins."
+            subtitle="No login. No membership to begin. Just fetch the build, hook up the desk feed, and Aleph minds the screens from the opening song onward."
           >
-            Ready in under five minutes.
+            Live in less than five minutes.
           </SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3 md:[&>*]:-ml-px md:[&>*]:-mt-px">

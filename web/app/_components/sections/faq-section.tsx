@@ -21,7 +21,7 @@ export function FaqSection() {
     >
       <Container className="flex flex-col gap-10 md:gap-14 lg:gap-[52px]">
         <Reveal>
-          <SectionHeading id="faq-heading">Common questions</SectionHeading>
+          <SectionHeading id="faq-heading">Questions, answered</SectionHeading>
         </Reveal>
         <Reveal>
           <dl

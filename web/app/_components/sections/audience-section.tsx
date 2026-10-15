@@ -8,17 +8,17 @@ const AUDIENCE = [
   {
     icon: IconUsers,
     title: "Church media teams",
-    body: "One operator runs verses, hymns, lyrics and slides — no app-switching mid-service",
+    body: "A single volunteer runs passages, hymns, lyrics and decks — no swapping apps mid-sermon",
   },
   {
     icon: IconVideo,
     title: "Livestream operators",
-    body: "Multi-output NDI with per-screen themes for stream, sanctuary and overflow",
+    body: "Separate NDI feeds with their own styling for the broadcast, hall and overflow rooms",
   },
   {
     icon: IconBuildingChurch,
     title: "Worship leaders & events",
-    body: "13,700+ offline hymns, song library and timer for rehearsals to revivals",
+    body: "Thousands of offline hymns, a reusable songbook and a stage timer, from rehearsal to revival",
   },
 ] as const;
 
@@ -30,7 +30,7 @@ export function AudienceSection() {
     >
       <Container className="flex flex-col gap-10 md:gap-14 lg:gap-16">
         <Reveal>
-          <SectionHeading id="audience-heading">Who this is for</SectionHeading>
+          <SectionHeading id="audience-heading">Built for your team</SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3 md:[&>*]:-ml-px md:[&>*]:-mt-px">
           {AUDIENCE.map((a, i) => (

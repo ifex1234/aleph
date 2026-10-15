@@ -33,8 +33,8 @@ const GROUPS = [
   {
     heading: "Legal",
     links: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
     ],
   },
 ]
@@ -47,8 +47,8 @@ export function SiteFooter() {
           <div className="flex flex-col gap-3">
             <AlephLogo />
             <p className="max-w-70 text-lg leading-6 tracking-[-0.01em] text-muted-foreground">
-              AI-powered real-time Bible verse detection for churches. Scripture
-              on screen, the instant it&apos;s spoken.
+              Open-source worship presentation: live scripture, hymns and
+              song on every screen.
             </p>
           </div>
           {GROUPS.map((g) => (

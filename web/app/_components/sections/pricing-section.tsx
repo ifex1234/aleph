@@ -7,17 +7,17 @@ import { SITE } from "../../_lib/site"
 import { cn } from "../../_lib/utils"
 
 const FREE_FEATURES = [
-  "Whisper transcription, fully offline after download",
-  "₦0 per sermon — no API key, no account",
-  "13,700+ hymns, lyrics, slides, notes & timer included",
-  "Best where data is costly or signal is unreliable",
+  "Whisper transcription, running on-device once downloaded",
+  "₦0 a sermon — no key, no login",
+  "Hymns, lyrics, decks, notes and timer all bundled",
+  "Suited to pricey data or shaky venue internet",
 ] as const
 
 const PRO_FEATURES = [
-  "Nova-3 streaming + Bible keyterm prompting",
-  "Bring your own Deepgram key — pay them directly, ~$0.73 per 2-hr sermon",
-  "$200 free Deepgram credit ≈ 273 sermons (~5 years of weekly services)",
-  "Faster, more accurate live detection for large sanctuaries",
+  "Nova-3 streaming boosted with Bible keyterms",
+  "Use your personal Deepgram key — billed by them, near $0.73 per two-hour sermon",
+  "Their $200 starting credit stretches to about 273 sermons (years of weekly gatherings)",
+  "Swifter, sharper live spotting for bigger auditoriums",
 ] as const
 
 export function PricingSection() {
@@ -31,9 +31,9 @@ export function PricingSection() {
         <Reveal>
           <SectionHeading
             id="pricing-heading"
-            subtitle="Aleph itself is free and open source forever. You only ever pay Deepgram for cloud transcription — and only if you choose it."
+            subtitle="The app stays free and open source for good. Cloud transcription is the only thing that can cost money — and only when you opt into it."
           >
-            Pricing
+            Simple, honest pricing
           </SectionHeading>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-2 md:*:-mt-px md:*:-ml-px">
@@ -47,7 +47,7 @@ export function PricingSection() {
                   ₦0
                 </p>
                 <p className="text-lg leading-8 text-muted-foreground">
-                  Offline transcription for every church, every Sunday.
+                  Offline transcription for every congregation, every Sunday.
                 </p>
               </div>
               <ul className="flex flex-col gap-2.5">
@@ -67,8 +67,8 @@ export function PricingSection() {
                 ))}
               </ul>
               <div className="mt-auto pt-2">
-                <Button href={SITE.repo.releases} variant="secondary">
-                  Download free
+                <Button href={SITE.repo.releases} variant="primary">
+                  Download, then add key
                 </Button>
               </div>
             </div>
@@ -88,7 +88,7 @@ export function PricingSection() {
               </p>
               <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium tracking-[0.08em] text-muted-foreground uppercase">
-                  Pro · Bring your own key
+                  Pro · Your own API key
                 </p>
                 <p className="text-[34px] leading-none font-medium tracking-[-0.04em] text-foreground">
                   ~$0.73{" "}
@@ -97,8 +97,9 @@ export function PricingSection() {
                   </span>
                 </p>
                 <p className="text-lg leading-8 text-muted-foreground">
-                  Cloud speed and accuracy, paid straight to Deepgram — roughly
-                  ₦1,120 at current rates, less than 2–3GB of mobile data.
+                  Cloud pace and precision billed straight by Deepgram — close
+                  to ₦1,120 at today&apos;s rates, cheaper than a couple of
+                  gigabytes of mobile data.
                 </p>
               </div>
               <ul className="flex flex-col gap-2.5">
@@ -135,10 +136,10 @@ export function PricingSection() {
         </div>
         <Reveal>
           <p className="text-center text-[15px] leading-6 text-muted-foreground">
-            About ₦4,480 a month for 4 weekly services — after the free credit
-            runs out. No subscription to Aleph, no account, no per-minute
-            markup. Estimates from Deepgram promo pricing; naira figures move
-            with the exchange rate.
+            Around ₦4,480 monthly for four weekly gatherings, once the starter
+            credit is spent. Nothing goes to Aleph — no membership, no login,
+            no per-minute surcharge. Figures track Deepgram&apos;s promo
+            pricing; naira amounts drift with exchange rates.
           </p>
         </Reveal>
       </Container>
