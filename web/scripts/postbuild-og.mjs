@@ -65,5 +65,12 @@ async function patchHtml() {
   console.log(`patched ${touched} html file(s)`);
 }
 
+// Static export only: with SSR there is no out/ directory and the OG image
+// routes are served by the server, so this script becomes a no-op.
+if (!existsSync(OUT_DIR)) {
+  console.log("no out/ directory (SSR build) — skipping GitHub Pages fixup");
+  process.exit(0);
+}
+
 await renameTargets();
 await patchHtml();

@@ -73,7 +73,7 @@ a glowing projector screen.
 
 **VO:**
 > Verses, song lyrics, thirteen thousand hymns, announcement slides —
-> images, video, even PDFs. One app, one remote, one calm operator.
+> images, video, even PDFs. One app, one laptop, one calm operator.
 > Every line auto-fits the screen, so nothing ever overflows or gets cut.
 
 ### Scene 5 — Beautiful by default (0:58–1:10)
@@ -92,15 +92,15 @@ thirds, and an NDI feed badge pulse on.
 ### Scene 6 — Built for real volunteers (1:10–1:22)
 
 **Visual:** Back to the volunteer — now relaxed, coffee in hand, tapping
-"next" on a phone (remote control). The service flows: verse, chorus,
-announcement. Congregation engaged.
+"next" in the service-control window on the operator laptop. The service
+flows: verse, chorus, announcement. Congregation engaged.
 
-**On-screen text:** "Run the whole service from your phone."
+**On-screen text:** "Run the whole service from one laptop."
 
 **VO:**
 > Aleph was built for real church life: volunteers, not video engineers.
-> Control it from your phone, present from anywhere in the room, and
-> trust that what's on screen is right — because Aleph heard it too.
+> Run it from one laptop — and keep your eyes on the room, not the screen —
+> with the confidence that what's on screen is right, because Aleph heard it too.
 
 ### Scene 7 — Call to action (1:22–1:30)
 
@@ -160,9 +160,19 @@ announcement. Congregation engaged.
 - [x] Authentic artwork in `motion-assets/` (see its README): vector
       logomark (color + white), app icon, white logo lockup, and 18 UI
       icons server-rendered from the app's exact lucide-react build
-- [ ] Screen recordings: live transcript + auto-detect, hymn search, slides
-      deck, theme designer with Motion on, NDI output window
-- [ ] Voiceover (warm, unhurried ~140 wpm; script timed above)
+- [x] 16:9 **done film + cutdown rendered** — implemented as code in
+      `motion/` (Remotion). The app UI is rebuilt in React and animated;
+      Scene 3 of the 90s film also cuts in six seconds of real transcription
+      footage (0:35–0:41 of the live recording, trimmed to
+      `motion/public/sermon-live.mp4`). Captions are burned in from the
+      script below for the silent cut.
+      - `bun install && bun run render:90` → `motion/out/aleph-launch-90.mp4`
+      - `bun run render:30` → `motion/out/aleph-launch-30.mp4`
+      - `bun run studio` to tweak scenes live
+- [ ] Voiceover (warm, unhurried ~140 wpm; script timed above) — drop into
+      `motion/src` as an `<Audio>` track once recorded; timing is already
+      aligned to these lines
 - [ ] Music bed: worship-electronic, resolves at 1:22
-- [ ] End card: logo, "Download free", Windows/macOS/Linux badges
-- [ ] Fonts: Geist (UI), Source Serif 4 (scripture) — same as the app
+- [x] End card: logo, "Download free", Windows/macOS/Linux badges
+- [x] Fonts: Inter (UI), Source Serif 4 (scripture) — self-hosted in
+      `motion/public/fonts/` so headless renders never fall back to Arial

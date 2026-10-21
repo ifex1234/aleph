@@ -1,0 +1,37 @@
+ALEPH LAUNCH CUTDOWN - 30 SECOND CUT
+Voiceover script, timed to the edit (motion/src/Launch30.tsx).
+
+IMPORTANT
+- These lines match the burned-in captions exactly (motion/src/captions.ts).
+  The 30s cut uses DIFFERENT opening lines than the 90s film - record this
+  script separately, do not reuse the 90s takes.
+- Delivery: warm, unhurried, ~140 wpm. Slightly more energy than the 90s.
+- "Aleph" is pronounced AH-lef (two syllables, stress on the first).
+- Gaps between lines are scene cuts. Do not fill them.
+
+WAV SPEC
+- Length: exactly 30.000 s, starting at t=0, with silence in the gaps.
+- 48 kHz, 24-bit, mono or stereo (mono preferred), peak around -3 dBFS, no limiter.
+- File name: aleph-30.wav
+
+TIMECODE  DUR   LINE
+-----------------------------------------------------------------------------
+[00:00.4 - 00:05.6 | 5.2s]
+The preacher calls a verse - and Sunday morning holds its breath.
+
+[00:06.2 - 00:15.6 | 9.4s]
+Aleph listens to the sermon and puts every verse on screen. Automatically.
+
+  This one line runs across the whole detection scene, so pace it with two
+  short breaths (the captions stay as one line - no word-sync needed):
+    "Aleph listens to the sermon"          00:06.2 - 00:08.6
+    "and puts every verse on screen."      00:09.6 - 00:12.8
+    "Automatically."                       00:13.6 - 00:15.6
+
+[00:16.2 - 00:23.4 | 7.2s]
+Verses, lyrics, hymns, slides - always framed, always beautiful.
+
+[00:24.2 - 00:29.4 | 5.2s]
+Aleph. The sermon, on screen. Download free.
+-----------------------------------------------------------------------------
+Ends at 0:29.4. Leave the final 0.6 s silent for the end card.

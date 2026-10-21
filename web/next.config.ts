@@ -3,11 +3,12 @@ import { fileURLToPath } from "node:url";
 import { createMDX } from "fumadocs-mdx/next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // SSR (default) — /api/track and /api/analytics need a Node runtime.
+  // Previously "export" for GitHub Pages; the site now deploys to Vercel.
   trailingSlash: true,
-  // The default next/image loader requires a server runtime; with
-  // output: "export" we ship every image through the static pipeline,
-  // so disable the optimizer and let the browser fetch assets as-is.
+  // The default next/image loader requires a server runtime; we ship every
+  // image through the static pipeline, so disable the optimizer and let
+  // the browser fetch assets as-is.
   images: { unoptimized: true },
   turbopack: {
     root: fileURLToPath(new URL(".", import.meta.url)),

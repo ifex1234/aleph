@@ -1,12 +1,13 @@
 import { SITE, downloadHref } from "./site";
 
 /**
- * The release pipeline publishes one release object per platform job for the
- * same tag, so `/releases/latest/download/<name>` only resolves assets from
- * whichever object GitHub picks — the rest 404. Instead of hardcoding a
- * filename, resolve the real installer at click time by scanning recent
- * stable releases for a matching asset. Anything goes wrong (offline,
- * rate-limited, renamed) and we fall back to the static URL.
+ * The release pipeline once published one release object per platform job
+ * for the same tag, so `/releases/latest/download/<name>` only resolved
+ * assets from whichever object GitHub picked — the rest 404'd. Instead of
+ * hardcoding a filename, resolve the real installer at click time by
+ * scanning recent stable releases for a matching asset. Anything goes
+ * wrong (offline, rate-limited, renamed) and we fall back to the static
+ * URL.
  */
 
 type PlatformKey = "windows" | "mac" | "linux";

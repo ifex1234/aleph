@@ -1,0 +1,82 @@
+ALEPH LAUNCH FILM - 90 SECOND CUT
+Voiceover script, timed to the edit (motion/src/Launch90.tsx).
+
+IMPORTANT
+- These lines match the burned-in captions exactly (motion/src/captions.ts).
+  Do not reword, shorten, or add sentences - captions are already in the picture.
+- Delivery: warm, unhurried, ~140 wpm. Conversational, not announcer.
+- "Aleph" is pronounced AH-lef (two syllables, stress on the first).
+- The gaps between lines are intentional scene cuts. Do not fill them.
+- One continuous take is fine, but silence must land exactly on the gaps.
+
+WAV SPEC
+- Length: exactly 90.000 s, starting at t=0, with silence in the gaps.
+- 48 kHz, 24-bit, mono or stereo (mono preferred), peak around -3 dBFS, no limiter.
+- File name: aleph-90.wav
+
+TIMECODE  DUR   LINE
+-----------------------------------------------------------------------------
+[00:00.8 - 00:04.4 | 3.6s]
+It's Sunday morning. The preacher calls a verse - and your heart skips a beat.
+
+[00:04.4 - 00:08.2 | 3.8s]
+Three apps open, a hundred tabs, and a congregation waiting...
+
+[00:08.2 - 00:11.6 | 3.4s]
+...to find John 3:16 before the moment passes.
+
+[00:12.4 - 00:17.0 | 4.6s]
+Meet Aleph - the presentation app that listens.
+
+[00:17.0 - 00:21.6 | 4.6s]
+It hears the sermon, understands it, and drives your screens for you.
+
+[00:22.4 - 00:27.2 | 4.8s]
+As the message is preached, Aleph transcribes every word...
+
+[00:27.2 - 00:31.8 | 4.6s]
+...and detects every scripture reference. Automatically.
+
+[00:31.8 - 00:36.0 | 4.2s]
+No typing. No searching. The verse is on screen before the sentence ends.
+
+[00:36.0 - 00:39.5 | 3.5s]
+In multiple translations. Even when the internet drops.
+
+[00:40.5 - 00:45.2 | 4.7s]
+Verses, song lyrics, thirteen thousand hymns, announcement slides...
+
+[00:45.2 - 00:50.0 | 4.8s]
+Images, video, even PDFs. One app, one laptop, one calm operator.
+
+[00:50.0 - 00:55.0 | 5.0s]
+Every line auto-fits the screen, so nothing overflows or gets cut.
+
+[00:55.0 - 00:57.6 | 2.6s]
+One app. Every screen.
+
+[00:58.6 - 01:03.2 | 4.6s]
+And it looks like a design team made it.
+
+[01:03.2 - 01:07.0 | 3.8s]
+Animated gradient backgrounds, custom themes...
+
+[01:07.0 - 01:09.7 | 2.7s]
+...and broadcast-grade NDI output for your livestream.
+
+[01:10.6 - 01:15.2 | 4.6s]
+Aleph was built for real church life: volunteers, not video engineers.
+
+[01:15.2 - 01:18.6 | 3.4s]
+Run it from one laptop - and keep your eyes on the room, not the screen.
+
+[01:18.6 - 01:21.7 | 3.1s]
+And trust what's on screen is right - because Aleph heard it too.
+
+[01:22.4 - 01:26.0 | 3.6s]
+Aleph. The sermon, on screen.
+
+[01:26.0 - 01:29.4 | 3.4s]
+Download free today - for Windows, macOS, and Linux.
+-----------------------------------------------------------------------------
+Ends at 1:29.4. Leave the final 0.6 s silent for the end card.

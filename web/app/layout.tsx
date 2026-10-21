@@ -3,6 +3,7 @@ import { RootProvider } from "fumadocs-ui/provider/next";
 import "./globals.css";
 import { SITE } from "./_lib/site";
 import { StructuredData } from "./_components/seo/structured-data";
+import { TrackVisit } from "./_components/track-visit";
 
 const TITLE = `${SITE.name} — Free church presentation suite for scripture, hymns & song`;
 const OG_TITLE = `${SITE.name} — ${SITE.tagline}`;
@@ -116,6 +117,7 @@ export default function RootLayout({
         className="min-h-full bg-background text-foreground"
         suppressHydrationWarning
       >
+        <TrackVisit />
         <StructuredData />
         <RootProvider
           theme={{

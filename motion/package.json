@@ -1,0 +1,26 @@
+{
+  "name": "aleph-motion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aleph product launch film — code-driven motion graphics",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:90": "remotion render src/index.ts AlephLaunch out/aleph-launch-90.mp4 --codec=h264",
+    "render:30": "remotion render src/index.ts AlephLaunch30 out/aleph-launch-30.mp4 --codec=h264",
+    "still": "remotion still src/index.ts AlephLaunch out/still.png",
+    "icons": "node scripts/gen-icons.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.9.0"
+  }
+}
