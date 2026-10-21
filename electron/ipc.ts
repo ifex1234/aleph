@@ -35,6 +35,7 @@ import { statusSnapshot } from "./services/remote/dispatcher"
 import { listSystemFonts } from "./services/fonts"
 import { exportDiagnostics } from "./services/diagnostics"
 import { storeDelete, storeGet, storeReset, storeSave, storeSet } from "./services/stores"
+import * as support from "./services/support"
 import { latencyMark, error as logError, info, warn } from "./services/logger"
 import { getLogDir, getLogFile } from "./services/logger"
 import { userDataDir, resourceDir, projectRoot } from "./services/paths"
@@ -362,6 +363,12 @@ const handlers: Record<string, Handler> = {
     }
     return null
   },
+
+  support_create_checkout: (a) => support.createCheckout(str(a.tier)),
+
+  support_resume_checkout: (a) => support.resumeCheckout(str(a.token)),
+
+  support_order_status: (a) => support.getOrderStatus(str(a.token)),
 }
 
 // ---------------------------------------------------------------------------

@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 import { fileURLToPath } from "node:url";
+import { config as loadEnv } from "dotenv";
 import { createMDX } from "fumadocs-mdx/next";
+
+loadEnv({ path: fileURLToPath(new URL("../.env", import.meta.url)) });
 
 const nextConfig: NextConfig = {
   // SSR (default) — /api/track and /api/analytics need a Node runtime.
