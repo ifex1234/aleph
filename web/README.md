@@ -1,7 +1,7 @@
 # Aleph marketing site
 
 Next.js 16 marketing site for [Aleph](https://aleph.zeravest.com). Server-side
-rendered (API routes for analytics), deployed to Vercel.
+rendered; analytics requests are rewritten to `server-aleph`. Deployed to Vercel.
 
 ## Develop
 
@@ -21,36 +21,34 @@ bun run build
 
 ## Deploy
 
-Deployed to Vercel on push to `main`. Set these env vars on the Vercel project:
+Deployed to Vercel on push to the production branch (`master`). Set this env
+var on the Vercel project:
 
-- `ANALYTICS_DATABASE_URL` — Postgres connection string for the analytics DB
-  (Neon works; `sslmode=require` is honored automatically). On first request
-  the `analytics_events` table and indexes are created automatically.
-- `ADMIN_KEY` — key that unlocks `GET /api/analytics` and the `/admin`
-  dashboard page.
+- `ANALYTICS_API_URL` - base URL of the `server-aleph` deployment (for example
+  `https://api.example.com`). Same-origin `/api/track` and `/api/analytics`
+  requests are rewritten to this server.
+
+The admin key is entered in the `/admin` page and forwarded through the rewrite;
+it does not need to be set on Vercel.
 
 ## Analytics
 
-Self-contained, backed by **Drizzle ORM** (`drizzle-orm` + `drizzle-kit`, postgres-js driver).
+The analytics implementation lives in `server-aleph`: Drizzle schema/bootstrap
+and the `POST /api/track` / `GET /api/analytics` endpoints. This site keeps the
+same-origin URLs as Next.js rewrites to `ANALYTICS_API_URL`.
 
-- Schema: `db/schema.ts` (`analytics_events` — event_type, anon_id, platform, unique dedupe_key, created_at)
-- Client: `db/index.ts` (lazy, idempotent `ensureSchema()` so a fresh database works with zero migrations)
-- Migration files: `drizzle/` — regenerate after schema changes with `npm run db:generate`, apply with `npm run db:migrate` (or `db:push` to sync directly)
-- `db:studio` opens Drizzle Studio against `ANALYTICS_DATABASE_URL`
+- `POST /api/track?event_type=visit|download|game_play&anon_id=&platform=` -
+  visits are deduped per device per UTC hour; downloads are deduped per device
+  per platform (`windows` / `macos` / `linux`).
+- `GET /api/analytics?days=N` - visitors, downloads + `by_platform`, game plays,
+  and a daily series; requires `X-Admin-Key`.
+- `/admin` - dashboard; enter the admin key in the page.
 
-Routes:
-
-- `POST /api/track?event_type=visit|download|game_play&anon_id=&platform=` — visit deduped
-  per device per UTC hour, download deduped per device **per platform** (`windows`/`macos`/`linux`)
-- `GET /api/analytics?days=N` — visitors, downloads + `by_platform`, game plays, daily series; requires `X-Admin-Key` header
-- `GET /admin?key=` (or the in-page key form) — dashboard
-
-The database is Aleph's own (separate from any other app). On first request the
-schema is created automatically if missing.
+Analytics tables are created automatically by `server-aleph` on first request.
 
 ## Notes
 
-- SSR (no `output: "export"`) so the `/api/*` analytics routes can run. Do not
-  re-enable static export — it would break them.
-- Self-hosted fonts under `public/fonts/`. Referenced from `app/globals.css` via absolute paths — do not introduce a `basePath`, it does not rewrite CSS `url()` values.
+- SSR (no `output: "export"`) so the analytics rewrites can run. Do not
+  re-enable static export - it would break them.
+- Self-hosted fonts under `public/fonts/`. Referenced from `app/globals.css` via absolute paths - do not introduce a `basePath`, it does not rewrite CSS `url()` values.
 - `getGitHubStars()` runs at build time. Authenticated via `GITHUB_TOKEN` in CI to avoid the 60/hr unauthenticated rate limit; falls back to a hardcoded count if the API call fails.

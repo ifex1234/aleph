@@ -1,4 +1,4 @@
-// lib: analytics - fire-and-forget event tracking to this site's own API
+// lib: analytics - fire-and-forget event tracking via the same-origin server-aleph rewrite
 const TRACK_URL = "/api/track";
 
 const ANON_KEY = "aleph_anon_id";

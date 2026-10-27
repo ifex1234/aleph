@@ -4,7 +4,7 @@ import { SiteFooter } from "../_components/sections/site-footer"
 import { Container } from "../_components/ui/container"
 import { SITE } from "../_lib/site"
 
-const LAST_UPDATED = "October 15, 2026"
+const LAST_UPDATED = "October 23, 2026"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -25,7 +25,7 @@ const SECTIONS = [
     id: "overview",
     heading: "Overview",
     body: [
-      "Aleph is built local-first. There is no Aleph account, no sign-in, and no Aleph cloud holding your congregation's data. Your sermon audio, transcriptions, songs, notes, slide decks and settings live on the computer running the app, and this website sets no cookies and runs no analytics.",
+      "Aleph is built local-first. There is no Aleph account, no sign-in, and no Aleph cloud holding your congregation's data. Your sermon audio, transcriptions, songs, notes, slide decks and settings live on the computer running the app, and this website sets no cookies or tracking scripts. We record anonymous, aggregate counts of visits and downloads; no personal data is tied to those counts.",
     ],
   },
   {
@@ -60,7 +60,7 @@ const SECTIONS = [
     id: "website",
     heading: "This website",
     body: [
-      "These pages are pre-rendered static files: no accounts, no cookies, no tracking scripts. The GitHub star count shown on the homepage is fetched server-side from the public GitHub API. Following outbound links (GitHub, X, LinkedIn) or emailing info@zeravest.ng puts you under those services' own policies.",
+      "These pages are pre-rendered static files: no accounts, no cookies, no tracking scripts. We record anonymous, aggregate counts of page visits and installer downloads; these counts contain no personal data and are not used for advertising or cross-site tracking. The GitHub star count shown on the homepage is fetched server-side from the public GitHub API. Following outbound links (GitHub, X, LinkedIn) or emailing info@zeravest.ng puts you under those services' own policies.",
     ],
   },
   {
