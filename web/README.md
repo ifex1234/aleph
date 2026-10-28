@@ -1,6 +1,6 @@
 # Aleph marketing site
 
-Next.js 16 marketing site for [Aleph](https://aleph.zeravest.com). Server-side
+Next.js 16 marketing site for [Aleph](https://aleph.zeravest.ng). Server-side
 rendered; analytics requests are rewritten to `server-aleph`. Deployed to Vercel.
 
 ## Develop

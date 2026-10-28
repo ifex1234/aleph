@@ -6,9 +6,9 @@ export const SITE = {
     "Free open-source church presentation suite: AI sermon-verse spotting, 13,700+ offline hymns, lyrics and decks over NDI for Windows, macOS and Linux.",
   description:
     "Aleph is a free, open-source presentation suite for worship gatherings: live AI passage spotting from sermon audio, 13,700+ offline hymns with stanza display, congregational song lyrics, image, video and PDF decks, sermon notes, a service timer, motion themes and multi-output NDI for OBS, vMix and sanctuary production.",
-  url: "https://aleph.zeravest.com",
+  url: "https://aleph.zeravest.ng",
   locale: "en_US",
-  twitterHandle: "@openbezal",
+  // twitterHandle: "@openbezal",
   founded: "2025",
   category: "ChurchSoftware",
   operatingSystems: ["Windows", "macOS", "Linux"],
@@ -33,7 +33,7 @@ export const SITE = {
   },
   socials: {
     github: "https://github.com/ifex1234/aleph",
-    twitter: "https://x.com/openbezal",
+    // twitter: "https://x.com/openbezal",
     linkedin: "https://www.linkedin.com/company/openbezal",
     email: "mailto:info@zeravest.ng",
   },
@@ -43,7 +43,7 @@ export const SITE = {
     hymns: "13,700+",
     hymnStanzas: "69,600+",
   },
-} as const;
+} as const
 
 /**
  * Where a "Download" CTA should point: straight at the installer for the
@@ -54,13 +54,13 @@ export const SITE = {
 export function downloadHref(platform: string | null | undefined): string {
   switch (platform) {
     case "windows":
-      return SITE.repo.downloadWindows;
+      return SITE.repo.downloadWindows
     case "mac":
-      return SITE.repo.downloadMac;
+      return SITE.repo.downloadMac
     case "linux":
-      return SITE.repo.downloadLinux;
+      return SITE.repo.downloadLinux
     default:
-      return SITE.repo.latestRelease;
+      return SITE.repo.latestRelease
   }
 }
 
@@ -68,20 +68,20 @@ export async function getGitHubStars(): Promise<number> {
   try {
     const headers: Record<string, string> = {
       Accept: "application/vnd.github+json",
-    };
-    const token = process.env.GITHUB_TOKEN;
-    if (token) headers.Authorization = `Bearer ${token}`;
+    }
+    const token = process.env.GITHUB_TOKEN
+    if (token) headers.Authorization = `Bearer ${token}`
 
     const res = await fetch(
       `https://api.github.com/repos/${SITE.repo.owner}/${SITE.repo.name}`,
       { headers }
-    );
-    if (!res.ok) return SITE.repo.stars.fallback;
-    const data = (await res.json()) as { stargazers_count?: number };
+    )
+    if (!res.ok) return SITE.repo.stars.fallback
+    const data = (await res.json()) as { stargazers_count?: number }
     return typeof data.stargazers_count === "number"
       ? data.stargazers_count
-      : SITE.repo.stars.fallback;
+      : SITE.repo.stars.fallback
   } catch {
-    return SITE.repo.stars.fallback;
+    return SITE.repo.stars.fallback
   }
 }

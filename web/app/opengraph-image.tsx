@@ -49,7 +49,7 @@ export default async function Image() {
           />
           <span style={{ color: "#FFFFFF", fontWeight: 600 }}>{SITE.name}</span>
           <span>·</span>
-          <span>aleph.zeravest.com</span>
+          <span>aleph.zeravest.ng</span>
         </div>
 
         <div

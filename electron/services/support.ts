@@ -1,7 +1,7 @@
 import { app, shell } from "electron"
 
 const DEV_API_URL = "http://localhost:3030"
-const PRODUCTION_API_URL = "https://aleph.zeravest.com"
+const PRODUCTION_API_URL = "https://aleph.zeravest.ng"
 const REQUEST_TIMEOUT_MS = 20_000
 const SETTLE_DELAY_MS = 1_500
 

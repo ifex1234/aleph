@@ -143,7 +143,7 @@ export const CTA: React.FC = () => {
           }}
         >
           <Icon name="sparkles" size={16} color="rgba(255,255,255,0.45)" />
-          aleph.zeravest.com · local Whisper included · works offline
+          aleph.zeravest.ng · local Whisper included · works offline
         </div>
       </div>
     </Stage>

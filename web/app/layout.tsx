@@ -1,12 +1,12 @@
-import type { Metadata, Viewport } from "next";
-import { RootProvider } from "fumadocs-ui/provider/next";
-import "./globals.css";
-import { SITE } from "./_lib/site";
-import { StructuredData } from "./_components/seo/structured-data";
-import { TrackVisit } from "./_components/track-visit";
+import type { Metadata, Viewport } from "next"
+import { RootProvider } from "fumadocs-ui/provider/next"
+import "./globals.css"
+import { SITE } from "./_lib/site"
+import { StructuredData } from "./_components/seo/structured-data"
+import { TrackVisit } from "./_components/track-visit"
 
-const TITLE = `${SITE.name} — Free church presentation suite for scripture, hymns & song`;
-const OG_TITLE = `${SITE.name} — ${SITE.tagline}`;
+const TITLE = `${SITE.name} — Free church presentation suite for scripture, hymns & song`
+const OG_TITLE = `${SITE.name} — ${SITE.tagline}`
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -74,8 +74,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: OG_TITLE,
     description: SITE.description,
-    site: SITE.twitterHandle,
-    creator: SITE.twitterHandle,
+    // site: SITE.twitterHandle,
+    // creator: SITE.twitterHandle,
     images: ["/twitter-image.png"],
   },
   robots: {
@@ -92,7 +92,10 @@ export const metadata: Metadata = {
   // icon and apple-icon are wired automatically from app/icon.svg and
   // app/apple-icon.tsx — overriding here would suppress Next.js's defaults.
   manifest: "/manifest.webmanifest",
-};
+  verification: {
+    google: "OvS2EHhw9Qw9Plh9OSqMVzMtMaGoSyg1f5OER-t9XCQ",
+  },
+}
 
 export const viewport: Viewport = {
   themeColor: [
@@ -102,17 +105,13 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className="h-full antialiased"
-      suppressHydrationWarning
-    >
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <body
         className="min-h-full bg-background text-foreground"
         suppressHydrationWarning
@@ -136,5 +135,5 @@ export default function RootLayout({
         </RootProvider>
       </body>
     </html>
-  );
+  )
 }
