@@ -179,6 +179,11 @@ function SongEditor() {
     })
   }, [])
 
+  const handleDelete = useCallback(() => {
+    if (!activeSongId) return
+    useLyricsStore.getState().deleteSong(activeSongId)
+  }, [activeSongId])
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-1 overflow-hidden">
@@ -215,6 +220,18 @@ function SongEditor() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDelete}
+            disabled={isSaving}
+            className="h-8 text-destructive hover:text-destructive"
+            aria-label="Delete song"
+            title="Delete song"
+          >
+            <Trash2Icon className="size-3.5" />
+            <span className="hidden sm:inline">Delete</span>
+          </Button>
           <Button
             variant="ghost"
             size="sm"
