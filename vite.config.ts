@@ -2,9 +2,15 @@ import path from "path"
 import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
+import pkg from "./package.json"
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Build-time app version so the UI never depends on a successful IPC call
+  // to Electron to display it.
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   // Relative asset URLs so Electron can load the built renderer over file://.
   base: "./",
   plugins: [react(), tailwindcss()],

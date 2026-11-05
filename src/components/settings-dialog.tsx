@@ -34,6 +34,14 @@ import { useAudioTest } from "@/hooks/use-audio-test"
 import { useSettingsStore } from "@/stores"
 import { useTranscriptStore } from "@/stores/transcript-store"
 import { useTutorialStore } from "@/stores/tutorial-store"
+import { useUpdaterStore } from "@/stores"
+import { FeatureGuides, ContactCard } from "@/components/settings/help-guides"
+import {
+  DownloadIcon,
+  LoaderCircleIcon,
+  RefreshCwIcon,
+  RotateCcwIcon,
+} from "lucide-react"
 import { useSettingsDialogStore } from "@/lib/settings-dialog"
 import { REMOTE_EVENTS } from "@/lib/remote-events"
 import { SupportSection } from "@/components/settings/support-section"
@@ -929,6 +937,73 @@ function HelpSection() {
           </div>
         </div>
       </div>
+
+      <UpdaterCard />
+
+      <ContactCard />
+
+      <FeatureGuides />
+    </div>
+  )
+}
+
+function UpdaterCard() {
+  const { enabled, phase, version, percent } = useUpdaterStore()
+  const checkNow = useUpdaterStore((s) => s.checkNow)
+  const download = useUpdaterStore((s) => s.download)
+  const install = useUpdaterStore((s) => s.install)
+
+  const status = !enabled
+    ? "You're on the installed build you launched. Updates only apply to packaged installations."
+    : phase === "ready"
+      ? `Aleph ${version} has been downloaded and is ready to install.`
+      : phase === "downloading"
+        ? `Downloading Aleph ${version}… ${percent}%`
+        : phase === "available"
+          ? `Aleph ${version} is available. Nothing has been downloaded yet.`
+          : "No update has been found so far."
+
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-4">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+          {phase === "downloading" ? (
+            <LoaderCircleIcon className="size-4 animate-spin text-primary" />
+          ) : (
+            <RotateCcwIcon className="size-4 text-primary" />
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-medium">App Updates</p>
+          <p className="truncate text-xs text-muted-foreground">{status}</p>
+        </div>
+      </div>
+      {enabled && (
+        <div className="flex shrink-0 items-center gap-2">
+          {phase === "ready" ? (
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={install}>
+              <RotateCcwIcon className="mr-1.5 size-3.5" />
+              Restart to install
+            </Button>
+          ) : phase === "available" ? (
+            <Button variant="outline" size="sm" className="h-7 text-xs" onClick={download}>
+              <DownloadIcon className="mr-1.5 size-3.5" />
+              Download now
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs"
+              onClick={() => void checkNow()}
+              disabled={phase === "downloading"}
+            >
+              <RefreshCwIcon className="mr-1.5 size-3.5" />
+              Check for updates
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

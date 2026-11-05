@@ -14,6 +14,7 @@ export type {
   BroadcastOutputNdiSettings,
   BroadcastOutputStatus,
   BroadcastOutputType,
+  BroadcastFitMode,
 } from "./broadcast-output"
 export { MAIN_OUTPUT_ID, defaultNdiSettings, outputWindowLabel } from "./broadcast-output"
 export type {

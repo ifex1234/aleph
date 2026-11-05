@@ -26,7 +26,6 @@ import {
   getBroadcastWindow,
   listMonitors,
   openBroadcastWindow,
-  setNdiActiveChecker,
 } from "./services/windows"
 import * as ndi from "./services/ndi"
 import { OscServer } from "./services/remote/osc"
@@ -35,6 +34,12 @@ import { statusSnapshot } from "./services/remote/dispatcher"
 import { listSystemFonts } from "./services/fonts"
 import { exportDiagnostics } from "./services/diagnostics"
 import { storeDelete, storeGet, storeReset, storeSave, storeSet } from "./services/stores"
+import {
+  acceptDownload,
+  checkNow,
+  installNow,
+  updaterState,
+} from "./services/updater"
 import * as support from "./services/support"
 import { latencyMark, error as logError, info, warn } from "./services/logger"
 import { getLogDir, getLogFile } from "./services/logger"
@@ -268,6 +273,14 @@ const handlers: Record<string, Handler> = {
 
   // ------------------------------------------------------- internal channels
   __get_version: () => app.getVersion(),
+
+  __updater_get_state: () => updaterState(),
+  __updater_download: () => acceptDownload(),
+  __updater_install: () => {
+    installNow()
+    return null
+  },
+  __updater_check: () => checkNow(),
   __get_log_dir: () => getLogDir(),
   __get_log_file: () => getLogFile(),
   __get_data_dir: () => userDataDir(),
@@ -421,9 +434,7 @@ export async function handleInvoke(
   }
 }
 
-// NDI-aware window closing (close_broadcast_window hides instead).
-setNdiActiveChecker((outputId) => ndi.isNdiActive(outputId))
-
+// NDI-aware window closing lives in windows.closeBroadcastWindow.
 export function broadcastWindowFor(outputId: string): BrowserWindow | null {
   return getBroadcastWindow(outputId)
 }

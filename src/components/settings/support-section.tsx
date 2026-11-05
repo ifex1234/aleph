@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { invoke } from "@tauri-apps/api/core"
+import { getVersion } from "@tauri-apps/api/app"
 import { Button } from "@/components/ui/button"
 import {
   Collapsible,
@@ -58,6 +59,13 @@ export function SupportSection() {
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [iconFailed, setIconFailed] = useState<Record<string, boolean>>({})
+  const [version, setVersion] = useState("")
+
+  useEffect(() => {
+    void getVersion()
+      .then(setVersion)
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -139,11 +147,23 @@ export function SupportSection() {
           <p className="text-sm font-medium">About</p>
         </div>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          Aleph is a free and open-source app and a product of Zeravest
-          technologies. It is built with care and love to help you manage your
-          tasks and projects efficiently. We appreciate your support in keeping
-          Aleph alive and improving.
+          Aleph is a free app and a product of Zeravest technologies. It is
+          built with care and love to help you manage your tasks and projects
+          efficiently.
         </p>
+        <div className="mt-3 flex items-baseline justify-between gap-3">
+          <span className="text-[0.5625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+            Version
+          </span>
+          <span className="font-mono text-xs text-foreground">
+            {version || "—"}
+          </span>
+        </div>
+        {info.about && (
+          <p className="mt-3 border-t border-border/70 pt-3 text-xs leading-relaxed text-muted-foreground">
+            {info.about}
+          </p>
+        )}
       </div>
 
       {/* Support us */}

@@ -28,6 +28,7 @@ import { useBroadcastStore } from "@/stores"
 import type {
   BroadcastOutput,
   BroadcastOutputType,
+  BroadcastFitMode,
   NdiAlphaMode,
   NdiFrameRate,
   NdiResolution,
@@ -259,7 +260,43 @@ export function OutputEditorDialog({
                   </SelectContent>
                 </Select>
               </div>
-            ) : (
+            ) : null}
+
+            {form.type === "display" && (
+              <div className="flex flex-col gap-1.5">
+                <span
+                  id="fit-mode-label"
+                  className="text-xs text-muted-foreground"
+                >
+                  Screen fit
+                </span>
+                <Select
+                  value={form.fitMode ?? "contain"}
+                  onValueChange={(v) =>
+                    patch({ fitMode: v as BroadcastFitMode })
+                  }
+                >
+                  <SelectTrigger
+                    aria-labelledby="fit-mode-label"
+                    className="w-full"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="contain">
+                      Letterbox — show everything, bars if needed
+                    </SelectItem>
+                    <SelectItem value="fill">
+                      Fill screen — crop edges, no bars
+                    </SelectItem>
+                    <SelectItem value="stretch">
+                      Stretch — distort to fill exactly
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {form.type !== "display" && (
               <>
                 <div className="flex flex-col gap-1.5">
                   <label

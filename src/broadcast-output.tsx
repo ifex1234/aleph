@@ -13,7 +13,7 @@ import { ImageSlides } from "@/components/ui/image-slides"
 import { CanvasVerse } from "@/components/ui/canvas-verse"
 import "./broadcast-fonts.css"
 import type { BroadcastTheme, BroadcastContent, TimerContent, LyricsContent, LyricsSlideContent } from "@/types/broadcast"
-import type { NdiConfigEventPayload, NdiFrameRequest } from "@/types"
+import type { BroadcastFitMode, NdiConfigEventPayload, NdiFrameRequest } from "@/types"
 
 /** Convert Uint8Array/Uint8ClampedArray to base64 using Function.apply (avoids spread stack overflow) */
 function uint8ToBase64(bytes: Uint8Array | Uint8ClampedArray): string {
@@ -39,6 +39,7 @@ const MOTION_NDI_INTERVAL_MS = 100
 interface BroadcastPayload {
   theme: BroadcastTheme
   content: BroadcastContent
+  fitMode?: BroadcastFitMode
 }
 
 export function BroadcastOutput() {
@@ -50,6 +51,7 @@ export function BroadcastOutput() {
   const captureRef = useRef<HTMLCanvasElement>(null)
   const slideImageCacheRef = useRef(new Map<string, HTMLImageElement>())
   const [latestData, setLatestData] = useState<BroadcastPayload | null>(null)
+  const [fitMode, setFitMode] = useState<BroadcastFitMode>("contain")
   const ndiConfigRef = useRef<NdiConfigEventPayload>({
     active: false,
     fps: 24,
@@ -431,6 +433,12 @@ export function BroadcastOutput() {
       await invoke("push_ndi_frame", { request })
       lastPushRef.current = Date.now()
     } catch (error) {
+      // The session ended on the main-process side while this window still
+      // thinks NDI is active. Deactivate the pump so we stop failing every
+      // frame; a future config event re-arms it.
+      if (String(error).includes("No active NDI session")) {
+        ndiConfigRef.current = { ...ndiConfigRef.current, active: false }
+      }
       console.warn("[broadcast-output] push_ndi_frame failed", error)
     } finally {
       pushingRef.current = false
@@ -467,6 +475,7 @@ export function BroadcastOutput() {
         theme: normalizeTheme(event.payload.theme),
       }
       setLatestData(normalizedPayload)
+      setFitMode(event.payload.fitMode ?? "contain")
       preloadThemeAssets(event.payload.theme)
       logDebug("Received broadcast:content-update", {
         type: event.payload.content.type,
@@ -548,9 +557,19 @@ export function BroadcastOutput() {
   // Determine if we should use slide-based rendering for verses
   const useSlidesForVerses = content?.type === "verse" && content.verseSlides && content.verseSlides.slides.length > 0
 
-  const aspectRatio = theme?.resolution.width ? theme.resolution.width / theme.resolution.height : 16/9
-  const displayWidth = containerSize.width || theme?.resolution.width || 1920
-  const displayHeight = displayWidth / aspectRatio
+  // The theme is designed at a fixed resolution (usually 16:9). Scale it onto
+  // whatever the output screen is:
+  // - contain: largest size that fits fully (letterbox as needed) — default
+  // - fill: cover the screen entirely, cropping the overflowing edges
+  // - stretch: ignore aspect and distort to the exact screen size
+  const themeWidth = theme?.resolution.width ?? 1920
+  const themeHeight = theme?.resolution.height ?? 1080
+  const containerWidth = containerSize.width || themeWidth
+  const containerHeight = containerSize.height || themeHeight
+  const fitScale =
+    fitMode === "fill"
+      ? Math.max(containerWidth / themeWidth, containerHeight / themeHeight)
+      : Math.min(containerWidth / themeWidth, containerHeight / themeHeight)
 
   const containerStyle = useMemo(() => ({
     width: "100vw",
@@ -562,10 +581,15 @@ export function BroadcastOutput() {
     overflow: "hidden",
   } as React.CSSProperties), [theme?.background.color])
 
-  const contentStyle = useMemo(() => ({
-    width: displayWidth,
-    height: displayHeight,
-  } as React.CSSProperties), [displayWidth, displayHeight])
+  const contentStyle = useMemo(() => {
+    if (fitMode === "stretch") {
+      return { width: containerWidth, height: containerHeight }
+    }
+    return {
+      width: Math.floor(themeWidth * fitScale),
+      height: Math.floor(themeHeight * fitScale),
+    }
+  }, [fitMode, containerWidth, containerHeight, fitScale, themeWidth, themeHeight])
 
   if (!theme) {
     return (

@@ -1,6 +1,6 @@
 {
   "name": "aleph",
-  "version": "0.8.8",
+  "version": "0.9.0",
   "author": "Zeravest Technologies",
   "main": "dist-electron/main.cjs",
   "dependencies": {

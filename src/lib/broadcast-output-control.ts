@@ -109,15 +109,24 @@ export async function enableOutput(output: BroadcastOutput): Promise<boolean> {
   const store = useBroadcastStore.getState()
   try {
     if (output.type === "display") {
-      await invoke("open_broadcast_window", {
-        outputId: output.id,
-        monitorIndex: output.monitorIndex,
-        title: output.name,
-      })
+      const result = await invoke<{ pinnedOperator?: boolean }>(
+        "open_broadcast_window",
+        {
+          outputId: output.id,
+          monitorIndex: output.monitorIndex,
+          title: output.name,
+        }
+      )
       const opened = await isPreviewWindowVisible(output.id)
       void logInfo(`[broadcast-ui] open_broadcast_window '${output.id}' ok, visible=${opened}`)
       store.setOutputStatus(output.id, { previewOpen: opened, ndiActive: false })
       if (!opened) return false
+      if (result?.pinnedOperator) {
+        toast.warning(`${output.name} covers the main display`, {
+          description:
+            "Your operator window was pinned on top so you stay in control. Minimize it to watch verses fullscreen, or flip the output off when you are done.",
+        })
+      }
       store.syncBroadcastOutputFor(output.id)
       syncNdiConfigToOutput(output, false)
       // The window may still be booting; re-send the verse once it settles.
@@ -172,9 +181,9 @@ export async function disableOutput(output: BroadcastOutput): Promise<boolean> {
   try {
     // Always stop the sender rather than trusting outputStatus: that state is
     // in-memory and only refreshed while the dialog is open, so after a main
-    // window reload it can read "inactive" while Rust still holds the session —
-    // and close_broadcast_window only hides the window while NDI is live, which
-    // would orphan a sender on the network. stop_ndi is a no-op when idle.
+    // window reload it can read "inactive" while the main process still holds
+    // the session — orphaning a sender on the network. stop_ndi is a no-op
+    // when idle. close_broadcast_window always just hides its window.
     await invoke("stop_ndi", { outputId: output.id })
     syncNdiConfigToOutput(output, false)
     await invoke("close_broadcast_window", { outputId: output.id }).catch(() => {})

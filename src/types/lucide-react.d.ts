@@ -37,6 +37,7 @@ export const ImageIcon: LucideIcon
 export const LayoutGridIcon: LucideIcon
 export const KeyIcon: LucideIcon
 export const LoaderCircleIcon: LucideIcon
+export const MailIcon: LucideIcon
 export const MaximizeIcon: LucideIcon
 export const MicIcon: LucideIcon
 export const MicOffIcon: LucideIcon

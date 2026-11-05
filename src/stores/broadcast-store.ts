@@ -157,6 +157,7 @@ function emitDraftToBroadcast(state: BroadcastState): void {
     void emitTo(outputWindowLabel(output.id), "broadcast:content-update", {
       theme: state.draftTheme,
       content,
+      fitMode: output.fitMode ?? "contain",
     }).catch(() => {})
   }
 }
@@ -310,6 +311,7 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
     void emitTo(outputWindowLabel(outputId), "broadcast:content-update", {
       theme,
       content,
+      fitMode: output.fitMode ?? "contain",
     }).catch(() => {})
   },
   syncBroadcastOutput: () => {
