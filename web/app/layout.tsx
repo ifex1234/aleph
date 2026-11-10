@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { RootProvider } from "fumadocs-ui/provider/next"
+import Script from "next/script"
 import "./globals.css"
 import { SITE } from "./_lib/site"
 import { StructuredData } from "./_components/seo/structured-data"
@@ -114,6 +115,20 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <TrackVisit />
+        {/* Google Tag Manager container (manages GA4) */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <Script
+          src="https://www.googletagmanager.com/gtm.js?id=GTM-TLDGCTGS"
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'GTM-TLDGCTGS');
+              `}
+        </Script>
         <StructuredData />
         <RootProvider
           theme={{
