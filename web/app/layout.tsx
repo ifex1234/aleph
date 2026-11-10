@@ -92,9 +92,6 @@ export const metadata: Metadata = {
   // icon and apple-icon are wired automatically from app/icon.svg and
   // app/apple-icon.tsx — overriding here would suppress Next.js's defaults.
   manifest: "/manifest.webmanifest",
-  verification: {
-    google: "OvS2EHhw9Qw9Plh9OSqMVzMtMaGoSyg1f5OER-t9XCQ",
-  },
 }
 
 export const viewport: Viewport = {
