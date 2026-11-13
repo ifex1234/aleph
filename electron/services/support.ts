@@ -5,6 +5,24 @@ const PRODUCTION_API_URL = "https://aleph.zeravest.ng"
 const REQUEST_TIMEOUT_MS = 20_000
 const SETTLE_DELAY_MS = 1_500
 
+// Currencies Bachs checkout can be priced in (see docs.bachs.io
+// guides/checkout/any-currency-checkout). Settlement always lands in USD/NGN,
+// so no balance is needed in the priced currency.
+const SUPPORTED_CURRENCIES = new Set([
+  "USD",
+  "NGN",
+  "GHS",
+  "KES",
+  "TZS",
+  "UGX",
+  "MWK",
+  "RWF",
+  "XAF",
+  "XOF",
+  "ZMW",
+])
+const DEFAULT_CURRENCY = "NGN"
+
 export interface SupportOrderSummary {
   reference: string
   tier: string
@@ -136,10 +154,19 @@ async function settle(result: SupportCheckoutResult): Promise<SupportCheckoutRes
   }
 }
 
-export async function createCheckout(tier: string): Promise<SupportCheckoutResult> {
+export async function createCheckout(
+  tier: string,
+  currency?: string
+): Promise<SupportCheckoutResult> {
   if (!tier) throw new Error("Choose a support amount.")
+  const pricedIn = currency?.trim().toUpperCase() || DEFAULT_CURRENCY
+  if (!SUPPORTED_CURRENCIES.has(pricedIn)) {
+    throw new Error(`Support checkout does not support ${pricedIn}.`)
+  }
   return settle(
-    decodeCheckout(await post("/api/support/checkout", { tier }))
+    decodeCheckout(
+      await post("/api/support/checkout", { tier, currency: pricedIn })
+    )
   )
 }
 

@@ -377,7 +377,11 @@ const handlers: Record<string, Handler> = {
     return null
   },
 
-  support_create_checkout: (a) => support.createCheckout(str(a.tier)),
+  support_create_checkout: (a) =>
+    support.createCheckout(
+      str(a.tier),
+      typeof a.currency === "string" && a.currency ? a.currency : undefined
+    ),
 
   support_resume_checkout: (a) => support.resumeCheckout(str(a.token)),
 

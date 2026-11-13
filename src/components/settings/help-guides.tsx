@@ -220,7 +220,7 @@ export const FEATURE_GUIDES: FeatureGuide[] = [
     summary: "Reach the team, fund development, and see sister apps.",
     steps: [
       "The Support tab shows the contact address, sister apps, and current app version.",
-      "One-time donations are processed securely through Bachs — pick ₦2,000, ₦5,000 or ₦10,000, or use the bank details if you prefer a transfer.",
+      "One-time donations are processed securely through Bachs — pick your currency and an amount, or use the bank details if you prefer a transfer.",
     ],
   },
 ]

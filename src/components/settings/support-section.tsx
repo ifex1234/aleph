@@ -20,6 +20,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 /* -------------------------------------------------------------------------- */
 /*  Types (mirror GET /info from zayine-server)                                */
@@ -290,6 +297,7 @@ export function SupportSection() {
 }
 
 const SUPPORT_ORDER_KEY = "aleph.support.order.v1"
+const SUPPORT_CURRENCY_KEY = "aleph.support.currency.v1"
 
 interface OnlineSupportOrder {
   reference: string
@@ -309,19 +317,98 @@ interface OnlineSupportResult {
   order: OnlineSupportOrder
 }
 
-const ONLINE_TIERS = [
-  { key: "small", label: "₦2,000" },
-  { key: "regular", label: "₦5,000" },
-  { key: "generous", label: "₦10,000" },
+// Currencies the Bachs checkout can be priced in. Any of these can be charged
+// directly; Bachs settles them into the account balance (USD/NGN) afterwards.
+const SUPPORT_CURRENCIES = [
+  { code: "NGN", name: "Nigerian Naira" },
+  { code: "USD", name: "US Dollar" },
+  { code: "GHS", name: "Ghanaian Cedi" },
+  { code: "KES", name: "Kenyan Shilling" },
+  { code: "TZS", name: "Tanzanian Shilling" },
+  { code: "UGX", name: "Ugandan Shilling" },
+  { code: "MWK", name: "Malawian Kwacha" },
+  { code: "RWF", name: "Rwandan Franc" },
+  { code: "XAF", name: "Central African CFA" },
+  { code: "XOF", name: "West African CFA" },
+  { code: "ZMW", name: "Zambian Kwacha" },
 ] as const
 
-function formatNaira(amount: string) {
+type TierKey = "small" | "regular" | "generous"
+
+// Rough local equivalents of the naira tiers (₦2,000 / ₦5,000 / ₦10,000),
+// rounded to clean amounts in each currency. The server is authoritative for
+// the final charged amount; these feed the labels and default selection.
+const TIER_AMOUNTS: Record<TierKey, Record<string, number>> = {
+  small: {
+    NGN: 2000,
+    USD: 2,
+    GHS: 20,
+    KES: 200,
+    TZS: 3000,
+    UGX: 5000,
+    MWK: 2000,
+    RWF: 2000,
+    XAF: 1000,
+    XOF: 1000,
+    ZMW: 30,
+  },
+  regular: {
+    NGN: 5000,
+    USD: 5,
+    GHS: 50,
+    KES: 500,
+    TZS: 8000,
+    UGX: 12000,
+    MWK: 5000,
+    RWF: 5000,
+    XAF: 2500,
+    XOF: 2500,
+    ZMW: 80,
+  },
+  generous: {
+    NGN: 10000,
+    USD: 10,
+    GHS: 100,
+    KES: 1000,
+    TZS: 16000,
+    UGX: 25000,
+    MWK: 10000,
+    RWF: 10000,
+    XAF: 5000,
+    XOF: 5000,
+    ZMW: 160,
+  },
+}
+
+const ONLINE_TIERS: { key: TierKey }[] = [
+  { key: "small" },
+  { key: "regular" },
+  { key: "generous" },
+]
+
+function isSupportedCurrency(value: string): boolean {
+  return SUPPORT_CURRENCIES.some((option) => option.code === value)
+}
+
+function readStoredCurrency(): string {
+  try {
+    const stored = window.localStorage.getItem(SUPPORT_CURRENCY_KEY)
+    if (stored && isSupportedCurrency(stored)) return stored
+  } catch {
+    /* storage unavailable */
+  }
+  return "NGN"
+}
+
+function formatMoney(amount: string | number, currency: string) {
   const value = Number(amount)
-  if (!Number.isFinite(value)) return `₦${amount}`
-  return new Intl.NumberFormat("en-NG", {
+  if (!Number.isFinite(value)) return `${currency} ${amount}`
+  return new Intl.NumberFormat("en", {
     style: "currency",
-    currency: "NGN",
-    maximumFractionDigits: 0,
+    currency,
+    // Tier amounts are whole numbers; server amounts like "150.00" should not
+    // sprout decimals for zero-decimal-display currencies like NGN.
+    maximumFractionDigits: Number.isInteger(value) ? 0 : 2,
   }).format(value)
 }
 
@@ -351,6 +438,7 @@ function readStoredToken(): string | null {
 
 function OnlineSupportCard() {
   const [tier, setTier] = useState<string>("regular")
+  const [currency, setCurrency] = useState<string>(readStoredCurrency)
   const [token, setToken] = useState<string | null>(readStoredToken)
   const [order, setOrder] = useState<OnlineSupportOrder | null>(null)
   const [starting, setStarting] = useState(false)
@@ -362,6 +450,14 @@ function OnlineSupportCard() {
     if (!token) return
     window.localStorage.setItem(SUPPORT_ORDER_KEY, JSON.stringify({ token }))
   }, [token])
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SUPPORT_CURRENCY_KEY, currency)
+    } catch {
+      /* storage unavailable */
+    }
+  }, [currency])
 
   useEffect(() => {
     if (!token) return
@@ -419,7 +515,7 @@ function OnlineSupportCard() {
     try {
       const result = await invoke<OnlineSupportResult>(
         "support_create_checkout",
-        { tier }
+        { tier, currency }
       )
       setToken(result.token)
       setOrder(result.order)
@@ -468,7 +564,9 @@ function OnlineSupportCard() {
     window.localStorage.removeItem(SUPPORT_ORDER_KEY)
   }
 
-  const selected = ONLINE_TIERS.find((option) => option.key === tier)
+  const selectedAmount =
+    TIER_AMOUNTS[tier as TierKey]?.[currency] ??
+    TIER_AMOUNTS.regular.NGN
 
   return (
     <div className="rounded-lg border border-border bg-card p-4">
@@ -490,8 +588,30 @@ function OnlineSupportCard() {
             one-time gift securely through Bachs.
           </p>
 
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <span className="text-[0.5625rem] font-semibold tracking-widest text-muted-foreground uppercase">
+              Currency
+            </span>
+            <Select value={currency} onValueChange={setCurrency}>
+              <SelectTrigger size="sm" className="w-44 text-xs">
+                <SelectValue placeholder="Choose currency" />
+              </SelectTrigger>
+              <SelectContent>
+                {SUPPORT_CURRENCIES.map((option) => (
+                  <SelectItem
+                    key={option.code}
+                    value={option.code}
+                    className="text-xs"
+                  >
+                    {option.name} ({option.code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div
-            className="mt-3 grid grid-cols-3 gap-2"
+            className="mt-2 grid grid-cols-3 gap-2"
             role="group"
             aria-label="Support amount"
           >
@@ -508,7 +628,10 @@ function OnlineSupportCard() {
                 }
               >
                 <span className="block text-sm font-semibold">
-                  {option.label}
+                  {formatMoney(
+                    TIER_AMOUNTS[option.key][currency],
+                    currency
+                  )}
                 </span>
                 <span className="block text-[0.5625rem] font-medium tracking-wider text-muted-foreground uppercase">
                   one-time
@@ -584,7 +707,8 @@ function OnlineSupportCard() {
                 ) : (
                   <>
                     <HeartHandshakeIcon className="mr-1.5 size-3.5" />
-                    Support with {selected ? selected.label : "a gift"}
+                    Support with{" "}
+                    {formatMoney(selectedAmount, currency)}
                   </>
                 )}
               </Button>
@@ -619,13 +743,13 @@ function PaidReceipt({
             Thank you for supporting Aleph
           </p>
           <p className="mt-0.5 text-[0.625rem] text-muted-foreground">
-            {formatNaira(order.amount)} received
+            {formatMoney(order.amount, order.currency)} received
             {order.paid_at ? ` on ${formatDate(order.paid_at)}` : ""}.
           </p>
         </div>
       </div>
       <div className="flex flex-col gap-1.5 rounded-md border border-border/70 p-2.5">
-        <ReceiptRow label="Amount" value={formatNaira(order.amount)} />
+        <ReceiptRow label="Amount" value={formatMoney(order.amount, order.currency)} />
         <ReceiptRow label="Reference" value={order.reference} mono />
         <ReceiptRow
           label="Date"
